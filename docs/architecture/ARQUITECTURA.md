@@ -19,7 +19,7 @@ flowchart LR
     D1[(D1<br/>ledger de costos)]
     WAI[Workers AI<br/>embeddings]
   end
-  LLM[Proveedor LLM<br/>configurable]
+  LLM[Anthropic API<br/>Claude Haiku 4.5]
 
   M -- login --> H --> AU
   A -- login --> AU
@@ -94,9 +94,9 @@ El gateway resuelve proveedor y modelo por **tarea**, no por endpoint. Esto perm
 | Tarea (`AiTask`) | Default | Alternativas | Notas |
 |------------------|---------|--------------|-------|
 | `embed` | Workers AI `@cf/baai/bge-m3` (multilingüe) | — | Verificar nombre exacto del modelo y cuota gratuita en F1 |
-| `enrich` | LLM económico con salida JSON | Jev (Choice/Score/Noul) para temas, geo, importancia | Una llamada por noticia |
-| `chat_answer` | LLM económico | Modelo de Workers AI (costo 0, calidad menor) | Único uso en lectura |
-| `digest` | LLM económico | — | Precalculado al publicar |
+| `enrich` | Anthropic `claude-haiku-4-5-20251001`, salida JSON | Jev (Choice/Score/Noul) para temas, geo, importancia | Una llamada por noticia |
+| `chat_answer` | Anthropic `claude-haiku-4-5-20251001` | Modelo de Workers AI (costo 0, calidad menor) | Único uso en lectura |
+| `digest` | Anthropic `claude-haiku-4-5-20251001` | — | Precalculado al publicar |
 | `image_generate` | Deshabilitado por defecto | Workers AI (modelo de imagen) | Último recurso, ver IMAGENES.md |
 
 Configuración en `services/api/src/ai/config.ts`. Modo `AI_MODE=mock` devuelve respuestas fijas para desarrollo.

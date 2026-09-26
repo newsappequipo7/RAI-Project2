@@ -1,4 +1,7 @@
-# FASE 4 — Chat, evaluación y preparación de la demo (Persona 4)
+# FASE 4 — Chat, evaluación y preparación de la demo (Joaquín · 9 – 13 oct)
+
+> Trabajo previo (ver `docs/CRONOGRAMA.md` §3): el set dorado (F4-05, contenido) y las reglas de intención en
+> `packages/shared/src/chat/intent.ts`. F4-08 lo hace Nelson y `demo:prepare`/videos de F4-09 los hace Diego.
 
 ## Resumen
 
@@ -17,7 +20,8 @@ Desarrollar todo el pipeline con `AI_MODE=mock` primero. Pasar a `live` solo par
 **Pasos:**
 1. `routes/chat.ts` con validación zod del request (máx. 500 caracteres, historia ≤ 6 turnos).
 2. Rate limit, flags y presupuesto vía gateway.
-3. `rag/intent.ts`: reglas de intención + detección de país con `catalogs/countries-es.ts`; pruebas con 30 frases.
+3. Integrar `packages/shared/src/chat/intent.ts` (hecho como trabajo previo: reglas de intención + detección de país
+   con `catalogs/countries-es.ts`, pruebas con 30 frases).
 4. Recuperación con filtros por intención; exclusión de retractadas; top-k 6.
 5. Abstención por umbral τ (config), caché en KV.
 6. Modo `retrieval_only` completo (devuelve bloques con entradillas de las noticias encontradas, `generatedBy = null`).

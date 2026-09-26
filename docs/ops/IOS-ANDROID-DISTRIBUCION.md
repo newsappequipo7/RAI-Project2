@@ -8,7 +8,7 @@ Objetivo: que el equipo **y compañeros** usen la app en iPhone y Android durant
 | Plan | Cómo | Quién puede usarlo | Pros | Contras |
 |---|---|---|---|---|
 | **A (principal)** | Expo Go (App Store / Play Store) + nuestro proyecto servido por Metro con túnel o por EAS Update | Cualquiera con Expo Go instalado; se abre con QR | Gratis, sin firma, sin USB, funciona en iOS y Android, actualizaciones instantáneas | Solo módulos incluidos en Expo Go; la versión de SDK debe ser la que soporte Expo Go en la tienda; depende de red |
-| **B (respaldo nativo)** | `expo prebuild` → IPA sin firmar compilada en GitHub Actions con **ios-builder** → reinstalada y re-firmada con un Apple ID gratuito vía **MobAI** | Teléfonos del equipo conectados por USB | App "real" con ícono propio, no depende de Expo Go | Firma gratuita de Apple: la app caduca en pocos días (7 días según las reglas conocidas de aprovisionamiento gratuito; verificar), límite de apps por dispositivo, un dispositivo a la vez en MobAI Free, requiere USB y Modo desarrollador |
+| **B (respaldo nativo)** | `expo prebuild` → build en **Xcode desde una MacBook del equipo** firmado con el Apple ID gratuito del equipo, instalado por USB | Los 2 iPhone del equipo | App "real" con ícono propio, no depende de Expo Go ni de GitHub Actions | Firma gratuita de Apple: la app caduca en pocos días (7 según las reglas conocidas del aprovisionamiento gratuito; verificar), límite de apps por dispositivo, requiere USB y Modo desarrollador |
 | **C (emergencia)** | `expo export -p web` publicado en Firebase Hosting (PWA) | Cualquiera con navegador | Cero instalación | No es app nativa; el enunciado pide app móvil: usar solo si A y B fallan |
 
 Android sin tienda: además de Expo Go, se puede generar un APK con EAS Build (plan gratuito de Expo, verificar cupo) o
@@ -58,7 +58,22 @@ Riesgos a probar explícitamente en el spike:
 Criterio de salida del spike: dos personas distintas inician sesión en un iPhone y un Android reales, y cierran/abren
 la app sin volver a loguearse. Grabar video corto como evidencia.
 
-## 4. Plan B — ios-builder + MobAI (tareas F1-04)
+## 4. Plan B — build nativo con Xcode (tareas F1-04)
+
+El equipo tiene MacBooks, así que el camino directo es Xcode con el Apple ID gratuito del equipo:
+
+1. Rama `native-build`: `npx expo prebuild -p ios` (esquema `newsapp`).
+2. Abrir `ios/*.xcworkspace` en Xcode → Signing & Capabilities → Team = Apple ID del equipo (Personal Team) →
+   bundle id único (p. ej. `gt.uvg.newsapp.<iniciales>`).
+3. Conectar el iPhone por USB, Modo desarrollador activo, compilar en configuración Release (bundle JS embebido,
+   no necesita Metro).
+4. En el iPhone: Ajustes → General → VPN y gestión de dispositivos → confiar en el desarrollador.
+5. Repetir con el segundo iPhone. Reinstalar ≤ 3 días antes de la presentación.
+
+Alternativa documentada (no necesaria con Mac): ios-builder + MobAI, descrita abajo. Se deja por si el día de la
+demo no hay Mac disponible.
+
+### 4.1 Alternativa sin Mac: ios-builder + MobAI
 
 Referencia: <https://github.com/MobAI-App/ios-builder> y <https://mobai.run>.
 
@@ -90,6 +105,6 @@ pantalla). Se puede usar en F3/F4 para pruebas de UI automatizadas y para grabar
 
 - [ ] Laptop con Metro/túnel lista + hotspot propio probado.
 - [ ] Actualización EAS publicada (o túnel activo) con la versión final.
-- [ ] 2 iPhones del equipo con Plan B instalado hace < 3 días, por si Expo Go falla.
+- [ ] Los 2 iPhones del equipo con Plan B (Xcode) instalado hace < 3 días, por si Expo Go falla.
 - [ ] Página `/instalar` proyectable con QR.
 - [ ] Video de respaldo de cada flujo (ver DEMO-RUNBOOK.md).

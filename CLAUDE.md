@@ -16,6 +16,8 @@ Enunciado original resumido y objetivos de evaluación: `docs/PLAN.md` §1.
 | Necesito…                                          | Leer                                              |
 |----------------------------------------------------|---------------------------------------------------|
 | Plan general, fases, orden, estado                 | `docs/PLAN.md`                                    |
+| Fechas, quién hace qué, trabajo previo             | `docs/CRONOGRAMA.md`                              |
+| Cuentas, secretos, máquinas (día 0)                | `docs/ops/SETUP-DIA-0.md`                         |
 | Mi fase (tareas atómicas + criterios de aceptación)| `docs/phases/FASE-N-*.md`                         |
 | Lo que dejó la persona anterior                    | `docs/handoffs/FASE-(N-1).md`                     |
 | Arquitectura y flujo de datos                      | `docs/architecture/ARQUITECTURA.md`               |
@@ -55,6 +57,9 @@ No cargues todos los documentos a la vez. Lee el de tu fase y abre los demás so
    y endpoints en `docs/architecture/CONTRATOS-API.md`. Si necesitas cambiar un contrato: actualiza el doc, los
    tipos y registra el cambio en el handoff de tu fase.
 8. **Nada está Done sin evidencia.** Ver `docs/process/ENGINEERING-LOOPS.md` §2.
+9. **Claude Code no usa la API key del proyecto.** La key de Anthropic (tope USD 20) existe solo como secret del
+   Worker. Si detectas `ANTHROPIC_API_KEY` del proyecto en el entorno local o en un archivo, detente y avisa.
+10. **El repo es público.** Nunca escribas secretos en archivos versionados; solo nombres en `.env.example`.
 
 ## 4. Stack
 
@@ -63,7 +68,7 @@ No cargues todos los documentos a la vez. Lee el de tu fase y abre los demás so
   App Store al momento de crear el proyecto (verificar, ver doc de distribución).
 - `apps/admin`: SvelteKit (SPA, `adapter-static`) en Firebase Hosting. Incluye la ruta puente de login móvil.
 - `services/api`: Cloudflare Worker con Hono. D1 (ledger de costos y caché), KV (índice de búsqueda, digests),
-  Workers AI (embeddings). LLM configurable por tarea.
+  Workers AI (embeddings). LLM: Anthropic, `claude-haiku-4-5-20251001` por defecto (ADR-009), configurable por tarea.
 - `packages/shared`: tipos, esquemas zod, catálogos (ubicaciones, temas), motor de ranking. Lo usan mobile y admin.
 - Firebase: Authentication (Google) + Firestore (plan Spark, sin tarjeta).
 - `evals/`: sets dorados y scripts de evaluación del chat y del ranking.

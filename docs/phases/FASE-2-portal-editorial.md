@@ -1,4 +1,4 @@
-# FASE 2 — Portal editorial (Persona 2)
+# FASE 2 — Portal editorial (Daniel · 1 – 5 oct)
 
 ## Resumen
 
@@ -143,4 +143,4 @@ CA2: el historial muestra todas las versiones.
 1. `[PLUS]` En el editor, panel "Así se verá": renderiza la tarjeta en los 4 tiers y la vista de lectura con los mismos
    estilos (reutilizando tokens de diseño).
 2. Completar `docs/handoffs/FASE-2.md`, filas F2 en PLAN.md §6, `git tag fase-2-done`.
-**CA:** CA1: la Persona 3 corre el portal y publica una noticia siguiendo solo el handoff.
+**CA:** CA1: Nelson corre el portal y publica una noticia siguiendo solo el handoff.

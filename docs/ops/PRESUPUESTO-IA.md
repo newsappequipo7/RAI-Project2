@@ -42,11 +42,15 @@
 
 | Función | Tokens entrada (prom.) | Tokens salida (prom.) | Costo por llamada | Llamadas esperadas | Total esperado |
 |---|---|---|---|---|---|
-| `enrich` | ~1 500 (supuesto) | ~500 (supuesto) | medir | 80 noticias | medir |
-| `chat_answer` | ~3 000 (supuesto) | ~400 (supuesto) | medir | 1 500 (dev + evals + demo) | medir |
-| `digest` | ~3 000 (supuesto) | ~500 (supuesto) | medir | 8 ubicaciones × ~20 regeneraciones | medir |
+| `enrich` | ~1 500 (supuesto) | ~500 (supuesto) | ≈ 0.0040 (estimado) | 80 noticias | ≈ 0.32 |
+| `chat_answer` | ~3 000 (supuesto) | ~400 (supuesto) | ≈ 0.0050 (estimado) | 1 500 (dev + evals + demo) | ≈ 7.50 sin caché; ≈ 4.50 con 40 % evitado |
+| `digest` | ~3 000 (supuesto) | ~500 (supuesto) | ≈ 0.0055 (estimado) | 8 ubicaciones × ~20 regeneraciones | ≈ 0.88 |
 | `embed` | — | — | 0 créditos | — | 0 |
-| `image_generate` | — | — | medir | ≤ 5 | medir |
+| `image_generate` | — | — | no aplica (deshabilitado; Anthropic no genera imágenes) | 0 | 0 |
+
+Estimaciones con Claude Haiku 4.5 a USD 1 / USD 5 por millón de tokens (entrada/salida), precio a verificar en la
+página oficial. Total estimado ≈ USD 5.7, holgado frente al tope de USD 13 de desarrollo. Reemplazar por datos reales
+del ledger en la primera semana.
 
 Fórmula: `costo = (in/1e6)·precioIn + (out/1e6)·precioOut`. Llenar la columna "Costo por llamada" en la primera semana
 con el promedio real de D1 y proyectar. Si la proyección total supera USD 13, cambiar de modelo o recortar contexto

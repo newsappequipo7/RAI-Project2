@@ -25,6 +25,8 @@ Opciones: (A) Expo + Expo Go: se instala desde App Store gratis y carga nuestro 
 (GitHub Actions) + reinstalación con Apple ID gratuito vía MobAI: vence a los 7 días y requiere USB por dispositivo.
 (C) PWA: no es "app" y en iOS el login y la instalación son menos confiables.
 Decisión: A como plan principal, B como respaldo para teléfonos del equipo, C como emergencia.
+Actualización 2026-09-26: el equipo tiene MacBooks, así que B se hace con Xcode y Apple ID gratuito en lugar de
+ios-builder + MobAI (que queda como alternativa sin Mac).
 Consecuencias: prohibido agregar módulos nativos fuera de Expo Go; Google Sign-In nativo no disponible → puente web (ADR-003).
 
 ## ADR-002 — Ranking por código, no por LLM
@@ -72,3 +74,17 @@ por defecto, etiquetada). Ver `docs/domain/IMAGENES.md`.
 Estado: propuesta (verificar en F1-09)
 Decisión: `@cf/baai/bge-m3` por soporte de español. Confirmar nombre, dimensión y cuota gratuita en la documentación
 de Cloudflare antes de indexar. Si cambia, reindexar todo (`/admin/index/rebuild`).
+
+## ADR-009 — Claude Haiku 4.5 como LLM por defecto
+Estado: aceptada
+Fecha: 2026-09-26 · Autor: Diego
+Contexto: los USD 20 están en una sola cuenta de Anthropic con una sola API key.
+Opciones: (A) Haiku 4.5: el más económico de la familia actual. (B) Sonnet: mejor calidad, varias veces más caro.
+(C) Modelo gratuito de Workers AI: costo 0, calidad en español a evaluar.
+Decisión: A (`claude-haiku-4-5-20251001`) para `enrich`, `chat_answer` y `digest`. C queda como modo de degradación
+si el presupuesto se agota. Precio de referencia (reportado para septiembre 2026): USD 1 por millón de tokens de entrada
+y USD 5 por millón de salida; verificar en https://platform.claude.com/docs/en/about-claude/pricing al configurar
+`pricing.ts`.
+Consecuencias: costo estimado ≈ USD 0.005 por respuesta de chat y ≈ USD 0.004 por enriquecimiento (ver
+PRESUPUESTO-IA.md §4). Si las evals muestran calidad insuficiente en español, evaluar Sonnet solo para `chat_answer`
+con un loop que mida costo vs calidad.

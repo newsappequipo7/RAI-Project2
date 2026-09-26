@@ -44,10 +44,10 @@ Cada fase:
 
 | Fase | Responsable | Resultado demostrable al cerrar | Documento |
 |------|-------------|---------------------------------|-----------|
-| 1. Fundaciones y distribución | Persona 1 | Login con Google en iPhone y Android; Worker con gateway, ledger y kill switch; datos semilla | `docs/phases/FASE-1-fundaciones.md` |
-| 2. Portal editorial | Persona 2 | Publicar desde el portal una noticia verificada, con fuentes, imagen y enriquecimiento IA, que queda indexada | `docs/phases/FASE-2-portal-editorial.md` |
-| 3. App móvil: feed y lectura | Persona 3 | Feed jerárquico por ubicación, "Lo que debes saber", "¿Por qué veo esto?", lectura con procedencia, tiempo real | `docs/phases/FASE-3-app-movil-feed.md` |
-| 4. Chat, evaluación y demo | Persona 4 | Chat RAG con citas y abstención; suite de evaluación; comparador de ubicaciones; runbook ensayado | `docs/phases/FASE-4-chat-evaluacion-demo.md` |
+| 1. Fundaciones y distribución | Diego Valenzuela | Login con Google en iPhone y Android; Worker con gateway, ledger y kill switch; datos semilla | `docs/phases/FASE-1-fundaciones.md` |
+| 2. Portal editorial | Daniel Dubón | Publicar desde el portal una noticia verificada, con fuentes, imagen y enriquecimiento IA, que queda indexada | `docs/phases/FASE-2-portal-editorial.md` |
+| 3. App móvil: feed y lectura | Nelson | Feed jerárquico por ubicación, "Lo que debes saber", "¿Por qué veo esto?", lectura con procedencia, tiempo real | `docs/phases/FASE-3-app-movil-feed.md` |
+| 4. Chat, evaluación y demo | Joaquín | Chat RAG con citas y abstención; suite de evaluación; comparador de ubicaciones; runbook ensayado | `docs/phases/FASE-4-chat-evaluacion-demo.md` |
 
 Aunque cada fase tiene un responsable, **todo el equipo participa en la presentación** (mapeo de quién presenta qué
 en `docs/ops/DEMO-RUNBOOK.md` §1).
@@ -59,6 +59,11 @@ en `docs/ops/DEMO-RUNBOOK.md` §1).
 - La Fase 3 no gasta IA (ranking por código), así que puede iterar libremente.
 - La Fase 4 concentra el gasto (chat) al final, cuando el corpus y el presupuesto están claros, y cierra con evaluación
   y ensayo de demo.
+
+## 3.1 Calendario
+
+Fechas, trabajo previo por persona y tareas reasignadas: `docs/CRONOGRAMA.md`.
+Preparación de cuentas y máquinas: `docs/ops/SETUP-DIA-0.md`.
 
 ## 4. Protocolo de traspaso (handoff)
 
@@ -105,9 +110,9 @@ por tarea al iniciar su fase.
 
 | Riesgo | Mitigación | Dueño |
 |--------|------------|-------|
-| iPhone no instala / login falla en iOS | Spike en F1-02/F1-03 con plan A (Expo Go) y plan B (ios-builder + MobAI) | P1 |
-| Créditos agotados antes de la demo | Gateway con ledger, kill switch y reserva de USD 7 | P1 define, todos respetan |
-| Wifi de la U bloquea Metro/túnel | Túnel + hotspot propio + video de respaldo | P4 |
+| iPhone no instala / login falla en iOS | Spike en F1-02/F1-03 con plan A (Expo Go) y plan B (build nativo con Xcode) | Diego |
+| Créditos agotados antes de la demo | Gateway con ledger, kill switch y reserva de USD 7; Claude Code nunca usa la key del proyecto | Diego define, todos respetan |
+| Wifi de la U bloquea Metro/túnel | Túnel + hotspot propio + video de respaldo | Diego |
 | Contratos cambian a media fase | Cambios solo con actualización de docs + nota en handoff | Todos |
-| Alucinaciones del chat en la demo | Abstención por umbral, validación de citas, set dorado | P4 |
+| Alucinaciones del chat en la demo | Abstención por umbral, validación de citas, set dorado | Joaquín |
 | Scope creep | Lo extra está marcado `[PLUS]` en cada fase: solo se hace con todo lo obligatorio en Done | Todos |

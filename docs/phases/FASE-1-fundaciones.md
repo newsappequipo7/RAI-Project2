@@ -1,4 +1,4 @@
-# FASE 1 — Fundaciones, distribución y gateway de IA (Persona 1)
+# FASE 1 — Fundaciones, distribución y gateway de IA (Diego · 28 sep – 1 oct)
 
 ## Resumen
 
@@ -67,15 +67,13 @@ Si F1-02 o F1-03 fallan después de 2 intentos documentados, **parar y escalar a
 - CA4: el token nunca aparece en query string (revisar URL de redirección en la evidencia).
 **Evidencia:** video; captura del rechazo; LOOP con los intentos fallidos (casi seguro habrá alguno).
 
-### F1-04 — Spike Plan B: build nativo con ios-builder + MobAI (timebox: 1 día)
+### F1-04 — Spike Plan B: build nativo con Xcode (timebox: medio día)
 **Objetivo:** tener respaldo nativo en iPhone del equipo.
 **Leer:** IOS-ANDROID-DISTRIBUCION.md §4.
 **Pasos:**
-1. Rama `native-build`: `npx expo prebuild -p ios`, esquema de URL `newsapp`.
-2. Instalar `builder`, `builder auth github`, `builder init`, `builder ios build`.
-3. Crear Apple ID de equipo (no personal). Instalar MobAI Free, conectar iPhone, activar Modo desarrollador, instalar.
-4. Probar login con el puente usando `newsapp://auth`.
-5. Registrar minutos de Actions consumidos y fecha de caducidad de la firma.
+1. Seguir IOS-ANDROID-DISTRIBUCION.md §4 (Xcode + Apple ID gratuito del equipo) en los 2 iPhone.
+2. Probar login con el puente usando `newsapp://auth`.
+3. Registrar la fecha de caducidad de la firma que muestra el dispositivo.
 **Criterios de aceptación:**
 - CA1: la app abre como app independiente en un iPhone del equipo e inicia sesión; o bien
 - CA1-alt: si no se logra en el timebox, LOOP documentando el bloqueo exacto y la decisión de seguir solo con Plan A.
@@ -155,7 +153,7 @@ Si F1-02 o F1-03 fallan después de 2 intentos documentados, **parar y escalar a
 con el modelo real; CA2: una retractada nunca aparece.
 **Evidencia:** tests + tabla de 5 consultas con puntajes (sirve para calibrar τ en F4).
 
-### F1-10 — Corpus semilla
+### F1-10 — Corpus semilla (contenido: Daniel como trabajo previo; script: Diego)
 **Objetivo:** datos realistas para que F2–F4 trabajen sin depender del portal.
 **Pasos:**
 1. `packages/shared/fixtures/news.json` con **40 noticias** ficticias pero verosímiles (marcar en `body` al final:
@@ -186,4 +184,4 @@ las 40 noticias pasa.
 1. GitHub Actions: `lint`, `typecheck`, `test` en cada PR (sin llamadas reales a IA).
 2. Comandos `.claude/commands` revisados y funcionando.
 3. Completar `docs/handoffs/FASE-1.md`, expandir filas F1 en PLAN.md §6, `git tag fase-1-done`.
-**Criterios de aceptación:** CA1: CI verde en `main`; CA2: la Persona 2 corre todo desde cero con el handoff.
+**Criterios de aceptación:** CA1: CI verde en `main`; CA2: Daniel corre todo desde cero con el handoff.

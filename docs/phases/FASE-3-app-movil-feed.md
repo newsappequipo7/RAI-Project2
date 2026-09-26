@@ -1,4 +1,7 @@
-# FASE 3 — App móvil: feed, lectura, personalización y comparador (Persona 3)
+# FASE 3 — App móvil: feed, lectura, personalización y comparador (Nelson · 5 – 8 oct)
+
+> F3-02, F3-03 y la función pura de F3-08 se hacen como **trabajo previo** entre el 30 sep y el 4 oct
+> (ver `docs/CRONOGRAMA.md` §3). Al iniciar la fase solo quedan la UI y la integración.
 
 ## Resumen
 
@@ -122,4 +125,4 @@ CA2: publicar desde el portal actualiza el comparador sin recargar.
 1. Modo oscuro, tamaño de texto dinámico, contraste AA en chips de certeza, estados vacíos con texto útil.
 2. Videos de: feed en 3 ubicaciones, "¿Por qué veo esto?", lectura de las 4 certezas, cambio de ubicación, tiempo real.
 3. Completar `docs/handoffs/FASE-3.md`, filas F3 en PLAN.md §6, `git tag fase-3-done`.
-**CA:** CA1: la Persona 4 corre app y comparador siguiendo solo el handoff.
+**CA:** CA1: Joaquín corre app y comparador siguiendo solo el handoff.

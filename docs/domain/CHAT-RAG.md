@@ -19,7 +19,7 @@ Casos que debe resolver (del enunciado):
 1. **Auth + rate limit**: 20 mensajes/hora por `uid` (D1). Excedido → `429`.
 2. **Presupuesto**: si `flags.killSwitch` → `mode = 'blocked'` con mensaje amable. Si `chatMode = 'retrieval_only'`
    → se salta el LLM y se devuelven las noticias encontradas con sus entradillas (paso 7 no se ejecuta).
-3. **Ruteo por intención (código, sin IA)**: reglas sobre el texto normalizado.
+3. **Ruteo por intención (código, sin IA)** en `packages/shared/src/chat/intent.ts`: reglas sobre el texto normalizado.
    - `resumen`: "resume", "resumen", "qué pasó hoy", "lo más importante".
    - `mi_region`: "mi zona", "mi país", "mi ciudad", "aquí", "cerca".
    - `otro_pais`: contiene nombre de país/ciudad del catálogo de gentilicios y países (`catalogs/countries-es.ts`)
