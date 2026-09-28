@@ -18,7 +18,7 @@ Evidencia: enlace a loop, medición o prueba que la respalda.
 ---
 
 ## ADR-001 — Expo compatible con Expo Go como app móvil
-Estado: aceptada (a confirmar con spike F1-02)
+Estado: aceptada
 Contexto: nadie del equipo tiene cuenta Apple Developer de pago y el presupuesto lo prohíbe. Los compañeros deben poder
 usar la app en su iPhone durante la clase.
 Opciones: (A) Expo + Expo Go: se instala desde App Store gratis y carga nuestro JS. (B) Build nativo vía ios-builder
@@ -27,7 +27,18 @@ Opciones: (A) Expo + Expo Go: se instala desde App Store gratis y carga nuestro 
 Decisión: A como plan principal, B como respaldo para teléfonos del equipo, C como emergencia.
 Actualización 2026-09-26: el equipo tiene MacBooks, así que B se hace con Xcode y Apple ID gratuito en lugar de
 ios-builder + MobAI (que queda como alternativa sin Mac).
-Consecuencias: prohibido agregar módulos nativos fuera de Expo Go; Google Sign-In nativo no disponible → puente web (ADR-003).
+Actualización 2026-09-27 (spike F1-02): Expo Go instalado desde App Store en iPhone real soporta **SDK 57**
+(verificado en el dispositivo; contradice el estado público de la documentación de Expo, que en esa fecha señalaba
+SDK 54 como tope — se confía en la verificación física, no en la doc externa). `apps/mobile` se creó con
+`expo@~57.0.25` + `expo-router@~57.0.23`, TypeScript estricto y monorepo pnpm (`packages/shared` vía
+`workspace:*`). Carga para desarrollo: `npx expo start --tunnel` (red universitaria aísla clientes). Requiere
+`.npmrc` con `shamefully-hoist=true` en la raíz: sin eso, Metro no resuelve dependencias transitivas de paquetes
+Expo bajo el layout estricto de `node_modules` de pnpm (error `Unable to resolve module debug` y similares).
+Falta confirmar en el spike: si la actualización EAS Update puede cargarse desde Expo Go para este proyecto
+(pendiente hasta tener build de demo) — si falla, usar túnel desde laptop con hotspot propio el día de la demo.
+Consecuencias: prohibido agregar módulos nativos fuera de Expo Go; Google Sign-In nativo no disponible → puente web (ADR-003);
+si Expo actualiza Expo Go a una versión que deje de soportar SDK 57 durante el semestre, no actualizar el SDK del
+proyecto sin volver a verificar en un dispositivo real.
 
 ## ADR-002 — Ranking por código, no por LLM
 Estado: aceptada
