@@ -4,7 +4,15 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['**/dist/**', '**/.expo/**', '**/.wrangler/**', '**/node_modules/**', '**/coverage/**'],
+    ignores: [
+      '**/dist/**',
+      '**/build/**',
+      '**/.expo/**',
+      '**/.svelte-kit/**',
+      '**/.wrangler/**',
+      '**/node_modules/**',
+      '**/coverage/**',
+    ],
   },
   {
     files: ['**/*.ts', '**/*.tsx'],

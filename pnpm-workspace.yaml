@@ -4,4 +4,6 @@ packages:
   - "packages/*"
   - "evals"
 allowBuilds:
+  '@firebase/util': true
   esbuild: true
+  protobufjs: true

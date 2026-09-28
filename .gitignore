@@ -1,8 +1,11 @@
 node_modules
 dist
+build
 .expo
 .expo-shared
 .wrangler
+.svelte-kit
+.firebase
 coverage
 *.log
 .env

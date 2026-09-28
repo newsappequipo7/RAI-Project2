@@ -48,12 +48,37 @@ Consecuencias: costo 0 en lectura, explicable, testeable. Perdemos matices semá
 geo enriquecidos una sola vez al publicar.
 
 ## ADR-003 — Login móvil mediante puente web de Firebase
-Estado: aceptada (a confirmar con spike F1-03)
+Estado: aceptada
 Contexto: Expo Go no incluye el SDK nativo de Google Sign-In.
 Decisión: página `/auth/mobile` en Firebase Hosting que autentica con el SDK web y devuelve el `id_token` de Google por
 deep link en el fragmento; la app lo canjea con `signInWithCredential`.
+Actualización 2026-09-27 (spike F1-03): tres iteraciones hasta llegar a algo confiable.
+1. `signInWithRedirect` + `getRedirectResult` (plan original): no funciona dentro de la sesión restringida que abre
+   `expo-web-browser` (`openAuthSessionAsync`, `ASWebAuthenticationSession` en iOS) — el estado pendiente del redirect
+   no sobrevive el viaje de ida y vuelta a Google, así que `getRedirectResult` siempre da `null` y la página relanza el
+   login, generando un loop con el selector de cuenta. Riesgo anticipado en `IOS-ANDROID-DISTRIBUCION.md` §3.
+2. `signInWithPopup`: falla igual dentro de esa sesión porque `ASWebAuthenticationSession` no soporta `window.open`
+   (confirmado: funciona perfecto en Safari de escritorio y en Safari normal del iPhone, nunca dentro de la sesión que
+   abre la app).
+3. **Decisión final**: la app abre el puente con `Linking.openURL` (Safari completo del sistema, no
+   `expo-web-browser`), y el puente hace el intercambio OAuth de Google **manualmente** (`accounts.google.com/o/oauth2/v2/auth`
+   con `response_type=id_token`, sin SDK de Firebase de por medio) usando una sola navegación de página completa —
+   exactamente lo que Safari soporta. El `redirect` original se guarda en `sessionStorage` antes de salir a Google y se
+   recupera al volver. La app captura el regreso con `Linking.addEventListener('url', …)` en vez de esperar la promesa
+   de `openAuthSessionAsync`. Requiere una URI de redirección fija registrada a mano una vez en Google Cloud Console
+   (`https://ai-news-app-f24cf.web.app/auth/mobile`, client ID web que Firebase creó automáticamente) — nunca cambia,
+   a diferencia de las URIs `exp://` dinámicas por túnel. `expo-auth-session` (la alternativa "oficial" de Expo) se
+   descartó: la propia documentación de Expo dice que Expo Go no puede probar flujos OAuth por no poder personalizar
+   el esquema de la app, y confirma que se necesitaría un Development Build (viola la regla de un solo Expo Go).
+   Nota de campo: durante las pruebas, el flujo mostró un loop intermitente y sin mensaje de error en el selector de
+   cuenta de Google incluso con Safari completo; se resolvió solo tras un par de intentos (posible fricción temporal
+   de Google por reintentos repetidos desde el mismo client ID/cuenta en poco tiempo). Si reaparece, revisar con Web
+   Inspector remoto antes de asumir que el código está mal — cuando la mecánica ya se verificó con una prueba manual
+   exitosa, es más probable que sea un problema externo pasajero que un bug de la página puente.
 Consecuencias: un solo camino de login para Expo Go, build nativo y web. Riesgo: fuga de token por redirección abierta
-→ lista blanca de esquemas de redirect y token en fragmento.
+→ lista blanca de esquemas de redirect y token en fragmento (nunca en query string, en ninguno de los dos saltos).
+`packages/shared`/Firebase JS SDK ya no se usa en la página puente (solo `fetch`/navegación nativa del navegador); la
+app sigue usando `signInWithCredential` del SDK de Firebase para canjear el `id_token` de Google.
 
 ## ADR-004 — Backend en Cloudflare Workers (plan Free), sin Admin SDK de Firebase
 Estado: aceptada
