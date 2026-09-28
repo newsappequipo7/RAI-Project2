@@ -1,0 +1,22 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "news",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "workflow", "order": "ASCENDING" },
+        { "fieldPath": "publishedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "news",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "workflow", "order": "ASCENDING" },
+        { "fieldPath": "importance", "order": "ASCENDING" },
+        { "fieldPath": "publishedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
