@@ -8,7 +8,8 @@
     "scheme": "newsapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "gt.uvg.newsapp.dv"
     },
     "android": {
       "adaptiveIcon": {
