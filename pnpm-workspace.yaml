@@ -3,6 +3,7 @@ packages:
   - "services/*"
   - "packages/*"
   - "evals"
+  - "firebase-tests"
 allowBuilds:
   '@firebase/util': true
   esbuild: true

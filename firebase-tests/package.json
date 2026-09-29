@@ -1,0 +1,17 @@
+{
+  "name": "firebase-tests",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "firebase emulators:exec --only firestore --project ai-news-app-f24cf \"vitest run\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "@types/node": "^24.19.0",
+    "firebase": "^12.19.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
