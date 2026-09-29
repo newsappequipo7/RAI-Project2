@@ -8,7 +8,9 @@
     "scheme": "newsapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "gt.uvg.newsapp.dv",
+      "appleTeamId": "L9Z4886757"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,6 +34,14 @@
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true
+          }
         }
       ]
     ],
