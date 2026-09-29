@@ -113,3 +113,23 @@ export interface UserEvent {
   locationId: string;
   at: string;
 }
+
+export type ChatMode = 'full' | 'retrieval_only';
+export type ApiEnv = 'dev' | 'demo';
+
+export interface Flags {
+  killSwitch: boolean;
+  imageGenEnabled: boolean;
+  chatMode: ChatMode;
+}
+
+export interface HealthResponse {
+  ok: true;
+  indexVersion: number;
+  flags: Flags;
+  env: ApiEnv;
+}
+
+export interface ApiErrorBody {
+  error: { code: string; message: string };
+}

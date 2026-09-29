@@ -145,6 +145,17 @@ export const userProfileSchema = z
   })
   .strict();
 
+export const chatModeSchema = z.enum(['full', 'retrieval_only']);
+export const apiEnvSchema = z.enum(['dev', 'demo']);
+
+export const flagsSchema = z
+  .object({
+    killSwitch: z.boolean(),
+    imageGenEnabled: z.boolean(),
+    chatMode: chatModeSchema,
+  })
+  .strict();
+
 export const userEventSchema = z
   .object({
     type: z.enum(['open', 'dwell', 'less_like_this', 'more_like_this', 'chat_topic', 'why_opened']),

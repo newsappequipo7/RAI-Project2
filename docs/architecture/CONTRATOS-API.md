@@ -4,8 +4,9 @@ Base URL: `https://news-api.<subdominio>.workers.dev`. Todas las rutas (excepto 
 `Authorization: Bearer <Firebase ID token>`. Errores con forma `{ error: { code: string, message: string } }`.
 Validación con zod; esquemas exportados desde `packages/shared/src/schemas.ts`.
 
-Códigos de error comunes: `unauthorized` (401), `forbidden` (403), `invalid_input` (422), `rate_limited` (429),
-`budget_blocked` (503, kill switch activo), `provider_error` (502).
+Códigos de error comunes: `unauthorized` (401), `forbidden` (403), `not_found` (404), `invalid_input` (422),
+`rate_limited` (429), `budget_blocked` (503, kill switch activo), `provider_error` (502), `internal_error` (500,
+sin detalles internos; el detalle va al log del Worker).
 
 ## 1. Salud y operación
 
