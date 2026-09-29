@@ -28,6 +28,7 @@
 			<a href={resolve('/noticias')}>Noticias</a>
 			<a href={resolve('/comparador')}>Comparador</a>
 			<a href={resolve('/costos')}>Costos</a>
+			<a href={resolve('/indice')}>Índice</a>
 			<a href={resolve('/instalar')}>Instalar</a>
 			<button onclick={() => session.logout()}>Cerrar sesión</button>
 		</nav>

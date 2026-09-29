@@ -166,3 +166,53 @@ export interface AiSelftestResponse {
   usage: { inputTokens: number; outputTokens: number };
   costUsd: number;
 }
+
+export interface IndexSource {
+  name: string;
+  url: string;
+}
+
+export interface IndexInput {
+  id: string;
+  title: string;
+  lead: string;
+  body: string;
+  aiSummary?: string;
+  topics: string[];
+  geo: NewsGeo;
+  importance: 0 | 1 | 2 | 3;
+  certainty: Certainty;
+  certaintyNote?: string;
+  sources: IndexSource[];
+  publishedAt: string;
+}
+
+export interface IndexEntry extends Omit<IndexInput, 'body'> {
+  excerpt: string;
+  embedding: number[];
+  indexedAt: string;
+}
+
+export interface IndexUpsertResponse {
+  indexVersion: number;
+  upserted: number;
+  invalidatedDigests: string[];
+}
+
+export interface IndexRemoveResponse {
+  indexVersion: number;
+  removed: number;
+  invalidatedDigests: string[];
+}
+
+export interface IndexSearchHit {
+  id: string;
+  title: string;
+  certainty: Certainty;
+  score: number;
+}
+
+export interface IndexSearchResponse {
+  indexVersion: number;
+  hits: IndexSearchHit[];
+}

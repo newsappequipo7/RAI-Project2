@@ -123,9 +123,12 @@ Decisión: jerarquía foto real → licencia libre → portada tipográfica (có
 por defecto, etiquetada). Ver `docs/domain/IMAGENES.md`.
 
 ## ADR-008 — Modelo de embeddings multilingüe en Workers AI
-Estado: propuesta (verificar en F1-09)
-Decisión: `@cf/baai/bge-m3` por soporte de español. Confirmar nombre, dimensión y cuota gratuita en la documentación
-de Cloudflare antes de indexar. Si cambia, reindexar todo (`/admin/index/rebuild`).
+Estado: aceptada (verificada 2026-09-29 en developers.cloudflare.com/workers-ai)
+Decisión: `@cf/baai/bge-m3` por soporte de español. Documentación: acepta texto o arreglo de textos, contexto de 60 000
+tokens, multilingüe. Precio: 1 075 neuronas por millón de tokens de entrada (≈ USD 0.012/M); cuota gratuita de 10 000
+neuronas por día en plan Free (reinicia 00:00 UTC; al excederla las llamadas fallan). La documentación no publica la
+dimensión: se mide con la llamada real en F1-09 (esperada 1024). Indexar 300 noticias de ~400 tokens ≈ 120 000 tokens
+≈ 130 neuronas, es decir ~1 % de la cuota diaria. Si el modelo cambia, reindexar todo (`/admin/index/rebuild`).
 
 ## ADR-009 — Claude Haiku 4.5 como LLM por defecto
 Estado: aceptada

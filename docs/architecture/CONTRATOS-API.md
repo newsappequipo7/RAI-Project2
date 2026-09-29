@@ -90,6 +90,17 @@ Request `{ ids: string[] }`. Se usa al retractar o despublicar.
 ### `POST /admin/index/rebuild` (admin)
 Request `{ news: IndexInput[] }` con **todo** el corpus publicado. Reemplaza el índice. Útil si KV y Firestore divergen.
 
+### `POST /admin/index/search` (admin)
+Herramienta de calibración (no la usa la app). Request `{ query: string, countries?: string[], topK?: number (1–20, def. 6) }`
+→ `200 { indexVersion, hits: { id, title, certainty, score }[] }`. Coseno sobre el índice vigente; **nunca** devuelve
+noticias `retractada`; `countries` filtra por intersección con `geo.countries`. Sirve para calibrar τ (CHAT-RAG.md §2 paso 6).
+
+Notas de implementación (F1-09): el Worker guarda una sola versión vigente (`rag:index:v{n}`) y borra la anterior tras
+publicar la nueva. Las retractadas se indexan (para conservar su estado) pero se excluyen en la búsqueda. Los embeddings
+se redondean a 5 decimales. `upsert`/`remove`/`rebuild` borran todos los `digest:*` (`invalidatedDigests` lista los
+`locationId` borrados). `remove` responde `{ indexVersion, removed, invalidatedDigests }`. Límite: 200 noticias por
+petición. No hay control de concurrencia: se asume un solo admin indexando a la vez.
+
 ## 4. Chat
 
 ### `POST /chat`

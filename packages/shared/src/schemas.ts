@@ -89,7 +89,10 @@ export const enrichSuggestionSchema = z
     topics: z.array(z.object({ key: z.string(), confidence: z.number() }).strict()),
     geo: newsGeoSchema,
     importance: z
-      .object({ value: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]), rationale: z.string() })
+      .object({
+        value: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+        rationale: z.string(),
+      })
       .strict(),
     claims: z.array(z.object({ text: z.string(), needsSource: z.boolean() }).strict()),
     summary: z.string(),
@@ -173,5 +176,47 @@ export const userEventSchema = z
     seconds: z.number().optional(),
     locationId: z.string(),
     at: z.string(),
+  })
+  .strict();
+
+export const MAX_INDEX_BATCH = 200;
+export const MAX_SEARCH_TOP_K = 20;
+
+const importanceSchema = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]);
+
+export const indexInputSchema = z
+  .object({
+    id: z.string().min(1).max(200),
+    title: z.string().min(1),
+    lead: z.string(),
+    body: z.string(),
+    aiSummary: z.string().optional(),
+    topics: z.array(z.string()),
+    geo: newsGeoSchema,
+    importance: importanceSchema,
+    certainty: certaintySchema,
+    certaintyNote: z.string().optional(),
+    sources: z.array(z.object({ name: z.string(), url: z.string() }).strict()),
+    publishedAt: z.string(),
+  })
+  .strict();
+
+export const indexUpsertRequestSchema = z
+  .object({ news: z.array(indexInputSchema).min(1).max(MAX_INDEX_BATCH) })
+  .strict();
+
+export const indexRebuildRequestSchema = z
+  .object({ news: z.array(indexInputSchema).max(MAX_INDEX_BATCH) })
+  .strict();
+
+export const indexRemoveRequestSchema = z
+  .object({ ids: z.array(z.string().min(1)).min(1).max(MAX_INDEX_BATCH) })
+  .strict();
+
+export const indexSearchRequestSchema = z
+  .object({
+    query: z.string().trim().min(1).max(500),
+    countries: z.array(z.string()).optional(),
+    topK: z.number().int().min(1).max(MAX_SEARCH_TOP_K).optional(),
   })
   .strict();

@@ -15,5 +15,12 @@ export function fakeKv(entries: Record<string, unknown> = {}): KVNamespace {
     put: async (key: string, value: string) => {
       store.set(key, value);
     },
+    delete: async (key: string) => {
+      store.delete(key);
+    },
+    list: async ({ prefix = '' }: { prefix?: string } = {}) => ({
+      keys: [...store.keys()].filter((key) => key.startsWith(prefix)).map((name) => ({ name })),
+      list_complete: true,
+    }),
   } as unknown as KVNamespace;
 }
