@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.128.0",
     "@repo/shared": "workspace:*",
     "hono": "4.13.8",
     "jose": "6.2.12",

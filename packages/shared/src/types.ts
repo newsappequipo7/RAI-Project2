@@ -1,3 +1,5 @@
+import type { AiTask, BudgetLevel } from './ai';
+
 export type GeoScope = 'local' | 'nacional' | 'regional' | 'internacional' | 'global';
 export type Workflow = 'borrador' | 'en_revision' | 'publicada' | 'rechazada';
 export type Certainty = 'confirmada' | 'en_desarrollo' | 'disputada' | 'retractada';
@@ -132,4 +134,35 @@ export interface HealthResponse {
 
 export interface ApiErrorBody {
   error: { code: string; message: string };
+}
+
+export interface CostsResponse {
+  totalUsd: number;
+  byTask: Record<AiTask, number>;
+  byDay: { day: string; usd: number }[];
+  calls: { total: number; cached: number; abstained: number; blocked: number };
+  budget: {
+    limitUsd: number;
+    reserveUsd: number;
+    warnUsd: number;
+    softUsd: number;
+    hardUsd: number;
+    level: BudgetLevel;
+    lastProviderBalance: number | null;
+  };
+  avgCostPerCall: Partial<Record<AiTask, number>>;
+}
+
+export interface BudgetSnapshot {
+  ts: string;
+  providerBalanceUsd: number;
+  note: string | null;
+}
+
+export interface AiSelftestResponse {
+  text: string;
+  provider: string;
+  model: string;
+  usage: { inputTokens: number; outputTokens: number };
+  costUsd: number;
 }

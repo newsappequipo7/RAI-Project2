@@ -5,6 +5,7 @@ compatibility_date = "2026-09-01"
 [vars]
 FIREBASE_PROJECT_ID = "ai-news-app-f24cf"
 ENV = "dev"
+AI_MODE = "mock"
 ALLOWED_ORIGINS = "https://ai-news-app-f24cf.web.app,https://ai-news-app-f24cf.firebaseapp.com,http://localhost:5173,http://localhost:4173"
 
 [[d1_databases]]

@@ -20,16 +20,30 @@ sin detalles internos; el detalle va al log del Worker).
   "byTask": { "enrich": 1.2, "chat_answer": 2.1, "digest": 0.11, "embed": 0, "image_generate": 0 },
   "byDay": [{ "day": "2026-10-01", "usd": 0.4 }],
   "calls": { "total": 812, "cached": 190, "abstained": 77, "blocked": 0 },
-  "budget": { "limitUsd": 20, "reserveUsd": 7, "softUsd": 11, "hardUsd": 13, "lastProviderBalance": 16.2 },
+  "budget": {
+    "limitUsd": 20, "reserveUsd": 7, "warnUsd": 8, "softUsd": 11, "hardUsd": 13,
+    "level": "normal", "lastProviderBalance": 16.2
+  },
   "avgCostPerCall": { "enrich": 0.004, "chat_answer": 0.003 }
 }
 ```
+`byTask` siempre trae las cinco tareas (0 si no hubo gasto). `budget.level` es `normal | warn | soft | hard | exhausted`
+según el total del ledger (umbrales en PRESUPUESTO-IA.md §2; `exhausted` = ≥ `limitUsd`, bloquea también `env=demo`).
+`lastProviderBalance` es `null` si nunca se registró un saldo. `avgCostPerCall` solo incluye tareas con llamadas pagadas
+(`outcome = ok`, no cacheadas). Tipo: `CostsResponse` en `packages/shared`.
 
 ### `POST /admin/flags` (admin)
-Body `Partial<Flags>`. Cambia kill switch, generación de imágenes, modo del chat.
+Body `Partial<Flags>` (campos desconocidos o valores inválidos → `422 invalid_input`). Cambia kill switch, generación de
+imágenes, modo del chat. Responde `200` con los flags resultantes completos.
 
 ### `POST /admin/budget-snapshot` (admin)
-Body `{ providerBalanceUsd: number, note?: string }`. Registro manual del saldo real que muestra el panel del proveedor.
+Body `{ providerBalanceUsd: number >= 0, note?: string }`. Registro manual del saldo real que muestra el panel del
+proveedor. Responde `200 { ts, providerBalanceUsd, note }`.
+
+### `POST /admin/ai/selftest` (admin)
+Sin body. Una llamada mínima (`chat_answer`, ≤ 16 tokens de salida) a través del gateway para validar de punta a punta
+proveedor, costo y ledger. Responde `200 { text, provider, model, usage: { inputTokens, outputTokens }, costUsd }`.
+Con `AI_MODE=mock` devuelve un fixture y `provider = 'mock'`. Cuenta contra el rate limit de chat del admin.
 
 ## 2. Enriquecimiento editorial
 

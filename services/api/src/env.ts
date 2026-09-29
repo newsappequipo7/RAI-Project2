@@ -5,8 +5,13 @@ export interface Bindings {
   KV: KVNamespace;
   AI: Ai;
   ADMIN_UIDS?: string;
+  ANTHROPIC_API_KEY?: string;
   FIREBASE_PROJECT_ID: string;
   ENV: ApiEnv;
+  AI_MODE?: string;
+  AI_MODEL_ENRICH?: string;
+  AI_MODEL_CHAT_ANSWER?: string;
+  AI_MODEL_DIGEST?: string;
   ALLOWED_ORIGINS: string;
 }
 

@@ -18,6 +18,15 @@ export const unauthorized = (message = 'Missing or invalid token') =>
 export const forbidden = (message = 'Admin access required') =>
   new ApiError(403, 'forbidden', message);
 
+export const invalidInput = (message: string) => new ApiError(422, 'invalid_input', message);
+
+export const rateLimited = (message = 'Too many requests, try again later') =>
+  new ApiError(429, 'rate_limited', message);
+
+export const budgetBlocked = (message: string) => new ApiError(503, 'budget_blocked', message);
+
+export const providerError = (message: string) => new ApiError(502, 'provider_error', message);
+
 function errorBody(code: string, message: string): ApiErrorBody {
   return { error: { code, message } };
 }

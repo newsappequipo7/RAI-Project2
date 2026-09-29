@@ -156,6 +156,15 @@ export const flagsSchema = z
   })
   .strict();
 
+export const flagsPatchSchema = flagsSchema.partial();
+
+export const budgetSnapshotRequestSchema = z
+  .object({
+    providerBalanceUsd: z.number().finite().nonnegative(),
+    note: z.string().max(500).optional(),
+  })
+  .strict();
+
 export const userEventSchema = z
   .object({
     type: z.enum(['open', 'dwell', 'less_like_this', 'more_like_this', 'chat_topic', 'why_opened']),
