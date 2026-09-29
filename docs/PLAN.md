@@ -107,8 +107,9 @@ por tarea al iniciar su fase.
 | F1-04 | Spike Plan B (Xcode) | ☑ | merge `8a7a818`, ADR-001 (firma expira a los 7 días exactos). Probado en 1 iPhone; falta el 2.º |
 | F1-05 | Portal base con login de admin | ☑ | commit `6dc6e2c`; 4 admins creados en `admins/{uid}`. Faltan capturas |
 | F1-06 | Reglas de Firestore e índices | ☑ | commit `39d5ff3`; 13 pruebas en emulador, reglas desplegadas |
-| F1-07 | Worker base (Hono, auth, D1, KV) | ◐ | commits `4cb309e`, `9b4eb21`; desplegado en `news-api.diegovalenzuela.workers.dev`. Falta: probar un token real (403 no-admin / 200 admin), llega con el portal en F1-08 |
-| F1-08 … F1-12 | Ver FASE-1 | ☐ | |
+| F1-07 | Worker base (Hono, auth, D1, KV) | ☑ | commits `4cb309e`, `9b4eb21`; desplegado en `news-api.diegovalenzuela.workers.dev`. Token real de admin verificado vía portal (`/admin/costs` 200). El 403 de no-admin con token real solo está probado con llaves locales |
+| F1-08 | Gateway de IA, ledger, umbrales y flags | ☑ | 72 pruebas en `services/api` (CA1 y CA3 automatizados). CA2: llamada real Haiku 4.5, ledger 16 in / 4 out tokens = Console → Uso 16 / 4, costo $0.000036 |
+| F1-09 … F1-12 | Ver FASE-1 | ☐ | |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
 | F2-01 … F2-12 | Ver FASE-2 | ☐ | |
