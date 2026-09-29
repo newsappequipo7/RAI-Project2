@@ -109,7 +109,7 @@ por tarea al iniciar su fase.
 | F1-06 | Reglas de Firestore e índices | ☑ | commit `39d5ff3`; 13 pruebas en emulador, reglas desplegadas |
 | F1-07 | Worker base (Hono, auth, D1, KV) | ☑ | commits `4cb309e`, `9b4eb21`; desplegado en `news-api.diegovalenzuela.workers.dev`. Token real de admin verificado vía portal (`/admin/costs` 200). El 403 de no-admin con token real solo está probado con llaves locales |
 | F1-08 | Gateway de IA, ledger, umbrales y flags | ☑ | 72 pruebas en `services/api` (CA1 y CA3 automatizados). CA2: llamada real Haiku 4.5, ledger 16 in / 4 out tokens = Console → Uso 16 / 4, costo $0.000036 |
-| F1-09 | Índice RAG y búsqueda | ◐ | 88 pruebas en `services/api` (CA2 automatizado: retractada nunca aparece). ADR-008 verificado. Falta CA1: 5 consultas con el modelo real desde `/indice` del portal (tabla de puntajes) |
+| F1-09 | Índice RAG y búsqueda | ☑ | 88 pruebas en `services/api` (CA2 automatizado). CA1 con bge-m3 real: 5/5 consultas devuelven la noticia esperada, puntajes 0.56–0.62; consulta sin noticia válida (retractada excluida) tope 0.41. Sugiere τ ≈ 0.45–0.50 (a confirmar en F4) |
 | F1-10 … F1-12 | Ver FASE-1 | ☐ | |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
