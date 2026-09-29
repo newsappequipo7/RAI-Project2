@@ -10,7 +10,7 @@ ALLOWED_ORIGINS = "https://ai-news-app-f24cf.web.app,https://ai-news-app-f24cf.f
 [[d1_databases]]
 binding = "DB"
 database_name = "news-db"
-database_id = "d93210a9-da7d-4da8-9c8e-5f02df223744"
+database_id = "d93210a9-d7da-4da8-9c8e-5f02df223744"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
