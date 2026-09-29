@@ -101,7 +101,16 @@ por tarea al iniciar su fase.
 
 | ID | Tarea | Estado | Evidencia |
 |----|-------|--------|-----------|
-| F1-01 … F1-12 | Ver FASE-1 | ☐ | |
+| F1-01 | Monorepo y paquete compartido | ☑ | commits `22e1022`, `15c17f2`; typecheck/lint/test verdes |
+| F1-02 | Spike Expo Go (iPhone + Android) | ◐ | commit `5a4b95a`, ADR-001. Falta: video de ambos teléfonos, EAS Update sin probar |
+| F1-03 | Firebase + login Google (puente web) | ◐ | commit `2ab548e`, ADR-003. CA2/CA3/CA4 probados en iPhone. Falta: CA1 con Android y 2 personas, video |
+| F1-04 | Spike Plan B (Xcode) | ☑ | merge `8a7a818`, ADR-001 (firma expira a los 7 días exactos). Probado en 1 iPhone; falta el 2.º |
+| F1-05 | Portal base con login de admin | ☑ | commit `6dc6e2c`; 4 admins creados en `admins/{uid}`. Faltan capturas |
+| F1-06 | Reglas de Firestore e índices | ☑ | commit `39d5ff3`; 13 pruebas en emulador, reglas desplegadas |
+| F1-07 | Worker base (Hono, auth, D1, KV) | ◐ | commits `4cb309e`, `9b4eb21`; desplegado en `news-api.diegovalenzuela.workers.dev`. Falta: probar un token real (403 no-admin / 200 admin), llega con el portal en F1-08 |
+| F1-08 … F1-12 | Ver FASE-1 | ☐ | |
+
+Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
 | F2-01 … F2-12 | Ver FASE-2 | ☐ | |
 | F3-01 … F3-12 | Ver FASE-3 | ☐ | |
 | F4-01 … F4-13 | Ver FASE-4 | ☐ | |
