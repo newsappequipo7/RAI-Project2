@@ -36,9 +36,25 @@ SDK 54 como tope — se confía en la verificación física, no en la doc extern
 Expo bajo el layout estricto de `node_modules` de pnpm (error `Unable to resolve module debug` y similares).
 Falta confirmar en el spike: si la actualización EAS Update puede cargarse desde Expo Go para este proyecto
 (pendiente hasta tener build de demo) — si falla, usar túnel desde laptop con hotspot propio el día de la demo.
+Actualización 2026-09-28 (spike F1-04, Plan B): build nativo con Xcode 27 + Apple ID gratuito, probado en un iPhone
+real. Bloqueante encontrado: Xcode 27 compila contra un SDK de iOS que **exige** el ciclo de vida `UIScene`; la
+plantilla nativa que genera `expo prebuild` para SDK 57 todavía no lo declara en `Info.plist`, así que la app se cierra
+al abrir con "UIScene life cycle is required for apps built with this SDK" (bug conocido de Expo,
+[expo/expo#46664](https://github.com/expo/expo/issues/46664)). Arreglo: plugin `expo-build-properties` con
+`ios.enableSceneSupport: true` en `app.json` (Expo lo retro-portó a partir de SDK 57.0.23). También se fijó
+`ios.bundleIdentifier` (`gt.uvg.newsapp.dv`) y `ios.appleTeamId` en `app.json` para que sobrevivan a un
+`expo prebuild` limpio (si no, hay que volver a elegir el Team a mano en Xcode → Signing & Capabilities cada vez).
+La firma gratuita expira a los **7 días exactos** desde la instalación (verificado con
+`security cms -D -i embedded.mobileprovision`, no es aproximado): reinstalar (`pnpm -F mobile run ios:native` con el
+iPhone conectado, o ▶️ en Xcode) regenera el perfil automáticamente por otros 7 días — no hay que crear nada a mano,
+solo recompilar dentro de la ventana de la demo. El login con el puente funciona igual usando el esquema nativo
+`newsapp://` en vez de `exp://`. `ios/` no se commitea (gitignored, se regenera con `expo prebuild -p ios`); los
+scripts `ios`/`android` del root siguen apuntando a Expo Go (`expo start --ios/--android`) para no romper el flujo
+del equipo — el build nativo vive en `ios:native`/`android:native`.
 Consecuencias: prohibido agregar módulos nativos fuera de Expo Go; Google Sign-In nativo no disponible → puente web (ADR-003);
 si Expo actualiza Expo Go a una versión que deje de soportar SDK 57 durante el semestre, no actualizar el SDK del
-proyecto sin volver a verificar en un dispositivo real.
+proyecto sin volver a verificar en un dispositivo real. Para el build nativo (Plan B), cualquiera que lo reconstruya
+necesita Xcode completo (~35 GB) instalado y su propio Apple ID logueado en Xcode → Settings → Accounts.
 
 ## ADR-002 — Ranking por código, no por LLM
 Estado: aceptada
