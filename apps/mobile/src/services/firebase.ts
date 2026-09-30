@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getReactNativePersistence } from '@firebase/auth';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { initializeAuth, type Auth } from 'firebase/auth';
+import { initializeFirestore, type Firestore } from 'firebase/firestore';
 import { firebaseConfig } from '@repo/shared';
 
 export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
@@ -18,4 +19,14 @@ export function getFirebaseAuth(): Auth {
   }
 
   return cachedAuth;
+}
+
+let cachedFirestore: Firestore | undefined;
+
+export function getFirebaseDb(): Firestore {
+  if (!cachedFirestore) {
+    cachedFirestore = initializeFirestore(firebaseApp, { experimentalAutoDetectLongPolling: true });
+  }
+
+  return cachedFirestore;
 }

@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 
 import { AuthGate } from '@/components/AuthGate';
 import { useColorScheme } from '@/components/useColorScheme';
+import { ProfileProvider } from '@/src/profile/ProfileProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,11 +51,14 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthGate>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="news/[id]" options={{ title: 'Noticia' }} />
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-        </Stack>
+        <ProfileProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="news/[id]" options={{ title: 'Noticia' }} />
+            <Stack.Screen name="login" options={{ headerShown: false }} />
+            <Stack.Screen name="location" options={{ headerShown: false, presentation: 'modal' }} />
+          </Stack>
+        </ProfileProvider>
       </AuthGate>
     </ThemeProvider>
   );
