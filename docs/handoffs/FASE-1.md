@@ -1,6 +1,6 @@
 # Handoff FASE-1 → FASE-2
 
-Responsable: Diego Valenzuela · Fecha de cierre: pendiente (se completa al etiquetar) · Tag: `fase-1-done`
+Responsable: Diego Valenzuela · Fecha de cierre: 2026-09-29 · Tag: `fase-1-done`
 
 ## 1. Qué quedó funcionando (demostrable)
 - **Login con Google** en la app móvil (Expo Go en iPhone y Android, y build nativo en iPhone) mediante un puente web en
@@ -61,18 +61,18 @@ cd services/api && pnpm exec wrangler deploy --var AI_MODE:live   # SOLO tempora
 ## 3. Estado de tareas
 | ID | Estado | Evidencia | Nota |
 |----|--------|-----------|------|
-| F1-01 | ☑ | commits `22e1022`, `15c17f2` | |
-| F1-02 | ◐ | `5a4b95a`, ADR-001 | Falta video con ambos teléfonos; EAS Update sin probar |
-| F1-03 | ◐ | `2ab548e`, ADR-003, LOOP-001 | Falta CA1 con Android y 2 personas, y video |
-| F1-04 | ☑ | `8a7a818`, LOOP-002 | Probado en 1 iPhone; falta el segundo |
-| F1-05 | ☑ | `6dc6e2c` | 4 admins creados; faltan capturas |
-| F1-06 | ☑ | `39d5ff3` | 13 pruebas de reglas en emulador |
-| F1-07 | ☑ | `4cb309e`, `9b4eb21` | 403 de no-admin con token real solo probado con llaves locales |
-| F1-08 | ☑ | `ee8c8d4`, LOOP-003 | 72 pruebas; costo real = Console (16 in / 4 out, USD 0.000036) |
-| F1-09 | ☑ | `29cb7e5`, LOOP-004 | 5/5 consultas correctas, puntajes 0.56–0.62 |
-| F1-10 | ☑ | `89fd61e` | 40 noticias en Firestore prod. El índice del corpus está pendiente (ver §5) |
-| F1-11 | ☑ | `04d323d` | Probado en Expo Go; falta el video |
-| F1-12 | ◐ | este commit | CI escrito y verificado localmente; falta ver el primer run verde en GitHub y etiquetar |
+| F1-01 | ☑ | commits `067c591`, `57552db` | |
+| F1-02 | ◐ | `2e6826f`, ADR-001 | Falta video con ambos teléfonos; EAS Update sin probar |
+| F1-03 | ◐ | `afe0f22`, ADR-003, LOOP-001 | Falta CA1 con Android y 2 personas, y video |
+| F1-04 | ☑ | `f38bdd9`, LOOP-002 | Probado en 1 iPhone; falta el segundo |
+| F1-05 | ☑ | `77688db` | 4 admins creados; faltan capturas |
+| F1-06 | ☑ | `17fed05` | 13 pruebas de reglas en emulador |
+| F1-07 | ☑ | `7d6bb7d`, `884cebb` | 403 de no-admin con token real solo probado con llaves locales |
+| F1-08 | ☑ | `c9c5d9b`, LOOP-003 | 72 pruebas; costo real = Console (16 in / 4 out, USD 0.000036) |
+| F1-09 | ☑ | `dd32e1c`, LOOP-004 | 5/5 consultas correctas, puntajes 0.56–0.62 |
+| F1-10 | ☑ | `7841a40` | 40 noticias en Firestore prod. El índice del corpus está pendiente (ver §5) |
+| F1-11 | ☑ | `0bc805d` | Probado en Expo Go; falta el video |
+| F1-12 | ☑ | CI verde en `main` (GitHub Actions, run del commit `452e7cd`) | CA2 (que Daniel corra todo desde cero con este handoff) se verifica en el recorrido de 15 minutos |
 
 ## 4. Desviaciones respecto a contratos o docs
 Los docs ya están actualizados salvo lo indicado.
@@ -99,7 +99,6 @@ Los docs ya están actualizados salvo lo indicado.
 | Media | Firma gratuita de iOS caduca cada 7 días | Repetir `pnpm -F mobile ios:native` antes de cada prueba; iPhone con Expo Go no se ve afectado |
 | Baja | Evidencia pendiente: videos (F1-02/03/11), Android + 2 personas, segundo iPhone, capturas de F1-05, EAS Update | Cerrar en la primera sesión con teléfonos |
 | Baja | Tipos de rutas de Expo Router requieren correr `expo start` una vez para regenerar `.expo/types` | Solo afecta al typecheck local cuando se agrega una ruta |
-| Baja | El primer run del CI aún no existe | Verificar que instalar `firebase-tools` y Java en Actions dejan verde `firebase-tests` |
 
 ## 6. Gasto de IA de la fase
 - Según el ledger (`/admin/costs`): USD 0.000036 (una sola llamada real, `selftest`).

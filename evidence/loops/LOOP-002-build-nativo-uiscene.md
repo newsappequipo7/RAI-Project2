@@ -8,7 +8,7 @@ Se esperaba que `expo run:ios` con Apple ID gratuito instalara la app y que el �
 Con el bundle id propio y el equipo personal, el build nativo abre igual que en Expo Go.
 
 ## Construcción
-Build nativo con Xcode 27 y `expo-build-properties`. Merge `8a7a818`.
+Build nativo con Xcode 27 y `expo-build-properties`. Merge `f38bdd9`.
 
 ## Prueba y observación
 El primer arranque falló por la exigencia de UIScene de Xcode 27. Aparecieron además fallos de entorno: iPhone sin

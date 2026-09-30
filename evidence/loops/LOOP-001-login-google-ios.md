@@ -11,7 +11,7 @@ Primera versión: abrir el puente en una sesión de navegador embebida (`ASWebAu
 
 ## Construcción
 Ruta `/auth/mobile` del portal, escucha de deep links en `AuthGate` y `signInWithCredential` con el ID token.
-Commit `2ab548e`.
+Commit `afe0f22`.
 
 ## Prueba y observación
 En iPhone el login se quedaba en bucle o sin volver a la app con popup, con redirect y con OAuth manual dentro de la

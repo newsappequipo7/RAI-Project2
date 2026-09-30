@@ -9,7 +9,7 @@ Con `@cf/baai/bge-m3` las consultas con noticia relevante deben dar un coseno cl
 
 ## Construcción
 Índice en KV con coseno por fuerza bruta (ADR-005), endpoint `/admin/index/search` y página `/indice` del portal con
-6 noticias de prueba. Commit `29cb7e5`.
+6 noticias de prueba. Commit `dd32e1c`.
 
 ## Prueba y observación
 5 consultas en español con modelo real: la noticia esperada quedó primera en las 5, con puntajes 0.5585 a 0.6202.

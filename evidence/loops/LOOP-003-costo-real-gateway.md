@@ -9,7 +9,7 @@ el 2026-09-29 en la documentación oficial) y un ledger en D1.
 Si el ledger usa los tokens que devuelve el proveedor, debe coincidir con el panel de Anthropic.
 
 ## Construcción
-Gateway único, ledger escrito antes de responder, umbrales 8/11/13/20 USD, `AI_MODE=mock` por defecto. Commit `ee8c8d4`.
+Gateway único, ledger escrito antes de responder, umbrales 8/11/13/20 USD, `AI_MODE=mock` por defecto. Commit `c9c5d9b`.
 
 ## Prueba y observación
 Una llamada real de `/admin/ai/selftest`: ledger 16 tokens de entrada y 4 de salida, USD 0.000036; Console → Uso
