@@ -97,7 +97,7 @@ Los docs ya están actualizados salvo lo indicado.
 | Media | Emulador de Firestore: `isAdmin()` da "evaluation error" para no-admin (falla cerrada, causa desconocida) | Investigar; las pruebas pasan y el acceso es seguro |
 | Media | No hay ningún `budget-snapshot` registrado | Registrar el saldo real cada lunes y antes de la demo |
 | Media | Firma gratuita de iOS caduca cada 7 días | Repetir `pnpm -F mobile ios:native` antes de cada prueba; iPhone con Expo Go no se ve afectado |
-| Baja | Dependencias: `pnpm audit` reporta 13 hallazgos (2 altos), todos en herramientas de desarrollo y ninguno en el bundle del Worker ni en el portal estático. 9 son `undici` vía `wrangler`/`miniflare` (corregido en `undici` ≥ 7.29.1, que trae `wrangler` 4.144.0); 2 son `cookie` (SvelteKit) y 2 `decode-uri-component`/`uuid` (Expo) | Subir `wrangler` a ≥ 4.144.0 cuando cumpla la política de 24 h de `pnpm`; volver a correr `pnpm audit` |
+| Baja | Dependencias: `pnpm audit` reporta 13 hallazgos (2 altos), todos en herramientas de desarrollo y ninguno en el bundle del Worker ni en el portal estático. 10 son `undici` vía `wrangler`/`miniflare` (corregido en `undici` ≥ 7.29.1, que trae `wrangler` 4.144.0); 1 es `cookie` (SvelteKit) y 2 son `decode-uri-component`/`uuid` (Expo) | Subir `wrangler` a ≥ 4.144.0 cuando cumpla la política de 24 h de `pnpm`; volver a correr `pnpm audit` |
 | Baja | Tipos de rutas de Expo Router requieren correr `expo start` una vez para regenerar `.expo/types` | Solo afecta al typecheck local cuando se agrega una ruta |
 
 ## 6. Gasto de IA de la fase
