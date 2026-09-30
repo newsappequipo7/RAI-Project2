@@ -112,7 +112,7 @@ por tarea al iniciar su fase.
 | F1-09 | Índice RAG y búsqueda | ☑ | 88 pruebas en `services/api` (CA2 automatizado). CA1 con bge-m3 real: 5/5 consultas devuelven la noticia esperada, puntajes 0.56–0.62; consulta sin noticia válida (retractada excluida) tope 0.41. Sugiere τ ≈ 0.45–0.50 (a confirmar en F4) |
 | F1-10 | Corpus semilla (40 noticias) y `pnpm seed` | ☑ | 13 pruebas en `shared` (cuotas, zod, reglas de certeza). CA1: `--target=emulator` (40 docs verificados) y `--target=prod` (40 docs escritos en `news/`). Índice RAG del corpus pendiente: botón en `/indice` |
 | F1-11 | Perfil y selector de ubicación | ☑ | commit `04d323d`; 3 pruebas del perfil por defecto; probado en Expo Go (selección y cambio de ubicación). Falta el video |
-| F1-12 | CI y cierre de fase | ☐ | |
+| F1-12 | CI y cierre de fase | ◐ | CI y comandos `.claude/commands` creados, 4 loops en `evidence/loops/`, handoff en `docs/handoffs/FASE-1.md`. Falta el primer run verde en GitHub y `git tag fase-1-done` |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
 | F2-01 … F2-12 | Ver FASE-2 | ☐ | |

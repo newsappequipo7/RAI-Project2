@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Firebase CLI (Firestore emulator for rules tests)
+        run: npm install --global firebase-tools
+
+      - name: Block leaked Anthropic keys
+        run: |
+          if git grep -nE 'sk-ant-[A-Za-z0-9_-]{20,}' -- . ':!.github/workflows/ci.yml'; then
+            echo "Anthropic API key pattern found in tracked files"
+            exit 1
+          fi
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test (mock AI only, no provider calls)
+        run: pnpm test
+        env:
+          AI_MODE: mock
