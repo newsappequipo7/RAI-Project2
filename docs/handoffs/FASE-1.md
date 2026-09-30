@@ -92,7 +92,6 @@ Los docs ya están actualizados salvo lo indicado.
 ## 5. Deuda y problemas conocidos
 | Severidad | Problema | Sugerencia |
 |-----------|----------|------------|
-| Alta | El índice RAG en producción puede tener **embeddings falsos** (Worker en `mock`) | Antes de F4: desplegar temporalmente en `live`, pulsar "Indexar corpus semilla", volver a `mock` |
 | Alta | La key de Anthropic vence el **2026-10-29** | Renovarla y volver a subirla con `wrangler secret put` antes de la presentación |
 | Media | Emulador de Firestore: `isAdmin()` da "evaluation error" para no-admin (falla cerrada, causa desconocida) | Investigar; las pruebas pasan y el acceso es seguro |
 | Media | No hay ningún `budget-snapshot` registrado | Registrar el saldo real cada lunes y antes de la demo |
@@ -105,6 +104,7 @@ Los docs ya están actualizados salvo lo indicado.
 - Según el panel de Anthropic: Uso 16 tokens de entrada y 4 de salida, coincide. No hay `budget-snapshot` con saldo.
 - Embeddings (Workers AI) no consumen créditos de Anthropic; dentro de la cuota gratuita diaria.
 - Costo medio por tarea: solo `chat_answer` (selftest) tiene una muestra. Los demás se miden en F2 y F4.
+- Cuidado con el portal: no muestra si el Worker está en `mock` o `live`. Con `mock` los puntajes de búsqueda son ~0.03 (vectores aleatorios); con `live` son ~0.56–0.62. Verificar con "Cargar corpus y correr consultas" antes de reindexar.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar
 1. **Nunca llames a un modelo fuera del gateway** y no uses la key de Anthropic: todo el desarrollo debe correr con
