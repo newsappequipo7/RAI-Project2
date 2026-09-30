@@ -102,17 +102,17 @@ por tarea al iniciar su fase.
 | ID | Tarea | Estado | Evidencia |
 |----|-------|--------|-----------|
 | F1-01 | Monorepo y paquete compartido | ☑ | commits `067c591`, `57552db`; typecheck/lint/test verdes |
-| F1-02 | Spike Expo Go (iPhone + Android) | ◐ | commit `2e6826f`, ADR-001. Falta: video de ambos teléfonos, EAS Update sin probar |
-| F1-03 | Firebase + login Google (puente web) | ◐ | commit `afe0f22`, ADR-003. CA2/CA3/CA4 probados en iPhone. Falta: CA1 con Android y 2 personas, video |
-| F1-04 | Spike Plan B (Xcode) | ☑ | merge `f38bdd9`, ADR-001 (firma expira a los 7 días exactos). Probado en 1 iPhone; falta el 2.º |
-| F1-05 | Portal base con login de admin | ☑ | commit `77688db`; 4 admins creados en `admins/{uid}`. Faltan capturas |
+| F1-02 | Spike Expo Go (iPhone + Android) | ☑ | commit `2e6826f`, ADR-001. Evidencia guardada fuera del repo (Diego). |
+| F1-03 | Firebase + login Google (puente web) | ☑ | commit `afe0f22`, ADR-003. Evidencia guardada fuera del repo (Diego). |
+| F1-04 | Spike Plan B (Xcode) | ☑ | merge `f38bdd9`, ADR-001 (firma expira a los 7 días exactos). Probado en iPhone. Evidencia guardada fuera del repo (Diego). |
+| F1-05 | Portal base con login de admin | ☑ | commit `77688db`; 4 admins creados en `admins/{uid}`. Evidencia guardada fuera del repo (Diego). |
 | F1-06 | Reglas de Firestore e índices | ☑ | commit `17fed05`; 13 pruebas en emulador, reglas desplegadas |
 | F1-07 | Worker base (Hono, auth, D1, KV) | ☑ | commits `7d6bb7d`, `884cebb`; desplegado en `news-api.diegovalenzuela.workers.dev`. Token real de admin verificado vía portal (`/admin/costs` 200). El 403 de no-admin con token real solo está probado con llaves locales |
 | F1-08 | Gateway de IA, ledger, umbrales y flags | ☑ | 72 pruebas en `services/api` (CA1 y CA3 automatizados). CA2: llamada real Haiku 4.5, ledger 16 in / 4 out tokens = Console → Uso 16 / 4, costo $0.000036 |
 | F1-09 | Índice RAG y búsqueda | ☑ | 88 pruebas en `services/api` (CA2 automatizado). CA1 con bge-m3 real: 5/5 consultas devuelven la noticia esperada, puntajes 0.56–0.62; consulta sin noticia válida (retractada excluida) tope 0.41. Sugiere τ ≈ 0.45–0.50 (a confirmar en F4) |
 | F1-10 | Corpus semilla (40 noticias) y `pnpm seed` | ☑ | 13 pruebas en `shared` (cuotas, zod, reglas de certeza). CA1: `--target=emulator` (40 docs verificados) y `--target=prod` (40 docs escritos en `news/`). Índice RAG del corpus pendiente: botón en `/indice` |
-| F1-11 | Perfil y selector de ubicación | ☑ | commit `0bc805d`; 3 pruebas del perfil por defecto; probado en Expo Go (selección y cambio de ubicación). Falta el video |
-| F1-12 | CI y cierre de fase | ☑ | CI verde en `main`; comandos `.claude/commands`, 4 loops en `evidence/loops/`, handoff en `docs/handoffs/FASE-1.md`. CA2 (recorrido con Daniel) pendiente |
+| F1-11 | Perfil y selector de ubicación | ☑ | commit `0bc805d`; 3 pruebas del perfil por defecto; probado en Expo Go (selección y cambio de ubicación). Evidencia guardada fuera del repo (Diego). |
+| F1-12 | CI y cierre de fase | ☑ | CI verde en `main`; comandos `.claude/commands`, 4 loops en `evidence/loops/`, handoff en `docs/handoffs/FASE-1.md`. CA2 (recorrido con Daniel) hecho |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
 | F2-01 … F2-12 | Ver FASE-2 | ☐ | |
