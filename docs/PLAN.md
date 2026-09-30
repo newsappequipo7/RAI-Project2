@@ -111,7 +111,7 @@ por tarea al iniciar su fase.
 | F1-08 | Gateway de IA, ledger, umbrales y flags | ☑ | 72 pruebas en `services/api` (CA1 y CA3 automatizados). CA2: llamada real Haiku 4.5, ledger 16 in / 4 out tokens = Console → Uso 16 / 4, costo $0.000036 |
 | F1-09 | Índice RAG y búsqueda | ☑ | 88 pruebas en `services/api` (CA2 automatizado). CA1 con bge-m3 real: 5/5 consultas devuelven la noticia esperada, puntajes 0.56–0.62; consulta sin noticia válida (retractada excluida) tope 0.41. Sugiere τ ≈ 0.45–0.50 (a confirmar en F4) |
 | F1-10 | Corpus semilla (40 noticias) y `pnpm seed` | ☑ | 13 pruebas en `shared` (cuotas, zod, reglas de certeza). CA1: `--target=emulator` (40 docs verificados) y `--target=prod` (40 docs escritos en `news/`). Índice RAG del corpus pendiente: botón en `/indice` |
-| F1-11 | Perfil y selector de ubicación | ◐ | Implementado; typecheck/lint verdes, 3 pruebas del perfil por defecto. Falta CA1 en el teléfono (cambiar ubicación, cerrar y reabrir) y video |
+| F1-11 | Perfil y selector de ubicación | ☑ | commit `04d323d`; 3 pruebas del perfil por defecto; probado en Expo Go (selección y cambio de ubicación). Falta el video |
 | F1-12 | CI y cierre de fase | ☐ | |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
