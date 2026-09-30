@@ -1,5 +1,12 @@
 <script lang="ts">
-	import type { IndexSearchResponse, IndexUpsertResponse } from '@repo/shared';
+	import {
+		buildSeedNews,
+		toIndexInput,
+		type IndexSearchResponse,
+		type IndexUpsertResponse,
+		type SeedNews
+	} from '@repo/shared';
+	import seedNews from '@repo/shared/fixtures/news.json';
 	import { apiFetch } from '$lib/api';
 	import {
 		CALIBRATION_NEWS,
@@ -27,6 +34,23 @@
 			method: 'POST',
 			body: JSON.stringify({ query, topK: 6 })
 		});
+	}
+
+	async function indexSeedCorpus() {
+		running = true;
+		errorMessage = '';
+
+		try {
+			const news = buildSeedNews(seedNews as SeedNews[]).map(toIndexInput);
+			loaded = await apiFetch<IndexUpsertResponse>('/admin/index/rebuild', {
+				method: 'POST',
+				body: JSON.stringify({ news })
+			});
+		} catch (error) {
+			errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+		} finally {
+			running = false;
+		}
 	}
 
 	async function runCalibration() {
@@ -75,6 +99,9 @@
 </p>
 
 <button onclick={runCalibration} disabled={running}>Cargar corpus y correr consultas</button>
+<button onclick={indexSeedCorpus} disabled={running}
+	>Indexar corpus semilla ({seedNews.length})</button
+>
 
 {#if errorMessage}
 	<p role="alert">{errorMessage}</p>

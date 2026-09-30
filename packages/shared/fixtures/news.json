@@ -1,0 +1,1132 @@
+[
+  {
+    "id": "n-gt-sismo",
+    "title": "Sismo de magnitud 5.9 sacude la costa sur de Guatemala",
+    "lead": "Se reportan daños en viviendas y suspensión temporal de clases en tres departamentos.",
+    "body": "El movimiento se sintió en la capital y en el occidente del país. Las autoridades de emergencia evalúan daños en carreteras y viviendas mientras continúan las réplicas.\n\nLa población debe mantenerse alejada de estructuras dañadas y seguir las indicaciones oficiales.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["clima-desastres"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["GT"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 3,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 3,
+    "sources": [
+      {
+        "key": "ssm",
+        "supports": "confirma"
+      },
+      {
+        "key": "sgd",
+        "supports": "confirma"
+      },
+      {
+        "key": "dal",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Aún no se confirma el número de personas afectadas ni el alcance de los daños."
+  },
+  {
+    "id": "n-gt-001",
+    "title": "Alerta sanitaria por aumento de casos de dengue en Guatemala",
+    "lead": "Salud Pública pide eliminar criaderos de zancudos y acudir al centro de salud ante fiebre alta.",
+    "body": "Los casos aumentaron en las últimas semanas, sobre todo en zonas costeras. Las brigadas realizan fumigación y entregan información a las familias.\n\nSe recomienda eliminar agua estancada en patios y recipientes.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["salud"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["GT"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 3,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 20,
+    "sources": [
+      {
+        "key": "dsp-gt",
+        "supports": "confirma"
+      },
+      {
+        "key": "agn",
+        "supports": "confirma"
+      },
+      {
+        "key": "dal",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-gt-002",
+    "title": "Cierres viales por obras en la calzada principal de la capital",
+    "lead": "Las obras durarán tres semanas y se habilitan rutas alternas en horas pico.",
+    "body": "La municipalidad informó que el tramo estará cerrado por las noches para reparar el pavimento. Se pide a los conductores planificar sus desplazamientos.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["sociedad"],
+    "geo": {
+      "scope": "local",
+      "countries": ["GT"],
+      "cityIds": ["gt-guatemala"],
+      "regions": ["centroamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 8,
+    "sources": [
+      {
+        "key": "alc-gt",
+        "supports": "confirma"
+      },
+      {
+        "key": "cro",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-gt-003",
+    "title": "Quetzaltenango celebra su festival de marimba con más de treinta agrupaciones",
+    "lead": "El encuentro reúne a músicos de todo el occidente del país durante el fin de semana.",
+    "body": "Las presentaciones son gratuitas y se realizan en plazas y teatros de la ciudad. Los organizadores esperan miles de visitantes.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["cultura"],
+    "geo": {
+      "scope": "local",
+      "countries": ["GT"],
+      "cityIds": ["gt-quetzaltenango"],
+      "regions": ["centroamerica"]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 30,
+    "sources": [
+      {
+        "key": "cul-gt",
+        "supports": "confirma"
+      },
+      {
+        "key": "dal",
+        "supports": "confirma"
+      }
+    ],
+    "image": {
+      "kind": "licencia_libre",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Marimba-Antonko-AMC12.jpg",
+      "credit": "Vassia Atanassova - Spiritia",
+      "license": "CC BY-SA 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=5184838",
+      "altText": "Una marimba de concierto"
+    }
+  },
+  {
+    "id": "n-gt-004",
+    "title": "Las remesas hacia Guatemala alcanzan un nuevo máximo mensual",
+    "lead": "El banco central atribuye el aumento al empleo de migrantes en el exterior.",
+    "body": "Las remesas familiares crecieron frente al mismo mes del año pasado y sostienen el consumo de los hogares. Analistas advierten que dependen de factores externos.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["economia", "migracion"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["GT"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 40,
+    "sources": [
+      {
+        "key": "bcn-gt",
+        "supports": "confirma"
+      },
+      {
+        "key": "agn",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-gt-005",
+    "title": "El Congreso discute cambios a la ley de compras del Estado",
+    "lead": "Diputados de varias bancadas proponen más transparencia en licitaciones.",
+    "body": "La iniciativa se encuentra en segunda lectura. Distintos sectores piden ampliar la consulta antes de votarla.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["politica"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["GT"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 52,
+    "sources": [
+      {
+        "key": "cam-gt",
+        "supports": "confirma"
+      },
+      {
+        "key": "dal",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta confirmar si la votación se realizará esta semana."
+  },
+  {
+    "id": "n-gt-007",
+    "title": "Cifras de guatemaltecos retornados desde el exterior no coinciden entre fuentes",
+    "lead": "Un informe oficial y un análisis periodístico reportan totales distintos.",
+    "body": "La autoridad migratoria reporta un total menor al publicado por un medio que contó llegadas en varios puntos. Ambas partes explican metodologías diferentes.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["migracion", "sociedad"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["GT"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 2,
+    "certainty": "disputada",
+    "publishedHoursAgo": 64,
+    "sources": [
+      {
+        "key": "mig",
+        "supports": "confirma"
+      },
+      {
+        "key": "cro",
+        "supports": "confirma"
+      },
+      {
+        "key": "dal",
+        "supports": "contradice"
+      }
+    ],
+    "certaintyNote": "La autoridad migratoria reporta un total menor; el medio suma llegadas por vía aérea y terrestre. Falta una fuente que concilie ambas metodologías."
+  },
+  {
+    "id": "n-ret-001",
+    "title": "Falso cierre del aeropuerto de la capital circuló en redes",
+    "lead": "Un mensaje viral aseguraba que se suspendían todos los vuelos; la autoridad de aviación lo desmintió.",
+    "body": "Un mensaje sin fuente afirmaba que el aeropuerto cerraba por una emergencia. La operación continúa con normalidad.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["sociedad"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["GT"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 1,
+    "certainty": "retractada",
+    "publishedHoursAgo": 75,
+    "sources": [
+      {
+        "key": "red",
+        "supports": "confirma"
+      },
+      {
+        "key": "aer",
+        "supports": "contradice"
+      }
+    ],
+    "correction": "Retractada: la Autoridad de Aviación Civil confirmó que el aeropuerto opera con normalidad. El mensaje original provenía de redes sin fuente verificable."
+  },
+  {
+    "id": "n-sv-001",
+    "title": "San Salvador amplía el alumbrado y el patrullaje en el centro histórico",
+    "lead": "La alcaldía instalará luminarias nuevas en 40 calles durante el mes.",
+    "body": "El plan incluye rondas de vigilancia nocturnas coordinadas con la policía. Comerciantes del centro valoran la medida.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["seguridad", "sociedad"],
+    "geo": {
+      "scope": "local",
+      "countries": ["SV"],
+      "cityIds": ["sv-san-salvador"],
+      "regions": ["centroamerica"]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 26,
+    "sources": [
+      {
+        "key": "alc-sv",
+        "supports": "confirma"
+      },
+      {
+        "key": "vol",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-sv-002",
+    "title": "Las exportaciones de café salvadoreño suben por la mejora en los precios",
+    "lead": "Productores esperan una cosecha con mejor rendimiento que la del año anterior.",
+    "body": "Cooperativas informan más contratos con compradores de Europa. El sector pide apoyo para renovar cafetales.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["economia"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["SV"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 88,
+    "sources": [
+      {
+        "key": "bcn-sv",
+        "supports": "confirma"
+      },
+      {
+        "key": "vol",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-sv-003",
+    "title": "Feria de tecnología en San Salvador presenta proyectos de estudiantes",
+    "lead": "Más de 60 equipos muestran aplicaciones y robots durante tres días.",
+    "body": "La feria busca acercar la innovación a los colegios. La entrada es libre.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["tecnologia", "educacion"],
+    "geo": {
+      "scope": "local",
+      "countries": ["SV"],
+      "cityIds": ["sv-san-salvador"],
+      "regions": ["centroamerica"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 110,
+    "sources": [
+      {
+        "key": "edu-sv",
+        "supports": "confirma"
+      },
+      {
+        "key": "vol",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-mx-001",
+    "title": "Huracán categoría 2 toca tierra en la costa del Pacífico mexicano",
+    "lead": "Autoridades evacúan a más de diez mil personas y suspenden actividades en puertos.",
+    "body": "El fenómeno avanza con vientos fuertes y lluvias intensas. Protección civil habilita refugios y pide no acercarse a la costa.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["clima-desastres"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["MX"],
+      "cityIds": [],
+      "regions": ["norteamerica"]
+    },
+    "importance": 3,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 6,
+    "sources": [
+      {
+        "key": "sme-mx",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      },
+      {
+        "key": "anh",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-mx-002",
+    "title": "La inflación anual en México baja por tercer mes consecutivo",
+    "lead": "El banco central atribuye la caída a menores precios de alimentos.",
+    "body": "El índice de precios mostró una desaceleración. Analistas esperan que el banco central mantenga su tasa de referencia.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["economia"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["MX"],
+      "cityIds": [],
+      "regions": ["norteamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 34,
+    "sources": [
+      {
+        "key": "bcn-mx",
+        "supports": "confirma"
+      },
+      {
+        "key": "anh",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-mx-003",
+    "title": "Ciudad de México ampliará una línea de transporte público",
+    "lead": "La obra conectará dos zonas del oriente y reducirá los tiempos de traslado.",
+    "body": "El gobierno de la ciudad publicó el calendario de obras. Vecinos piden información sobre los cierres.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["sociedad"],
+    "geo": {
+      "scope": "local",
+      "countries": ["MX"],
+      "cityIds": ["mx-cdmx"],
+      "regions": ["norteamerica"]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 58,
+    "sources": [
+      {
+        "key": "alc-mx",
+        "supports": "confirma"
+      },
+      {
+        "key": "anh",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-mx-004",
+    "title": "Posible lesión del delantero de la selección mexicana antes del amistoso",
+    "lead": "El cuerpo técnico dice que se le realizarán estudios para definir su participación.",
+    "body": "El jugador salió con molestias del último entrenamiento. Aún no hay parte médico oficial.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["deportes"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["MX"],
+      "cityIds": [],
+      "regions": ["norteamerica"]
+    },
+    "importance": 0,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 14,
+    "sources": [
+      {
+        "key": "fed",
+        "supports": "confirma"
+      },
+      {
+        "key": "anh",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta el parte médico oficial del club y de la federación."
+  },
+  {
+    "id": "n-us-001",
+    "title": "El Congreso de Estados Unidos aprueba un presupuesto provisional",
+    "lead": "La medida evita un cierre parcial del gobierno federal por seis semanas.",
+    "body": "Ambas cámaras votaron a favor tras semanas de negociación. La votación definitiva del presupuesto anual queda pendiente.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["politica", "economia"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["US"],
+      "cityIds": [],
+      "regions": ["norteamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 22,
+    "sources": [
+      {
+        "key": "cam-us",
+        "supports": "confirma"
+      },
+      {
+        "key": "hud",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-us-002",
+    "title": "Nueva York abre un centro de atención para migrantes recién llegados",
+    "lead": "El espacio ofrecerá orientación legal y alojamiento temporal.",
+    "body": "La ciudad anunció el centro, pero los detalles de capacidad y financiamiento aún no están publicados.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["migracion"],
+    "geo": {
+      "scope": "local",
+      "countries": ["US"],
+      "cityIds": ["us-nueva-york"],
+      "regions": ["norteamerica"]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 46,
+    "sources": [
+      {
+        "key": "alc-us",
+        "supports": "confirma"
+      },
+      {
+        "key": "hud",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta confirmar la capacidad del centro y su fecha de apertura."
+  },
+  {
+    "id": "n-us-003",
+    "title": "Festival de cine latino en Nueva York estrena 30 películas",
+    "lead": "Directores de Guatemala, México y Colombia presentan sus obras.",
+    "body": "El festival incluye conversatorios y proyecciones al aire libre. Las entradas se pueden adquirir en línea.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["cultura"],
+    "geo": {
+      "scope": "local",
+      "countries": ["US"],
+      "cityIds": ["us-nueva-york"],
+      "regions": ["norteamerica"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 120,
+    "sources": [
+      {
+        "key": "cul-us",
+        "supports": "confirma"
+      },
+      {
+        "key": "hud",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-co-001",
+    "title": "Comisión aprueba en primer debate la reforma de pensiones en Colombia",
+    "lead": "El proyecto pasa a la plenaria con cambios sobre el aporte de los trabajadores.",
+    "body": "Legisladores del gobierno y la oposición negociaron modificaciones. Gremios piden más estudios sobre el efecto fiscal.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["politica", "economia"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["CO"],
+      "cityIds": [],
+      "regions": ["sudamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 28,
+    "sources": [
+      {
+        "key": "cam-co",
+        "supports": "confirma"
+      },
+      {
+        "key": "and",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-co-002",
+    "title": "Bogotá anuncia restricciones de agua por bajo nivel de embalses",
+    "lead": "La medida por sectores comenzaría la próxima semana si no llueve.",
+    "body": "La empresa de acueducto evalúa el calendario. La alcaldía pide reducir el consumo mientras se define la medida.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["medio-ambiente"],
+    "geo": {
+      "scope": "local",
+      "countries": ["CO"],
+      "cityIds": ["co-bogota"],
+      "regions": ["sudamerica"]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 36,
+    "sources": [
+      {
+        "key": "acu",
+        "supports": "confirma"
+      },
+      {
+        "key": "and",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta confirmar la fecha exacta y los barrios incluidos en el racionamiento.",
+    "image": {
+      "kind": "licencia_libre",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/75/Bogota-skyline.jpg",
+      "credit": "Alcaldía de Bogotá",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=124518875",
+      "altText": "Vista del horizonte de edificios de Bogotá"
+    }
+  },
+  {
+    "id": "n-co-003",
+    "title": "Versiones enfrentadas sobre un incidente en el clásico del fútbol colombiano",
+    "lead": "El club y la liga dan explicaciones distintas sobre la suspensión del partido.",
+    "body": "El club local asegura que fue por falta de seguridad. La liga afirma que fue por problemas de iluminación.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["deportes"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["CO"],
+      "cityIds": [],
+      "regions": ["sudamerica"]
+    },
+    "importance": 0,
+    "certainty": "disputada",
+    "publishedHoursAgo": 70,
+    "sources": [
+      {
+        "key": "lig",
+        "supports": "confirma"
+      },
+      {
+        "key": "and",
+        "supports": "confirma"
+      },
+      {
+        "key": "cro",
+        "supports": "contradice"
+      }
+    ],
+    "certaintyNote": "El club afirma que el partido se suspendió por seguridad; la liga sostiene que fue por iluminación. No hay peritaje independiente."
+  },
+  {
+    "id": "n-ar-001",
+    "title": "Argentina mantiene su tasa de interés y anuncia metas de inflación",
+    "lead": "El banco central dice que la decisión busca consolidar la baja de precios.",
+    "body": "La autoridad monetaria publicó su informe trimestral. Los analistas coinciden en que el efecto se verá en los próximos meses.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["economia"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["AR"],
+      "cityIds": [],
+      "regions": ["sudamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 32,
+    "sources": [
+      {
+        "key": "bcn-ar",
+        "supports": "confirma"
+      },
+      {
+        "key": "rio",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-ar-002",
+    "title": "Universidades de Buenos Aires anuncian paro de 48 horas por presupuesto",
+    "lead": "Los docentes piden actualizar salarios y fondos de funcionamiento.",
+    "body": "Las clases se suspenden el jueves y el viernes. Las autoridades universitarias piden retomar el diálogo con el gobierno.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["educacion"],
+    "geo": {
+      "scope": "local",
+      "countries": ["AR"],
+      "cityIds": ["ar-buenos-aires"],
+      "regions": ["sudamerica"]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 44,
+    "sources": [
+      {
+        "key": "edu-ar",
+        "supports": "confirma"
+      },
+      {
+        "key": "rio",
+        "supports": "confirma"
+      }
+    ],
+    "image": {
+      "kind": "licencia_libre",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Facultad_de_Ingenier%C3%ADa_de_la_Universidad_de_Buenos_Aires_%2827547142228%29.jpg",
+      "credit": "Deensel",
+      "license": "CC BY 2.0",
+      "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=73532653",
+      "altText": "Fachada de la Facultad de Ingeniería de la Universidad de Buenos Aires"
+    }
+  },
+  {
+    "id": "n-ar-003",
+    "title": "Científicos argentinos describen una nueva especie de dinosaurio patagónico",
+    "lead": "El hallazgo se basa en fósiles de más de 90 millones de años.",
+    "body": "El equipo publicó su trabajo en una revista científica. Los restos se exhibirán en un museo regional.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["ciencia"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["AR"],
+      "cityIds": [],
+      "regions": ["sudamerica"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 130,
+    "sources": [
+      {
+        "key": "uni-ar",
+        "supports": "confirma"
+      },
+      {
+        "key": "rio",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-es-001",
+    "title": "Alerta roja por ola de calor en varias regiones de España",
+    "lead": "La agencia meteorológica prevé temperaturas superiores a 44 grados durante tres días.",
+    "body": "Las autoridades recomiendan evitar salir en horas centrales, hidratarse y vigilar a personas mayores. Se abren espacios refrigerados.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["clima-desastres", "salud"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["ES"],
+      "cityIds": [],
+      "regions": ["europa"]
+    },
+    "importance": 3,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 5,
+    "sources": [
+      {
+        "key": "sme-es",
+        "supports": "confirma"
+      },
+      {
+        "key": "aib",
+        "supports": "confirma"
+      },
+      {
+        "key": "cap",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-es-002",
+    "title": "Convocan huelga de trenes en España por recortes de personal",
+    "lead": "La medida afectaría a miles de pasajeros durante el fin de semana.",
+    "body": "Los sindicatos rechazan la reducción de plantillas. La empresa asegura que garantizará servicios mínimos.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["sociedad"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["ES"],
+      "cityIds": [],
+      "regions": ["europa"]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 18,
+    "sources": [
+      {
+        "key": "sin",
+        "supports": "confirma"
+      },
+      {
+        "key": "cap",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta confirmar los servicios mínimos y si hay una negociación de última hora."
+  },
+  {
+    "id": "n-es-003",
+    "title": "Madrid prueba autobuses autónomos en una ruta de la ciudad",
+    "lead": "Durante seis meses un vehículo sin conductor recorrerá un trayecto corto con supervisión.",
+    "body": "El ayuntamiento evaluará seguridad y aceptación de los usuarios. El servicio será gratuito durante la prueba.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["tecnologia"],
+    "geo": {
+      "scope": "local",
+      "countries": ["ES"],
+      "cityIds": ["es-madrid"],
+      "regions": ["europa"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 96,
+    "sources": [
+      {
+        "key": "alc-es",
+        "supports": "confirma"
+      },
+      {
+        "key": "cap",
+        "supports": "confirma"
+      }
+    ],
+    "image": {
+      "kind": "licencia_libre",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Madrid_-_Gran_Via%2C_Edificio_Telef%C3%B3nica_3.jpg",
+      "credit": "Zarateman",
+      "license": "CC0 1.0",
+      "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=55027618",
+      "altText": "Edificio en la Gran Vía de Madrid"
+    }
+  },
+  {
+    "id": "n-es-004",
+    "title": "España inicia la campaña de vacunación contra la gripe y el refuerzo de COVID",
+    "lead": "Personas mayores y sanitarios pueden pedir cita desde esta semana.",
+    "body": "La campaña se extiende hasta enero. Las autoridades sanitarias recomiendan vacunarse antes del pico de contagios.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["salud"],
+    "geo": {
+      "scope": "nacional",
+      "countries": ["ES"],
+      "cityIds": [],
+      "regions": ["europa"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 38,
+    "sources": [
+      {
+        "key": "dsp-es",
+        "supports": "confirma"
+      },
+      {
+        "key": "aib",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-ca-001",
+    "title": "Ministros de Centroamérica acuerdan un plan regional de seguridad fronteriza",
+    "lead": "El plan incluye intercambio de información y patrullajes coordinados.",
+    "body": "Los ministros firmaron la declaración al cierre de la cumbre. Organizaciones piden que se garanticen los derechos de las personas migrantes.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["politica", "seguridad"],
+    "geo": {
+      "scope": "regional",
+      "countries": ["GT", "SV", "HN", "NI", "CR", "PA", "BZ"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 50,
+    "sources": [
+      {
+        "key": "cam-ca",
+        "supports": "confirma"
+      },
+      {
+        "key": "agn",
+        "supports": "confirma"
+      },
+      {
+        "key": "vol",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-int-001",
+    "title": "La deforestación en la Amazonía brasileña baja por segundo año",
+    "lead": "Un sistema de monitoreo satelital reporta la menor pérdida de bosque en una década.",
+    "body": "Expertos advierten que la reducción depende de la vigilancia sostenida. Los datos se publicaron en un informe oficial.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["medio-ambiente"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["BR"],
+      "cityIds": [],
+      "regions": ["sudamerica"]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 84,
+    "sources": [
+      {
+        "key": "sat",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-int-002",
+    "title": "Japón presenta un nuevo chip de bajo consumo para dispositivos móviles",
+    "lead": "Fabricantes dicen que reducirá el gasto de energía de los teléfonos hasta un 30 %.",
+    "body": "La empresa mostró el prototipo en una feria. La producción en masa comenzaría el próximo año.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["tecnologia"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["JP"],
+      "cityIds": [],
+      "regions": ["asia"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 100,
+    "sources": [
+      {
+        "key": "emj",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-int-003",
+    "title": "Francia debate una ley sobre el uso de pantallas en escuelas",
+    "lead": "El Parlamento evalúa restringir teléfonos en la educación básica.",
+    "body": "Los partidos discrepan en las edades y las excepciones. Se espera un voto en las próximas semanas.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["politica", "educacion"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["FR"],
+      "cityIds": [],
+      "regions": ["europa"]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 60,
+    "sources": [
+      {
+        "key": "cam-fr",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta confirmar la fecha de votación y los cambios al texto."
+  },
+  {
+    "id": "n-int-004",
+    "title": "China y Alemania difieren sobre el avance de las negociaciones comerciales",
+    "lead": "Cada gobierno describe de forma distinta los resultados de la reunión.",
+    "body": "Un comunicado habla de acuerdos preliminares. La otra parte asegura que no se fijó ningún compromiso.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["economia"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["CN", "DE"],
+      "cityIds": [],
+      "regions": ["asia", "europa"]
+    },
+    "importance": 2,
+    "certainty": "disputada",
+    "publishedHoursAgo": 48,
+    "sources": [
+      {
+        "key": "gob1",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      },
+      {
+        "key": "gob2",
+        "supports": "contradice"
+      }
+    ],
+    "certaintyNote": "Un gobierno afirma que hay acuerdos preliminares; el otro niega compromisos. Falta un texto oficial conjunto."
+  },
+  {
+    "id": "n-int-005",
+    "title": "Brote de cólera en Haití: organismos internacionales piden más ayuda",
+    "lead": "Las cifras de casos aún se actualizan y los hospitales reportan saturación.",
+    "body": "Las organizaciones humanitarias envían suministros. El acceso a algunas zonas sigue limitado.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["salud", "migracion"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["HT"],
+      "cityIds": [],
+      "regions": ["caribe"]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "publishedHoursAgo": 42,
+    "sources": [
+      {
+        "key": "oms",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "contexto"
+      }
+    ],
+    "certaintyNote": "Falta confirmar el número total de casos y de fallecidos."
+  },
+  {
+    "id": "n-int-006",
+    "title": "India lanza una misión para estudiar el clima solar",
+    "lead": "La sonda observará tormentas solares que afectan a satélites y redes eléctricas.",
+    "body": "La agencia espacial completó el lanzamiento sin incidentes. Los primeros datos llegarán en varias semanas.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["ciencia"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["IN"],
+      "cityIds": [],
+      "regions": ["asia"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 150,
+    "sources": [
+      {
+        "key": "esp",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-int-007",
+    "title": "Un museo de El Cairo reabre sus salas con piezas restauradas",
+    "lead": "La reapertura incluye una sala dedicada a la vida cotidiana en el antiguo Egipto.",
+    "body": "Los visitantes podrán ver piezas que se restauraron durante dos años. Habrá guías en varios idiomas.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["cultura"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["EG"],
+      "cityIds": [],
+      "regions": ["africa"]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 140,
+    "sources": [
+      {
+        "key": "cul-eg",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-ret-002",
+    "title": "Falso cierre de una ruta del canal de Panamá circuló en internet",
+    "lead": "Se aseguraba que el tránsito de buques quedaba suspendido por una avería.",
+    "body": "La autoridad del canal indicó que la operación es normal. La publicación original no tenía fuente.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["migracion", "economia"],
+    "geo": {
+      "scope": "internacional",
+      "countries": ["PA"],
+      "cityIds": [],
+      "regions": ["centroamerica"]
+    },
+    "importance": 1,
+    "certainty": "retractada",
+    "publishedHoursAgo": 90,
+    "sources": [
+      {
+        "key": "red",
+        "supports": "confirma"
+      },
+      {
+        "key": "aer",
+        "supports": "contradice"
+      }
+    ],
+    "correction": "Retractada: la autoridad confirmó que el tránsito continúa con normalidad. El mensaje original provenía de redes sin fuente verificable."
+  },
+  {
+    "id": "n-glo-001",
+    "title": "Más de cien países firman metas para reducir emisiones en la cumbre climática",
+    "lead": "El acuerdo incluye financiamiento para la transición energética de países en desarrollo.",
+    "body": "Los gobiernos se comprometen a recortar gases de efecto invernadero. Organizaciones ambientales piden plazos más estrictos.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["medio-ambiente", "politica"],
+    "geo": {
+      "scope": "global",
+      "countries": [],
+      "cityIds": [],
+      "regions": []
+    },
+    "importance": 3,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 10,
+    "sources": [
+      {
+        "key": "onu",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      },
+      {
+        "key": "mun",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-glo-002",
+    "title": "Organismo sanitario declara alerta mundial por una nueva variante de influenza",
+    "lead": "Recomienda reforzar la vigilancia y vacunar a los grupos de riesgo.",
+    "body": "La alerta busca coordinar a los países. Por ahora no hay restricciones de viaje.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["salud"],
+    "geo": {
+      "scope": "global",
+      "countries": [],
+      "cityIds": [],
+      "regions": []
+    },
+    "importance": 3,
+    "certainty": "confirmada",
+    "publishedHoursAgo": 16,
+    "sources": [
+      {
+        "key": "oms",
+        "supports": "confirma"
+      },
+      {
+        "key": "ali",
+        "supports": "confirma"
+      },
+      {
+        "key": "mun",
+        "supports": "confirma"
+      }
+    ]
+  },
+  {
+    "id": "n-ret-003",
+    "title": "Falsa noticia sobre una cura definitiva contra el resfriado circuló en el mundo",
+    "lead": "Un estudio inexistente atribuido a una universidad se difundió como confirmado.",
+    "body": "Los verificadores no hallaron el estudio citado. La universidad negó su autoría.\n\nNoticia de prueba para el proyecto académico",
+    "topics": ["salud", "ciencia"],
+    "geo": {
+      "scope": "global",
+      "countries": [],
+      "cityIds": [],
+      "regions": []
+    },
+    "importance": 1,
+    "certainty": "retractada",
+    "publishedHoursAgo": 105,
+    "sources": [
+      {
+        "key": "red",
+        "supports": "confirma"
+      },
+      {
+        "key": "uni",
+        "supports": "contradice"
+      }
+    ],
+    "correction": "Retractada: no existe el estudio citado. La universidad señalada negó su autoría y los verificadores no encontraron publicación alguna."
+  }
+]
