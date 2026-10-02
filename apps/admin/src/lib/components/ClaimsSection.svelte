@@ -73,7 +73,7 @@
 	}
 </script>
 
-<section>
+<section id="section-claims">
 	<h2>Afirmaciones verificables</h2>
 	<p class="hint">
 		El estado se calcula solo a partir de las fuentes vinculadas: <strong>respaldada</strong> si al
