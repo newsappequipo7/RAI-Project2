@@ -7,11 +7,20 @@ import {
 } from '@repo/shared';
 import { doc, getDoc, updateDoc, type Firestore } from 'firebase/firestore';
 
-const EDITABLE_FIELDS: NewsFieldName[] = ['title', 'lead', 'body', 'topics', 'geo', 'importance'];
+const EDITABLE_FIELDS: NewsFieldName[] = [
+	'title',
+	'lead',
+	'body',
+	'topics',
+	'geo',
+	'importance',
+	'sources',
+	'claims'
+];
 
 export class SaveBlockedError extends Error {}
 
-/** The fields the Content and Classification sections are allowed to write. */
+/** The fields the editor sections (content, classification, sources, claims) may write. */
 export function pickEditableFields(news: News): EditableNewsFields {
 	return Object.fromEntries(
 		EDITABLE_FIELDS.map((field) => [field, news[field]])
