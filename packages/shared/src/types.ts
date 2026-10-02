@@ -118,6 +118,8 @@ export interface UserEvent {
 
 export type ChatMode = 'full' | 'retrieval_only';
 export type ApiEnv = 'dev' | 'demo';
+/** `mock` = fixtures and fake embeddings, no provider spend; `live` = real models. */
+export type AiMode = 'mock' | 'live';
 
 export interface Flags {
   killSwitch: boolean;
@@ -130,6 +132,7 @@ export interface HealthResponse {
   indexVersion: number;
   flags: Flags;
   env: ApiEnv;
+  aiMode: AiMode;
 }
 
 export interface ApiErrorBody {
