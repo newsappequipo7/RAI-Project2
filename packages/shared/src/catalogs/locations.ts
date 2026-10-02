@@ -9,6 +9,18 @@ export type Region =
   | 'oceania'
   | 'medio-oriente';
 
+export const REGIONS: Region[] = [
+  'centroamerica',
+  'norteamerica',
+  'sudamerica',
+  'caribe',
+  'europa',
+  'asia',
+  'africa',
+  'oceania',
+  'medio-oriente',
+];
+
 export interface Location {
   id: string;
   city: string;
