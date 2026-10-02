@@ -2,13 +2,18 @@ import { findCountry } from '../catalogs/countries-es';
 import { findLocation, REGIONS } from '../catalogs/locations';
 import { findTopic } from '../catalogs/topics';
 import type { News } from '../types';
+import { isValidSourceUrl } from './sources';
 
 export const TITLE_WARN_LENGTH = 110;
 export const LEAD_MAX_LENGTH = 280;
 export const MIN_TOPICS = 1;
 export const MAX_TOPICS = 3;
 
-export type NewsFieldName = 'title' | 'lead' | 'body' | 'topics' | 'geo' | 'importance';
+export type NewsFieldName =
+  'title' | 'lead' | 'body' | 'topics' | 'geo' | 'importance' | 'sources' | 'claims';
+
+/** Fields whose structure must stay sound in every workflow, drafts included. */
+const INTEGRITY_FIELDS: NewsFieldName[] = ['sources', 'claims'];
 
 export type EditableNewsFields = Pick<News, NewsFieldName>;
 
@@ -58,6 +63,8 @@ export function validateNewsFields(news: EditableNewsFields): FieldIssue[] {
 
   issues.push(...validateTopics(news.topics));
   issues.push(...validateGeo(news.geo));
+  issues.push(...validateSources(news.sources));
+  issues.push(...validateClaims(news.claims, news.sources));
 
   if (![0, 1, 2, 3].includes(news.importance)) {
     issues.push(error('importance', 'importance_invalid', 'La importancia debe ser 0, 1, 2 o 3.'));
@@ -151,15 +158,64 @@ function validateGeo(geo: News['geo']): FieldIssue[] {
   return issues;
 }
 
+function validateSources(sources: News['sources']): FieldIssue[] {
+  const issues: FieldIssue[] = [];
+
+  for (const source of sources) {
+    const label = source.name.trim() || source.id;
+
+    if (source.name.trim() === '' || source.organization.trim() === '') {
+      issues.push(
+        error(
+          'sources',
+          'source_incomplete',
+          `La fuente «${label}» necesita nombre y organización.`,
+        ),
+      );
+    }
+    if (!isValidSourceUrl(source.url)) {
+      issues.push(
+        error('sources', 'source_url_invalid', `La URL de la fuente «${label}» no es válida.`),
+      );
+    }
+  }
+
+  return issues;
+}
+
+function validateClaims(claims: News['claims'], sources: News['sources']): FieldIssue[] {
+  const issues: FieldIssue[] = [];
+  const known = new Set(sources.map((source) => source.id));
+
+  for (const claim of claims) {
+    if (claim.text.trim() === '') {
+      issues.push(error('claims', 'claim_text_required', 'Hay una afirmación sin texto.'));
+    }
+    if (claim.sourceIds.some((id) => !known.has(id))) {
+      issues.push(
+        error(
+          'claims',
+          'claim_unknown_source',
+          'Una afirmación apunta a una fuente que no existe.',
+        ),
+      );
+    }
+  }
+
+  return issues;
+}
+
 export function hasErrors(issues: FieldIssue[]): boolean {
   return issues.some((issue) => issue.severity === 'error');
 }
 
 /**
- * Invalid data must never be stored as published (F2-02 CA2). Drafts may be saved incomplete so that
- * autosave works; a published news must pass every field rule.
+ * Invalid data must never be stored as published (F2-02 CA2), and a broken source URL or a claim
+ * pointing at a missing source is never stored in any workflow (F2-03 CA2). Otherwise drafts may
+ * be saved incomplete so that autosave works.
  */
 export function saveBlockers(news: News): FieldIssue[] {
-  if (news.workflow !== 'publicada') return [];
-  return validateNewsFields(news).filter((issue) => issue.severity === 'error');
+  const errors = validateNewsFields(news).filter((issue) => issue.severity === 'error');
+  if (news.workflow === 'publicada') return errors;
+  return errors.filter((issue) => INTEGRITY_FIELDS.includes(issue.field));
 }
