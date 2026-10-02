@@ -1,13 +1,7 @@
-import {
-	saveBlockers,
-	type EditableNewsFields,
-	type GeoScope,
-	type News,
-	type NewsFieldName
-} from '@repo/shared';
-import { doc, getDoc, updateDoc, type Firestore } from 'firebase/firestore';
+import { saveBlockers, type GeoScope, type News } from '@repo/shared';
+import { deleteField, doc, getDoc, updateDoc, type Firestore } from 'firebase/firestore';
 
-const EDITABLE_FIELDS: NewsFieldName[] = [
+const EDITABLE_FIELDS = [
 	'title',
 	'lead',
 	'body',
@@ -15,16 +9,22 @@ const EDITABLE_FIELDS: NewsFieldName[] = [
 	'geo',
 	'importance',
 	'sources',
-	'claims'
-];
+	'claims',
+	'certainty',
+	'certaintyNote',
+	'checklist'
+] as const satisfies readonly (keyof News)[];
+
+export type EditableField = (typeof EDITABLE_FIELDS)[number];
+export type EditablePatch = Pick<News, EditableField>;
 
 export class SaveBlockedError extends Error {}
 
-/** The fields the editor sections (content, classification, sources, claims) may write. */
-export function pickEditableFields(news: News): EditableNewsFields {
+/** The fields the editor sections may write. Workflow, version and publication data are not here. */
+export function pickEditableFields(news: News): EditablePatch {
 	return Object.fromEntries(
 		EDITABLE_FIELDS.map((field) => [field, news[field]])
-	) as unknown as EditableNewsFields;
+	) as unknown as EditablePatch;
 }
 
 /** Drops the geography that a scope does not use (global: nothing; non-local: no cities). */
@@ -49,8 +49,16 @@ export async function saveNewsFields(db: Firestore, news: News): Promise<void> {
 		throw new SaveBlockedError(blockers.map((issue) => issue.message).join(' '));
 	}
 
+	// Firestore rejects `undefined`: an emptied optional field (certaintyNote) is deleted instead.
+	const patch = Object.fromEntries(
+		Object.entries(pickEditableFields(news)).map(([key, value]) => [
+			key,
+			value === undefined ? deleteField() : value
+		])
+	);
+
 	await updateDoc(doc(db, 'news', news.id), {
-		...pickEditableFields(news),
+		...patch,
 		updatedAt: new Date().toISOString()
 	});
 }
