@@ -44,7 +44,11 @@ export function validateNewsFields(news: EditableNewsFields): FieldIssue[] {
     issues.push(error('lead', 'lead_required', 'La entradilla es obligatoria.'));
   } else if (lead.length > LEAD_MAX_LENGTH) {
     issues.push(
-      error('lead', 'lead_too_long', `La entradilla no puede pasar de ${LEAD_MAX_LENGTH} caracteres.`),
+      error(
+        'lead',
+        'lead_too_long',
+        `La entradilla no puede pasar de ${LEAD_MAX_LENGTH} caracteres.`,
+      ),
     );
   }
 
@@ -67,7 +71,11 @@ function validateTopics(topics: string[]): FieldIssue[] {
 
   if (topics.length < MIN_TOPICS || topics.length > MAX_TOPICS) {
     issues.push(
-      error('topics', 'topics_count', `Elige entre ${MIN_TOPICS} y ${MAX_TOPICS} temas del catálogo.`),
+      error(
+        'topics',
+        'topics_count',
+        `Elige entre ${MIN_TOPICS} y ${MAX_TOPICS} temas del catálogo.`,
+      ),
     );
   }
   if (new Set(topics).size !== topics.length) {
@@ -75,7 +83,9 @@ function validateTopics(topics: string[]): FieldIssue[] {
   }
   const unknown = topics.filter((key) => !findTopic(key));
   if (unknown.length > 0) {
-    issues.push(error('topics', 'topics_unknown', `Temas fuera del catálogo: ${unknown.join(', ')}.`));
+    issues.push(
+      error('topics', 'topics_unknown', `Temas fuera del catálogo: ${unknown.join(', ')}.`),
+    );
   }
 
   return issues;
@@ -87,7 +97,11 @@ function validateGeo(geo: News['geo']): FieldIssue[] {
   if (geo.scope === 'global') {
     if (geo.countries.length + geo.cityIds.length + geo.regions.length > 0) {
       issues.push(
-        error('geo', 'geo_global_scoped', 'Una noticia global no lleva países, ciudades ni regiones.'),
+        error(
+          'geo',
+          'geo_global_scoped',
+          'Una noticia global no lleva países, ciudades ni regiones.',
+        ),
       );
     }
     return issues;
@@ -99,20 +113,30 @@ function validateGeo(geo: News['geo']): FieldIssue[] {
   const unknownCountries = geo.countries.filter((iso) => !findCountry(iso));
   if (unknownCountries.length > 0) {
     issues.push(
-      error('geo', 'geo_country_unknown', `Países fuera del catálogo: ${unknownCountries.join(', ')}.`),
+      error(
+        'geo',
+        'geo_country_unknown',
+        `Países fuera del catálogo: ${unknownCountries.join(', ')}.`,
+      ),
     );
   }
 
   const unknownRegions = geo.regions.filter((region) => !(REGIONS as string[]).includes(region));
   if (unknownRegions.length > 0) {
     issues.push(
-      error('geo', 'geo_region_unknown', `Regiones fuera del catálogo: ${unknownRegions.join(', ')}.`),
+      error(
+        'geo',
+        'geo_region_unknown',
+        `Regiones fuera del catálogo: ${unknownRegions.join(', ')}.`,
+      ),
     );
   }
 
   if (geo.scope === 'local') {
     if (geo.cityIds.length === 0) {
-      issues.push(error('geo', 'geo_city_required', 'Una noticia local necesita al menos una ciudad.'));
+      issues.push(
+        error('geo', 'geo_city_required', 'Una noticia local necesita al menos una ciudad.'),
+      );
     }
   } else if (geo.cityIds.length > 0) {
     issues.push(error('geo', 'geo_city_not_local', 'Solo las noticias locales llevan ciudades.'));

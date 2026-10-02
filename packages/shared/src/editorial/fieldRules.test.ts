@@ -78,7 +78,9 @@ describe('validateNewsFields', () => {
     expect(codes(valid({ geo: geo({ countries: ['ZZ'] }) }))).toEqual(['geo_country_unknown']);
     expect(codes(valid({ geo: geo({ regions: ['atlantida'] }) }))).toEqual(['geo_region_unknown']);
     expect(codes(valid({ geo: geo({ scope: 'local' }) }))).toEqual(['geo_city_required']);
-    expect(codes(valid({ geo: geo({ cityIds: ['gt-guatemala'] }) }))).toEqual(['geo_city_not_local']);
+    expect(codes(valid({ geo: geo({ cityIds: ['gt-guatemala'] }) }))).toEqual([
+      'geo_city_not_local',
+    ]);
     expect(codes(valid({ geo: geo({ scope: 'local', cityIds: ['xx-nada'] }) }))).toEqual([
       'geo_city_unknown',
     ]);
@@ -96,7 +98,9 @@ describe('validateNewsFields', () => {
 describe('saveBlockers', () => {
   it('lets incomplete drafts be saved so autosave works', () => {
     expect(saveBlockers(createEmptyDraft('n1', 'uid-1', NOW))).toEqual([]);
-    expect(saveBlockers({ ...createEmptyDraft('n1', 'uid-1', NOW), workflow: 'en_revision' })).toEqual([]);
+    expect(
+      saveBlockers({ ...createEmptyDraft('n1', 'uid-1', NOW), workflow: 'en_revision' }),
+    ).toEqual([]);
   });
 
   it('blocks saving invalid data as published', () => {
