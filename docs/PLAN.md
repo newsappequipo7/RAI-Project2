@@ -113,11 +113,22 @@ por tarea al iniciar su fase.
 | F1-10 | Corpus semilla (40 noticias) y `pnpm seed` | ☑ | 13 pruebas en `shared` (cuotas, zod, reglas de certeza). CA1: `--target=emulator` (40 docs verificados) y `--target=prod` (40 docs escritos en `news/`). Corpus indexado con embeddings reales (índice v6, 40 noticias) |
 | F1-11 | Perfil y selector de ubicación | ☑ | commit `0bc805d`; 3 pruebas del perfil por defecto; probado en Expo Go (selección y cambio de ubicación). Evidencia guardada fuera del repo (Diego). |
 | F1-12 | CI y cierre de fase | ☑ | CI verde en `main`; comandos `.claude/commands`, 4 loops en `evidence/loops/`, handoff en `docs/handoffs/FASE-1.md`. CA2 (recorrido con Daniel) hecho |
-
-Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
-| F2-01 … F2-12 | Ver FASE-2 | ☐ | |
+| F2-01 | Lista de noticias | ☐ | |
+| F2-02 | Editor de noticia | ☐ | |
+| F2-03 | Fuentes y afirmaciones | ☐ | |
+| F2-04 | Enriquecimiento con IA (Worker + UI) | ☐ | |
+| F2-05 | Reglas de certeza y checklist (bloqueo de publicación) | ☐ | |
+| F2-06 | Publicar e indexar | ☐ | |
+| F2-07 | Imágenes | ☐ | |
+| F2-08 | Correcciones y retractación | ☐ | |
+| F2-09 | Dashboard de costos | ☐ | |
+| F2-10 | Pruebas del flujo editorial | ☐ | |
+| F2-11 | Corpus editorial real | ☐ | |
+| F2-12 | [PLUS] Vista previa móvil y cierre | ☐ | |
 | F3-01 … F3-12 | Ver FASE-3 | ☐ | |
 | F4-01 … F4-13 | Ver FASE-4 | ☐ | |
+
+Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
 
 ## 7. Riesgos principales
 
