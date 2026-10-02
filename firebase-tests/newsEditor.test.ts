@@ -3,7 +3,11 @@ import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/
 import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createEmptyDraft } from '../packages/shared/src/editorial/draft';
-import { buildSource, createClaim, recomputeClaims } from '../packages/shared/src/editorial/sources';
+import {
+  buildSource,
+  createClaim,
+  recomputeClaims,
+} from '../packages/shared/src/editorial/sources';
 import type { News } from '../packages/shared/src/types';
 import { loadNews, SaveBlockedError, saveNewsFields } from '../apps/admin/src/lib/newsStore';
 
@@ -17,6 +21,7 @@ beforeAll(async () => {
     projectId: 'ai-news-app-f24cf',
     firestore: { rules: readFileSync('../firestore.rules', 'utf8') },
   });
+  await testEnv.clearFirestore();
   await testEnv.withSecurityRulesDisabled(async (context) => {
     await setDoc(doc(context.firestore() as unknown as Firestore, 'admins', 'admin-a'), {});
   });
@@ -37,7 +42,12 @@ describe('F2-02 news editor persistence', () => {
       title: 'Sismo sacude el occidente',
       lead: 'Entradilla a medio escribir',
       topics: ['clima-desastres'],
-      geo: { scope: 'local', countries: ['GT'], cityIds: ['gt-quetzaltenango'], regions: ['centroamerica'] },
+      geo: {
+        scope: 'local',
+        countries: ['GT'],
+        cityIds: ['gt-quetzaltenango'],
+        regions: ['centroamerica'],
+      },
       importance: 3,
     };
     await saveNewsFields(db, edited);
@@ -69,9 +79,9 @@ describe('F2-02 news editor persistence', () => {
     };
     await setDoc(doc(db, 'news', published.id), published);
 
-    await expect(saveNewsFields(db, { ...published, title: '', topics: [] })).rejects.toBeInstanceOf(
-      SaveBlockedError,
-    );
+    await expect(
+      saveNewsFields(db, { ...published, title: '', topics: [] }),
+    ).rejects.toBeInstanceOf(SaveBlockedError);
 
     const stored = (await getDoc(doc(db, 'news', 'pub-1'))).data();
     expect(stored?.title).toBe('Titular válido');
@@ -124,4 +134,3 @@ describe('F2-03 sources and claims persistence', () => {
     expect((await loadNews(db, 'draft-3'))?.sources).toEqual([]);
   });
 });
-
