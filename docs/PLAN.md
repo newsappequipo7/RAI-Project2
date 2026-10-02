@@ -115,7 +115,7 @@ por tarea al iniciar su fase.
 | F1-12 | CI y cierre de fase | ☑ | CI verde en `main`; comandos `.claude/commands`, 4 loops en `evidence/loops/`, handoff en `docs/handoffs/FASE-1.md`. CA2 (recorrido con Daniel) hecho |
 | F2-01 | Lista de noticias | ◐ | commits `05e0241`…`100058e` (rama `fase-2/f2-01-news-list`); CA1 y CA2 cubiertos por `firebase-tests/newsList.test.ts` (40 semilla, tiempo real entre dos admins) y filtros por 6 pruebas en `apps/admin`. Falta recorrido manual de la UI con login real |
 | F2-02 | Editor de noticia | ◐ | rama `fase-2/f2-02-news-editor`; reglas de campos y guardia de guardado en `packages/shared/src/editorial/fieldRules.ts` (12 pruebas, las 40 semilla pasan); autoguardado a 2 s, markdown seguro y `newsStore` con pruebas en `apps/admin`; CA1 y CA2 contra el emulador en `firebase-tests/newsEditor.test.ts`. Implementadas las secciones Contenido y Clasificación; Fuentes, Afirmaciones, Imagen, Certeza e Historial llegan con F2-03, F2-05, F2-07 y F2-08. Falta recorrido manual de la UI con login real |
-| F2-03 | Fuentes y afirmaciones | ☐ | |
+| F2-03 | Fuentes y afirmaciones | ◐ | rama `fase-2/f2-03-sources-claims`; helpers y estado calculado en `packages/shared/src/editorial/sources.ts` (14 pruebas) e integridad en `fieldRules.ts`; gestores de fuentes (con indicador de independencia) y afirmaciones en el editor; CA1 y CA2 contra el emulador en `firebase-tests/newsEditor.test.ts`. Falta recorrido manual de la UI con login real |
 | F2-04 | Enriquecimiento con IA (Worker + UI) | ☐ | |
 | F2-05 | Reglas de certeza y checklist (bloqueo de publicación) | ☐ | |
 | F2-06 | Publicar e indexar | ☐ | |
