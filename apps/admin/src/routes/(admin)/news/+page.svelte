@@ -5,7 +5,10 @@
 	import { onMount } from 'svelte';
 	import { createEmptyDraft, type Certainty, type News, type Workflow } from '@repo/shared';
 	import { db } from '$lib/firebase';
+	import { fetchHealth, rebuildNews } from '$lib/indexApi';
+	import { reindexWarning } from '$lib/indexGuard';
 	import { displayTitle, EMPTY_FILTERS, filterNews, type NewsListFilters } from '$lib/newsList';
+	import { rebuildIndex } from '$lib/publishFlow';
 	import { session } from '$lib/session.svelte';
 
 	const WORKFLOWS: Workflow[] = ['borrador', 'en_revision', 'publicada', 'rechazada'];
@@ -20,6 +23,8 @@
 	let loading = $state(true);
 	let errorMessage = $state('');
 	let creating = $state(false);
+	let rebuilding = $state(false);
+	let rebuildMessage = $state('');
 	let filters = $state<NewsListFilters>({ ...EMPTY_FILTERS });
 
 	const visible = $derived(filterNews(items, filters));
@@ -58,6 +63,26 @@
 		}
 	}
 
+	async function rebuild() {
+		if (rebuilding) return;
+		rebuilding = true;
+		errorMessage = '';
+		rebuildMessage = '';
+
+		try {
+			// Rebuilding in mock mode would replace the real index with fake embeddings.
+			const warning = reindexWarning(await fetchHealth().catch(() => null));
+			if (warning && !window.confirm(warning)) return;
+
+			const result = await rebuildIndex(db, { rebuild: rebuildNews });
+			rebuildMessage = `Índice reconstruido: versión ${result.indexVersion}, ${result.upserted} noticias publicadas.`;
+		} catch (error) {
+			errorMessage = error instanceof Error ? error.message : 'No se pudo reconstruir el índice';
+		} finally {
+			rebuilding = false;
+		}
+	}
+
 	function formatDate(iso: string): string {
 		return dateFormat.format(new Date(iso));
 	}
@@ -65,7 +90,12 @@
 
 <div class="header">
 	<h1>Noticias</h1>
-	<button onclick={createDraft} disabled={creating}>Nueva noticia</button>
+	<div class="actions">
+		<button onclick={rebuild} disabled={rebuilding}>
+			{rebuilding ? 'Reconstruyendo…' : 'Reconstruir índice'}
+		</button>
+		<button onclick={createDraft} disabled={creating}>Nueva noticia</button>
+	</div>
 </div>
 
 <div class="filters">
@@ -96,6 +126,9 @@
 {#if errorMessage}
 	<p role="alert">{errorMessage}</p>
 {/if}
+{#if rebuildMessage}
+	<p role="status">{rebuildMessage}</p>
+{/if}
 
 {#if loading}
 	<p>Cargando noticias…</p>
@@ -117,7 +150,12 @@
 			{#each visible as item (item.id)}
 				<tr>
 					<td><a href={resolve(`/news/${item.id}`)}>{displayTitle(item)}</a></td>
-					<td>{item.workflow}</td>
+					<td>
+						{item.workflow}
+						{#if item.indexPending}<span class="badge" title="Publicada, falta indexarla"
+								>indexación pendiente</span
+							>{/if}
+					</td>
 					<td>{item.certainty}</td>
 					<td>{item.importance}</td>
 					<td>{item.geo.scope}</td>
@@ -136,6 +174,19 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+	}
+
+	.actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.badge {
+		margin-left: 0.35rem;
+		padding: 0 0.4rem;
+		border-radius: 3px;
+		background: #fff3cd;
+		font-size: 0.75rem;
 	}
 
 	.filters {
