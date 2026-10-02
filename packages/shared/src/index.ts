@@ -5,3 +5,4 @@ export * from './seed';
 export * from './profile';
 export * from './catalogs';
 export * from './config';
+export * from './editorial';

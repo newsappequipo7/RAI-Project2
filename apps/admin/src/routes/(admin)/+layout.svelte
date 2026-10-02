@@ -25,7 +25,7 @@
 {:else}
 	<div class="shell">
 		<nav>
-			<a href={resolve('/noticias')}>Noticias</a>
+			<a href={resolve('/news')}>Noticias</a>
 			<a href={resolve('/comparador')}>Comparador</a>
 			<a href={resolve('/costos')}>Costos</a>
 			<a href={resolve('/indice')}>Índice</a>
