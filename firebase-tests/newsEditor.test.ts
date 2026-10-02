@@ -3,6 +3,7 @@ import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/
 import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createEmptyDraft } from '../packages/shared/src/editorial/draft';
+import { buildSource, createClaim, recomputeClaims } from '../packages/shared/src/editorial/sources';
 import type { News } from '../packages/shared/src/types';
 import { loadNews, SaveBlockedError, saveNewsFields } from '../apps/admin/src/lib/newsStore';
 
@@ -77,3 +78,50 @@ describe('F2-02 news editor persistence', () => {
     expect(stored?.topics).toEqual(['salud']);
   });
 });
+
+describe('F2-03 sources and claims persistence', () => {
+  const confirming = buildSource({
+    id: 's-yes',
+    name: 'Prensa Libre',
+    organization: 'Grupo Prensa Libre',
+    url: 'https://example.org/prensa-libre/nota',
+    type: 'medio',
+    accessedAt: NOW.toISOString(),
+    supports: 'confirma',
+    note: '',
+  });
+  const contradicting = buildSource({ ...confirming, id: 's-no', supports: 'contradice' });
+
+  it('stores sources and claims, with statuses following links and unlinks (CA1)', async () => {
+    const draft = createEmptyDraft('draft-2', 'admin-a', NOW);
+    await setDoc(doc(db, 'news', draft.id), draft);
+
+    const sources = [confirming, contradicting];
+    const claim = createClaim('c1', 'La cifra es 12', ['s-yes'], sources);
+    await saveNewsFields(db, { ...draft, sources, claims: [claim] });
+    expect((await loadNews(db, 'draft-2'))?.claims[0]?.status).toBe('respaldada');
+
+    const disputed = recomputeClaims([{ ...claim, sourceIds: ['s-yes', 's-no'] }], sources);
+    await saveNewsFields(db, { ...draft, sources, claims: disputed });
+    expect((await loadNews(db, 'draft-2'))?.claims[0]?.status).toBe('en_disputa');
+
+    const unlinked = recomputeClaims([{ ...claim, sourceIds: [] }], sources);
+    await saveNewsFields(db, { ...draft, sources, claims: unlinked });
+    const stored = await loadNews(db, 'draft-2');
+    expect(stored?.claims[0]).toMatchObject({ sourceIds: [], status: 'sin_respaldo' });
+    expect(stored?.sources).toHaveLength(2);
+    expect(stored?.sources[0] && 'note' in stored.sources[0]).toBe(false);
+  });
+
+  it('does not store an invalid source URL, even in a draft (CA2)', async () => {
+    const draft = createEmptyDraft('draft-3', 'admin-a', NOW);
+    await setDoc(doc(db, 'news', draft.id), draft);
+
+    const broken = { ...confirming, url: 'prensalibre.com/nota' };
+    await expect(saveNewsFields(db, { ...draft, sources: [broken] })).rejects.toBeInstanceOf(
+      SaveBlockedError,
+    );
+    expect((await loadNews(db, 'draft-3'))?.sources).toEqual([]);
+  });
+});
+
