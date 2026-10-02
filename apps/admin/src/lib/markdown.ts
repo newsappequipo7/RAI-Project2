@@ -13,7 +13,7 @@ const ESCAPES: Record<string, string> = {
 };
 
 function escapeHtml(text: string): string {
-	return text.replace(/[&<>"']/g, (char) => ESCAPES[char]);
+	return text.replace(/[&<>"']/g, (char) => ESCAPES[char] ?? char);
 }
 
 function renderInline(escaped: string): string {
@@ -22,13 +22,13 @@ function renderInline(escaped: string): string {
 	// Links first and out of the way, so `*` or `_` inside a URL are not read as emphasis.
 	const withTokens = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, url) => {
 		links.push(`<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
-		return `\u0000${links.length - 1}\u0000`;
+		return `\uE000${links.length - 1}\uE000`;
 	});
 
 	return withTokens
 		.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
 		.replace(/\*([^*]+)\*/g, '<em>$1</em>')
-		.replace(/\u0000(\d+)\u0000/g, (_, index) => links[Number(index)]);
+		.replace(/\uE000(\d+)\uE000/g, (_, index) => links[Number(index)] ?? '');
 }
 
 function renderBlock(block: string): string {
@@ -47,9 +47,10 @@ function renderBlock(block: string): string {
 	}
 
 	const heading = /^(#{1,3})\s+(.+)$/.exec(block);
-	if (heading && lines.length === 1) {
-		const level = heading[1].length + 1;
-		return `<h${level}>${renderInline(escapeHtml(heading[2]))}</h${level}>`;
+	const [, marks, headingText] = heading ?? [];
+	if (marks && headingText && lines.length === 1) {
+		const level = marks.length + 1;
+		return `<h${level}>${renderInline(escapeHtml(headingText))}</h${level}>`;
 	}
 
 	return `<p>${renderInline(escapeHtml(lines.join(' ')))}</p>`;
@@ -57,6 +58,7 @@ function renderBlock(block: string): string {
 
 export function renderMarkdown(source: string): string {
 	return source
+		.replace(/\uE000/g, '') // reserved as the link placeholder delimiter
 		.replace(/\r\n?/g, '\n')
 		.split(/\n{2,}/)
 		.map((block) => block.trim())

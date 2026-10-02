@@ -34,6 +34,10 @@ describe('renderMarkdown', () => {
 		expect(html).toContain('&lt;script&gt;');
 	});
 
+	it('cannot forge link placeholders with reserved characters', () => {
+		expect(renderMarkdown('a \uE0000\uE000 b')).toBe('<p>a 0 b</p>');
+	});
+
 	it('returns an empty string for blank input', () => {
 		expect(renderMarkdown('  \n\n ')).toBe('');
 	});
