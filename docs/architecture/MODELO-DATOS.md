@@ -112,6 +112,7 @@ export interface News {
   createdAt: string;
   publishedAt?: string;
   updatedAt: string;
+  indexPending?: boolean;   // publicada pero aún sin confirmar en el índice del Worker; el portal la reintenta
 }
 
 export type ChecklistItem =
@@ -165,6 +166,10 @@ export interface UserEvent {
 | `users/{uid}` | `UserProfile` | dueño; admins (solo agregados en comparador) | dueño |
 | `users/{uid}/events/{id}` | `UserEvent` | dueño | dueño (solo create) |
 | `config/public` | `{ feedWindowHours, rankingWeights, demoMode }` | autenticados | admins |
+
+`indexPending` lo escribe el portal en la misma transacción que publica (`true`) y lo borra al confirmar
+`/admin/index/upsert`; si el Worker falla queda en `true` y el portal ofrece «Reintentar indexación». Los clientes
+móviles pueden ignorarlo.
 
 Índices compuestos: `news` por (`workflow`, `publishedAt desc`) y (`workflow`, `importance`, `publishedAt desc`).
 

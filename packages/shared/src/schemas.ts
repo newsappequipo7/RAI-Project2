@@ -132,6 +132,7 @@ export const newsSchema = z
     createdAt: z.string(),
     publishedAt: z.string().optional(),
     updatedAt: z.string(),
+    indexPending: z.boolean().optional(),
   })
   .strict();
 
