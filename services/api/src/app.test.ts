@@ -101,6 +101,7 @@ describe('GET /health', () => {
       indexVersion: 0,
       flags: { killSwitch: false, imageGenEnabled: false, chatMode: 'full' },
       env: 'dev',
+      aiMode: 'mock',
     });
   });
 
@@ -117,7 +118,21 @@ describe('GET /health', () => {
       indexVersion: 7,
       flags: { killSwitch: true, imageGenEnabled: false, chatMode: 'retrieval_only' },
       env: 'demo',
+      aiMode: 'mock',
     });
+  });
+
+  it('reports aiMode live only when AI_MODE is exactly "live"', async () => {
+    const mode = async (aiMode?: string) => {
+      const response = await request('/health', {}, buildEnv({ AI_MODE: aiMode }));
+      return ((await response.json()) as { aiMode: string }).aiMode;
+    };
+
+    expect(await mode('live')).toBe('live');
+    expect(await mode('mock')).toBe('mock');
+    expect(await mode(undefined)).toBe('mock');
+    expect(await mode('LIVE')).toBe('mock'); // anything unexpected fails safe to mock
+    expect(await mode('')).toBe('mock');
   });
 
   it('falls back to default flags when the stored value is invalid', async () => {

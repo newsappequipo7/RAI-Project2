@@ -4,8 +4,10 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { validateNewsFields, type News, type NewsFieldName } from '@repo/shared';
 	import { Autosaver, type SaveStatus } from '$lib/autosave';
+	import ClaimsSection from '$lib/components/ClaimsSection.svelte';
 	import ClassificationSection from '$lib/components/ClassificationSection.svelte';
 	import ContentSection from '$lib/components/ContentSection.svelte';
+	import SourcesSection from '$lib/components/SourcesSection.svelte';
 	import { db } from '$lib/firebase';
 	import { loadNews, saveNewsFields } from '$lib/newsStore';
 
@@ -100,6 +102,8 @@
 
 	<ContentSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<ClassificationSection bind:news {issues} {touched} {readonly} onedit={edited} />
+	<SourcesSection bind:news {issues} {touched} {readonly} onedit={edited} />
+	<ClaimsSection bind:news {issues} {touched} {readonly} onedit={edited} />
 {/if}
 
 <style>

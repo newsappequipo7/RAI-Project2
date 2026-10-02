@@ -24,9 +24,11 @@ describe('pickEditableFields', () => {
 		const draft = createEmptyDraft('n1', 'uid-1', NOW);
 		expect(Object.keys(pickEditableFields(draft)).sort()).toEqual([
 			'body',
+			'claims',
 			'geo',
 			'importance',
 			'lead',
+			'sources',
 			'title',
 			'topics'
 		]);

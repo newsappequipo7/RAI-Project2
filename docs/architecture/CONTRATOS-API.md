@@ -11,7 +11,11 @@ sin detalles internos; el detalle va al log del Worker).
 ## 1. Salud y operación
 
 ### `GET /health`
-`200 { ok: true, indexVersion: number, flags: Flags, env: 'dev' | 'demo' }`
+`200 { ok: true, indexVersion: number, flags: Flags, env: 'dev' | 'demo', aiMode: 'mock' | 'live' }`
+
+`aiMode` refleja `AI_MODE` del Worker: `live` solo si vale exactamente `live`; cualquier otro valor (o ausente) es
+`mock`. Con `mock` el gateway devuelve fixtures y los embeddings son simulados, así que **reindexar en ese modo
+deja un índice inservible para búsqueda real**. El portal lo muestra en la página Índice.
 
 ### `GET /admin/costs` (admin)
 ```json

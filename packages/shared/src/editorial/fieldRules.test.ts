@@ -78,7 +78,9 @@ describe('validateNewsFields', () => {
     expect(codes(valid({ geo: geo({ countries: ['ZZ'] }) }))).toEqual(['geo_country_unknown']);
     expect(codes(valid({ geo: geo({ regions: ['atlantida'] }) }))).toEqual(['geo_region_unknown']);
     expect(codes(valid({ geo: geo({ scope: 'local' }) }))).toEqual(['geo_city_required']);
-    expect(codes(valid({ geo: geo({ cityIds: ['gt-guatemala'] }) }))).toEqual(['geo_city_not_local']);
+    expect(codes(valid({ geo: geo({ cityIds: ['gt-guatemala'] }) }))).toEqual([
+      'geo_city_not_local',
+    ]);
     expect(codes(valid({ geo: geo({ scope: 'local', cityIds: ['xx-nada'] }) }))).toEqual([
       'geo_city_unknown',
     ]);
@@ -96,7 +98,9 @@ describe('validateNewsFields', () => {
 describe('saveBlockers', () => {
   it('lets incomplete drafts be saved so autosave works', () => {
     expect(saveBlockers(createEmptyDraft('n1', 'uid-1', NOW))).toEqual([]);
-    expect(saveBlockers({ ...createEmptyDraft('n1', 'uid-1', NOW), workflow: 'en_revision' })).toEqual([]);
+    expect(
+      saveBlockers({ ...createEmptyDraft('n1', 'uid-1', NOW), workflow: 'en_revision' }),
+    ).toEqual([]);
   });
 
   it('blocks saving invalid data as published', () => {
@@ -109,5 +113,47 @@ describe('saveBlockers', () => {
     expect(
       saveBlockers(valid({ workflow: 'publicada', title: 'x'.repeat(TITLE_WARN_LENGTH + 5) })),
     ).toEqual([]);
+  });
+});
+
+describe('sources and claims integrity (F2-03)', () => {
+  const source = {
+    id: 's1',
+    name: 'Prensa Libre',
+    organization: 'Prensa Libre',
+    url: 'https://example.org/nota',
+    type: 'medio' as const,
+    accessedAt: '2026-10-02T00:00:00.000Z',
+    supports: 'confirma' as const,
+  };
+  const claim = {
+    id: 'c1',
+    text: 'Afirmación',
+    sourceIds: ['s1'],
+    status: 'respaldada' as const,
+    suggestedByAi: false,
+  };
+
+  it('accepts valid sources and claims', () => {
+    expect(codes(valid({ sources: [source], claims: [claim] }))).toEqual([]);
+  });
+
+  it('flags invalid source URLs, incomplete sources, and broken claims', () => {
+    expect(codes(valid({ sources: [{ ...source, url: 'nota' }] }))).toEqual(['source_url_invalid']);
+    expect(codes(valid({ sources: [{ ...source, organization: ' ' }] }))).toEqual([
+      'source_incomplete',
+    ]);
+    expect(codes(valid({ sources: [source], claims: [{ ...claim, text: ' ' }] }))).toEqual([
+      'claim_text_required',
+    ]);
+    expect(codes(valid({ claims: [claim] }))).toEqual(['claim_unknown_source']);
+  });
+
+  it('CA2: a broken source URL blocks saving even a draft, while other gaps do not', () => {
+    const draft = createEmptyDraft('n1', 'uid-1', NOW);
+    expect(
+      saveBlockers({ ...draft, sources: [{ ...source, url: 'nota' }] }).map((i) => i.code),
+    ).toEqual(['source_url_invalid']);
+    expect(saveBlockers({ ...draft, sources: [source], claims: [claim] })).toEqual([]);
   });
 });
