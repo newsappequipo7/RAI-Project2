@@ -134,3 +134,35 @@ describe('F2-03 sources and claims persistence', () => {
     expect((await loadNews(db, 'draft-3'))?.sources).toEqual([]);
   });
 });
+
+describe('F2-05 certainty, note and checklist persistence', () => {
+  it('stores them, and removes the note instead of writing undefined when it is emptied', async () => {
+    const draft = createEmptyDraft('draft-4', 'admin-a', NOW);
+    await setDoc(doc(db, 'news', draft.id), draft);
+
+    const checklist = { ...draft.checklist, fuentes_revisadas: true, imagen_etiquetada: true };
+    await saveNewsFields(db, {
+      ...draft,
+      certainty: 'disputada',
+      certaintyNote: 'El ministerio y el medio dan cifras distintas.',
+      checklist,
+    });
+
+    const stored = await loadNews(db, 'draft-4');
+    expect(stored).toMatchObject({
+      certainty: 'disputada',
+      certaintyNote: 'El ministerio y el medio dan cifras distintas.',
+      checklist,
+    });
+
+    await saveNewsFields(db, {
+      ...draft,
+      certainty: 'confirmada',
+      certaintyNote: undefined,
+      checklist,
+    });
+    const cleared = await loadNews(db, 'draft-4');
+    expect(cleared?.certainty).toBe('confirmada');
+    expect(cleared && 'certaintyNote' in cleared).toBe(false);
+  });
+});
