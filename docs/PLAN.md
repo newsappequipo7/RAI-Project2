@@ -113,7 +113,7 @@ por tarea al iniciar su fase.
 | F1-10 | Corpus semilla (40 noticias) y `pnpm seed` | ☑ | 13 pruebas en `shared` (cuotas, zod, reglas de certeza). CA1: `--target=emulator` (40 docs verificados) y `--target=prod` (40 docs escritos en `news/`). Corpus indexado con embeddings reales (índice v6, 40 noticias) |
 | F1-11 | Perfil y selector de ubicación | ☑ | commit `0bc805d`; 3 pruebas del perfil por defecto; probado en Expo Go (selección y cambio de ubicación). Evidencia guardada fuera del repo (Diego). |
 | F1-12 | CI y cierre de fase | ☑ | CI verde en `main`; comandos `.claude/commands`, 4 loops en `evidence/loops/`, handoff en `docs/handoffs/FASE-1.md`. CA2 (recorrido con Daniel) hecho |
-| F2-01 | Lista de noticias | ☐ | |
+| F2-01 | Lista de noticias | ◐ | commits `05e0241`…`100058e` (rama `fase-2/f2-01-news-list`); CA1 y CA2 cubiertos por `firebase-tests/newsList.test.ts` (40 semilla, tiempo real entre dos admins) y filtros por 6 pruebas en `apps/admin`. Falta recorrido manual de la UI con login real |
 | F2-02 | Editor de noticia | ☐ | |
 | F2-03 | Fuentes y afirmaciones | ☐ | |
 | F2-04 | Enriquecimiento con IA (Worker + UI) | ☐ | |
