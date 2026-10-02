@@ -2,11 +2,12 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { onDestroy, onMount } from 'svelte';
-	import { validateNewsFields, type News, type NewsFieldName } from '@repo/shared';
+	import { validateNewsFields, validatePublish, type News, type NewsFieldName } from '@repo/shared';
 	import { Autosaver, type SaveStatus } from '$lib/autosave';
 	import ClaimsSection from '$lib/components/ClaimsSection.svelte';
 	import ClassificationSection from '$lib/components/ClassificationSection.svelte';
 	import ContentSection from '$lib/components/ContentSection.svelte';
+	import PublishSection from '$lib/components/PublishSection.svelte';
 	import SourcesSection from '$lib/components/SourcesSection.svelte';
 	import { db } from '$lib/firebase';
 	import { loadNews, saveNewsFields } from '$lib/newsStore';
@@ -30,6 +31,7 @@
 	const readonly = $derived(news?.workflow === 'publicada');
 	const issues = $derived(news ? validateNewsFields(news) : []);
 	const pendingErrors = $derived(issues.filter((issue) => issue.severity === 'error').length);
+	const publishResult = $derived(news ? validatePublish(news) : { ok: false, errors: [] });
 
 	const saver = new Autosaver(
 		async () => {
@@ -104,6 +106,7 @@
 	<ClassificationSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<SourcesSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<ClaimsSection bind:news {issues} {touched} {readonly} onedit={edited} />
+	<PublishSection bind:news result={publishResult} {readonly} onchange={() => saver.schedule()} />
 {/if}
 
 <style>

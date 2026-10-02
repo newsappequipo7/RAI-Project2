@@ -130,7 +130,7 @@
 	}
 </script>
 
-<section>
+<section id="section-sources">
 	<h2>Fuentes</h2>
 
 	<p class="independence" class:enough={confirming >= 2} role="status">

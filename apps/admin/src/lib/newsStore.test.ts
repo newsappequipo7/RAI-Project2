@@ -2,6 +2,7 @@ import { createEmptyDraft } from '@repo/shared';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('firebase/firestore', () => ({
+	deleteField: vi.fn(() => '__delete__'),
 	doc: vi.fn(),
 	getDoc: vi.fn(),
 	updateDoc: vi.fn()
@@ -24,6 +25,9 @@ describe('pickEditableFields', () => {
 		const draft = createEmptyDraft('n1', 'uid-1', NOW);
 		expect(Object.keys(pickEditableFields(draft)).sort()).toEqual([
 			'body',
+			'certainty',
+			'certaintyNote',
+			'checklist',
 			'claims',
 			'geo',
 			'importance',
@@ -77,6 +81,17 @@ describe('saveNewsFields', () => {
 		expect(written.title).toBe('');
 		expect(typeof written.updatedAt).toBe('string');
 		expect(written).not.toHaveProperty('workflow');
+	});
+
+	it('deletes an emptied certaintyNote instead of writing undefined', async () => {
+		vi.mocked(updateDoc).mockClear();
+		const draft = createEmptyDraft('n1', 'uid-1', NOW);
+		await saveNewsFields(db, { ...draft, certainty: 'disputada', certaintyNote: undefined });
+
+		const written = vi.mocked(updateDoc).mock.calls[0]?.[1] as unknown as Record<string, unknown>;
+		expect(written.certainty).toBe('disputada');
+		expect(written.certaintyNote).toBe('__delete__');
+		expect(Object.values(written)).not.toContain(undefined);
 	});
 
 	it('refuses to store invalid data as published (CA2)', async () => {

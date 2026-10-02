@@ -60,7 +60,7 @@
 	}
 </script>
 
-<section>
+<section id="section-classification">
 	<h2>Clasificación</h2>
 
 	<fieldset disabled={readonly}>
