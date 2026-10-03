@@ -24,8 +24,13 @@ portada. Si se renderiza en la app, `image.kind = 'portada_generada'` y `url = '
 `creator`, `license`, `licenseUrl`, `sourceUrl`. Excluir licencias `NC` si hubiera cualquier duda de uso. El pie en la
 app siempre dice "Imagen de archivo" para que no se interprete como foto del hecho.
 
-Almacenamiento de imágenes subidas: decidir en F2 entre Cloudinary (plan gratuito) o enlazar la URL de origen.
-Firebase Storage exige plan Blaze en proyectos nuevos; no usarlo salvo ADR.
+Almacenamiento de imágenes subidas: Cloudinary plan gratuito con *upload preset sin firma* (ADR-010); también se
+puede enlazar la URL de origen con crédito. Firebase Storage exige plan Blaze en proyectos nuevos; no usarlo salvo ADR.
+Configuración del preset y variables `VITE_CLOUDINARY_*`: ver ADR-010.
+
+Reglas al publicar (las aplica `validatePublish`): toda imagen lleva crédito y texto alternativo; foto real y licencia
+libre llevan URL, licencia y enlace de origen; la portada generada no lleva URL; la ilustración IA lleva su
+`aiDisclosure`.
 
 ## 4. Ilustración con IA (último recurso)
 

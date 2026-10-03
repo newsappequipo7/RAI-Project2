@@ -220,3 +220,24 @@ export interface IndexSearchResponse {
   indexVersion: number;
   hits: IndexSearchHit[];
 }
+
+export interface ImageSearchResult {
+  thumbUrl: string;
+  url: string;
+  title: string;
+  creator: string;
+  license: string; // "CC BY 4.0"
+  licenseUrl: string;
+  sourceUrl: string; // página de origen (Openverse/Commons)
+}
+
+export interface ImageSearchResponse {
+  results: ImageSearchResult[];
+}
+
+export interface ImageGenerateResponse {
+  url: string;
+  model: string;
+  costUsd: number;
+  aiDisclosure: string;
+}

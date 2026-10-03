@@ -30,6 +30,7 @@ describe('pickEditableFields', () => {
 			'checklist',
 			'claims',
 			'geo',
+			'image',
 			'importance',
 			'lead',
 			'sources',

@@ -1,12 +1,16 @@
 import {
   budgetSnapshotRequestSchema,
   flagsPatchSchema,
+  imageGenerateRequestSchema,
+  imageSearchRequestSchema,
   indexRebuildRequestSchema,
   indexRemoveRequestSchema,
   indexSearchRequestSchema,
   indexUpsertRequestSchema,
+  wrapImagePrompt,
   type AiSelftestResponse,
   type BudgetSnapshot,
+  type ImageSearchResponse,
   type IndexRemoveResponse,
   type IndexSearchResponse,
   type IndexUpsertResponse,
@@ -15,7 +19,9 @@ import { Hono } from 'hono';
 import { gateway } from '../ai/gateway';
 import { loadCosts } from '../costs';
 import type { AppEnv } from '../env';
+import { providerError } from '../errors';
 import { parseJsonBody } from '../http';
+import { ImageSearchFailed, searchFreeImages } from '../images/search';
 import { readFlags, readIndexVersion, writeFlags } from '../kv';
 import { rebuild, remove, upsert } from '../rag/index';
 import { searchIndex } from '../rag/search';
@@ -67,6 +73,30 @@ export const adminRoutes = new Hono<AppEnv>()
 
     return c.json(body);
   })
+  .post('/image/search', async (c) => {
+    const { query } = await parseJsonBody(c, imageSearchRequestSchema);
+
+    try {
+      const body: ImageSearchResponse = { results: await searchFreeImages(query) };
+      return c.json(body);
+    } catch (error) {
+      if (error instanceof ImageSearchFailed) throw providerError(error.message);
+      throw error;
+    }
+  })
+
+  .post('/image/generate', async (c) => {
+    const { prompt } = await parseJsonBody(c, imageGenerateRequestSchema);
+
+    // The gateway is the only door: it enforces the flag, the kill switch and the budget levels.
+    await gateway.run(
+      'image_generate',
+      { kind: 'text', prompt: wrapImagePrompt(prompt), maxTokens: 1 },
+      { env: c.env, uid: c.var.uid },
+    );
+    throw providerError('Image generation is not implemented');
+  })
+
   .post('/index/upsert', async (c) => {
     const { news } = await parseJsonBody(c, indexUpsertRequestSchema);
     const result = await upsert(c.env, news);

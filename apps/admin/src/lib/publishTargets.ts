@@ -1,9 +1,6 @@
 import type { PublishField } from '@repo/shared';
 
-/**
- * Element each publish error points to, so the editor can jump to it. `null` means that section
- * does not exist yet (the image picker arrives with F2-07).
- */
+/** Element each publish error points to, so the editor can jump to it (`null` = no section). */
 export const PUBLISH_FIELD_TARGETS: Record<PublishField, string | null> = {
 	title: 'title',
 	lead: 'lead',
@@ -13,7 +10,7 @@ export const PUBLISH_FIELD_TARGETS: Record<PublishField, string | null> = {
 	importance: 'section-classification',
 	sources: 'section-sources',
 	claims: 'section-claims',
-	image: null,
+	image: 'section-image',
 	certainty: 'certainty-options',
 	certaintyNote: 'certainty-note',
 	checklist: 'section-checklist'
