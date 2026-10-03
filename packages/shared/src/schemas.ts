@@ -221,3 +221,19 @@ export const indexSearchRequestSchema = z
     topK: z.number().int().min(1).max(MAX_SEARCH_TOP_K).optional(),
   })
   .strict();
+
+export const IMAGE_SEARCH_MIN_QUERY = 2;
+export const IMAGE_SEARCH_MAX_QUERY = 200;
+export const IMAGE_PROMPT_MIN = 10;
+export const IMAGE_PROMPT_MAX = 500;
+
+export const imageSearchRequestSchema = z
+  .object({ query: z.string().trim().min(IMAGE_SEARCH_MIN_QUERY).max(IMAGE_SEARCH_MAX_QUERY) })
+  .strict();
+
+export const imageGenerateRequestSchema = z
+  .object({
+    newsId: z.string().min(1),
+    prompt: z.string().trim().min(IMAGE_PROMPT_MIN).max(IMAGE_PROMPT_MAX),
+  })
+  .strict();

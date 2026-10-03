@@ -1,3 +1,4 @@
+import { GENERATED_COVER_CREDIT } from './cover/spec';
 import type { Certainty, Claim, IndexInput, News, NewsGeo, NewsImage, Source } from './types';
 
 export interface SeedSourceRef {
@@ -30,7 +31,6 @@ interface SourceProfile {
 const MS_PER_HOUR = 3_600_000;
 const SEED_EDITOR_UID = 'seed-script';
 const SEED_SOURCE_BASE_URL = 'https://example.org/fuentes';
-const GENERATED_COVER_CREDIT = 'Portada generada por la app (no es una fotografía)';
 
 // Every outlet and institution below is fictional; the corpus is test data.
 export const SEED_SOURCES: Record<string, SourceProfile> = {
