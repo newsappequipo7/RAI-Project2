@@ -4,6 +4,8 @@ import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createEmptyDraft } from '../packages/shared/src/editorial/draft';
 import { buildCoverImage, buildFreeLicenseImage } from '../packages/shared/src/editorial/images';
+import { RevisionError } from '../packages/shared/src/editorial/revision';
+import { listVersions, retractNews, saveRevision } from '../apps/admin/src/lib/revisionFlow';
 import {
   buildSource,
   createClaim,
@@ -255,6 +257,7 @@ describe('F2-06 publish and index', () => {
   it('CA2: with the Worker down the mark stays; the retry clears it', async () => {
     const deps = (upsert: () => Promise<{ indexVersion: number }>) => ({
       upsert,
+      remove: () => Promise.reject(new Error('not used for a published news')),
       clearPending: (id: string) => clearIndexPending(db, id),
     });
     const published = (await loadNews(db, 'pub-a')) as News;
@@ -343,5 +346,111 @@ describe('F2-07 images', () => {
     await expect(publishNews(db, 'img-nocredit', 'admin-a')).rejects.toBeInstanceOf(
       PublishBlockedError,
     );
+  });
+});
+
+describe('F2-08 corrections and retraction', () => {
+  const publishAs = async (id: string) => {
+    const news = publishable(id);
+    await setDoc(doc(db, 'news', id), news);
+    return publishNews(db, id, 'admin-a', new Date('2026-10-03T10:00:00Z'));
+  };
+  const entry = { kind: 'correccion' as const, summary: 'Se corrigió el titular.' };
+
+  it('saves an edit as version 2 with its correction, keeping version 1 (CA2)', async () => {
+    const v1 = await publishAs('rev-a');
+    const edited = { ...v1, title: 'Titular corregido' };
+
+    const v2 = await saveRevision(
+      db,
+      'rev-a',
+      edited,
+      entry,
+      'admin-b',
+      new Date('2026-10-04T10:00:00Z'),
+    );
+    expect(v2).toMatchObject({ version: 2, title: 'Titular corregido', indexPending: true });
+
+    const stored = await loadNews(db, 'rev-a');
+    expect(stored?.corrections).toEqual([
+      {
+        at: '2026-10-04T10:00:00.000Z',
+        kind: 'correccion',
+        summary: entry.summary,
+        editorUid: 'admin-b',
+      },
+    ]);
+    expect(stored?.publishedBy).toBe('admin-a');
+
+    const versions = await listVersions(db, 'rev-a');
+    expect(versions.map((item) => item.version)).toEqual([2, 1]);
+    expect(versions.map((item) => item.title)).toEqual(['Titular corregido', 'Titular']);
+  });
+
+  it('rejects a missing summary, no changes and invalid data, leaving no new version', async () => {
+    const v1 = await publishAs('rev-b');
+    const attempt = (edited: News, summary = entry.summary) =>
+      saveRevision(db, 'rev-b', edited, { kind: 'correccion', summary }, 'admin-a');
+
+    await expect(attempt({ ...v1, title: 'Otro' }, '  ')).rejects.toMatchObject({
+      code: 'summary_invalid',
+    });
+    await expect(attempt({ ...v1 })).rejects.toMatchObject({ code: 'no_changes' });
+    await expect(attempt({ ...v1, title: '' })).rejects.toBeInstanceOf(PublishBlockedError);
+
+    expect((await loadNews(db, 'rev-b'))?.version).toBe(1);
+    expect((await getDoc(doc(db, 'news', 'rev-b', 'versions', '2'))).exists()).toBe(false);
+  });
+
+  it('CA1: retracting keeps the news with its correction, and the index entry is removed', async () => {
+    const v1 = await publishAs('rev-c');
+
+    const retracted = await retractNews(db, 'rev-c', 'Los datos eran falsos.', 'admin-b');
+    expect(retracted).toMatchObject({ certainty: 'retractada', version: 2, title: v1.title });
+
+    const stored = await loadNews(db, 'rev-c');
+    expect(stored).toMatchObject({
+      workflow: 'publicada',
+      certainty: 'retractada',
+      title: v1.title,
+    });
+    expect(stored?.corrections.at(-1)).toMatchObject({
+      kind: 'retractacion',
+      summary: 'Los datos eran falsos.',
+    });
+    expect((await listVersions(db, 'rev-c')).map((item) => item.certainty)).toEqual([
+      'retractada',
+      'en_desarrollo',
+    ]);
+
+    const removed: string[] = [];
+    const outcome = await indexNews(stored as News, {
+      upsert: () => Promise.reject(new Error('must not upsert a retracted news')),
+      remove: async (id) => {
+        removed.push(id);
+        return { indexVersion: 30 };
+      },
+      clearPending: (id) => clearIndexPending(db, id),
+    });
+    expect(outcome).toEqual({ status: 'indexed', indexVersion: 30 });
+    expect(removed).toEqual(['rev-c']);
+    const cleared = await loadNews(db, 'rev-c');
+    expect(cleared && 'indexPending' in cleared).toBe(false);
+  });
+
+  it('cannot retract twice, edit a retracted news, or retract a draft', async () => {
+    await expect(retractNews(db, 'rev-c', 'otra vez', 'admin-a')).rejects.toMatchObject({
+      code: 'already_retracted',
+    });
+    const retracted = (await loadNews(db, 'rev-c')) as News;
+    await expect(
+      saveRevision(db, 'rev-c', { ...retracted, title: 'Editada' }, entry, 'admin-a'),
+    ).rejects.toBeInstanceOf(RevisionError);
+
+    const draft = publishable('rev-draft');
+    await setDoc(doc(db, 'news', draft.id), draft);
+    await expect(retractNews(db, 'rev-draft', 'x', 'admin-a')).rejects.toMatchObject({
+      code: 'not_published',
+    });
   });
 });

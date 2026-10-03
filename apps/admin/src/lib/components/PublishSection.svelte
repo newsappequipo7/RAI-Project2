@@ -14,6 +14,7 @@
 		result,
 		readonly,
 		publishing = false,
+		canPublish = true,
 		onchange,
 		onpublish
 	}: {
@@ -21,6 +22,8 @@
 		result: PublishValidation;
 		readonly: boolean;
 		publishing?: boolean;
+		/** False while correcting an already published news: saving goes through a correction. */
+		canPublish?: boolean;
 		onchange: () => void;
 		onpublish?: () => void;
 	} = $props();
@@ -135,15 +138,17 @@
 		{/if}
 	</div>
 
-	<div class="actions">
-		<button
-			type="button"
-			disabled={readonly || publishing || !result.ok || !onpublish}
-			onclick={onpublish}
-		>
-			{publishing ? 'Publicando…' : 'Publicar'}
-		</button>
-	</div>
+	{#if canPublish}
+		<div class="actions">
+			<button
+				type="button"
+				disabled={readonly || publishing || !result.ok || !onpublish}
+				onclick={onpublish}
+			>
+				{publishing ? 'Publicando…' : 'Publicar'}
+			</button>
+		</div>
+	{/if}
 </section>
 
 <style>

@@ -157,10 +157,12 @@ Opciones:
   hotlinking y no sirve para fotos propias del equipo.
 - C. Cloudinary plan gratuito con *upload preset sin firma* limitado a imágenes: el navegador sube directo y obtiene una
   URL estable (CDN). No hay API secret en el cliente.
-Decisión: C, manteniendo B como alternativa (la pestaña acepta también una URL). El preset debe crearse así en
-Cloudinary → Settings → Upload → Upload presets: *Signing mode: Unsigned*, *Folder: news*, *Allowed formats:
-jpg, png, webp*, *Use filename: off*, *Overwrite: off*, *Unique filename: on*. La app valida además tipo `image/*` y
-máximo 5 MB antes de subir. Variables públicas del portal: `VITE_CLOUDINARY_CLOUD_NAME` y
+Decisión: C, manteniendo B como alternativa (la pestaña acepta también una URL). El preset (`news_unsigned`) se crea en Cloudinary → Settings → Upload → Upload presets con: *Signing mode:
+Unsigned*, *Asset folder: news*, *Generated public ID: Auto-generate an unguessable public ID value* (los nombres de
+archivo no se usan como ID), *Overwrite: false* y, en la pestaña *Advanced*, *Allowed formats: jpg,png,webp* si la
+cuenta lo ofrece (las demás pestañas se dejan por defecto: sin moderación ni análisis). La app valida además tipo
+JPG/PNG/WebP y máximo 5 MB antes de subir. Verificado el 2026-10-02 con una subida sin firma desde `curl`: respondió con
+URL `res.cloudinary.com/<cloud>/…` y `asset_folder: news`. Variables públicas del portal: `VITE_CLOUDINARY_CLOUD_NAME` y
 `VITE_CLOUDINARY_UPLOAD_PRESET` (no son secretos; solo nombres en `.env.example`).
 Consecuencias: quien conozca el nombre del preset puede subir imágenes a nuestra cuenta (acotado por formatos, carpeta y
 cuota gratuita); si hay abuso se rota el preset. Si Cloudinary no está configurado el portal sigue funcionando con URL
