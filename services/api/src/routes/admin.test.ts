@@ -96,6 +96,59 @@ describe('GET /admin/costs', () => {
     expect(body.avgCostPerCall.chat_answer).toBeUndefined();
   });
 
+  it('matches an independent read of the ledger rows (F2-09 CA1)', async () => {
+    const tasks = ['embed', 'enrich', 'chat_answer', 'digest'];
+    const outcomes = ['ok', 'ok', 'ok', 'error', 'abstained', 'blocked_budget'];
+    for (let index = 0; index < 60; index += 1) {
+      insertCall({
+        id: `row-${index}`,
+        ts: `2026-09-${String(20 + (index % 9)).padStart(2, '0')}T${String(index % 24).padStart(2, '0')}:00:00.000Z`,
+        task: tasks[index % tasks.length] as string,
+        cost: ((index * 7) % 13) / 1000,
+        outcome: outcomes[index % outcomes.length] as string,
+        cached: index % 5 === 0 ? 1 : 0,
+      });
+    }
+
+    const rows = testDb.sqlite.prepare('SELECT * FROM ai_calls').all() as {
+      ts: string;
+      task: string;
+      cost_usd: number;
+      cached: number;
+      outcome: string;
+    }[];
+    const sum = (items: { cost_usd: number }[]) => items.reduce((total, row) => total + row.cost_usd, 0);
+
+    const body = (await (await adminRequest('/admin/costs')).json()) as {
+      totalUsd: number;
+      byTask: Record<string, number>;
+      byDay: { day: string; usd: number }[];
+      calls: { total: number; cached: number; abstained: number; blocked: number };
+      avgCostPerCall: Record<string, number>;
+    };
+
+    expect(body.totalUsd).toBeCloseTo(sum(rows), 10);
+    for (const task of tasks) {
+      expect(body.byTask[task]).toBeCloseTo(sum(rows.filter((row) => row.task === task)), 10);
+    }
+    const days = [...new Set(rows.map((row) => row.ts.slice(0, 10)))].sort();
+    expect(body.byDay.map((entry) => entry.day)).toEqual(days);
+    for (const entry of body.byDay) {
+      expect(entry.usd).toBeCloseTo(sum(rows.filter((row) => row.ts.startsWith(entry.day))), 10);
+    }
+    expect(body.byDay.reduce((total, entry) => total + entry.usd, 0)).toBeCloseTo(body.totalUsd, 10);
+    expect(body.calls).toEqual({
+      total: rows.length,
+      cached: rows.filter((row) => row.cached === 1).length,
+      abstained: rows.filter((row) => row.outcome === 'abstained').length,
+      blocked: rows.filter((row) => row.outcome === 'blocked_budget').length,
+    });
+    for (const task of tasks) {
+      const paid = rows.filter((row) => row.task === task && row.outcome === 'ok' && row.cached === 0);
+      if (paid.length > 0) expect(body.avgCostPerCall[task]).toBeCloseTo(sum(paid) / paid.length, 10);
+    }
+  });
+
   it('reports the budget level and the latest provider balance', async () => {
     insertCall({ id: '1', ts: '2026-09-28T10:00:00.000Z', task: 'chat_answer', cost: 11.2 });
     await postJson('/admin/budget-snapshot', { providerBalanceUsd: 8.5 });
