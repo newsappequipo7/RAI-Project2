@@ -1,6 +1,7 @@
 import {
 	GoogleAuthProvider,
 	onAuthStateChanged,
+	signInWithEmailAndPassword,
 	signInWithPopup,
 	signOut,
 	type User
@@ -33,6 +34,11 @@ class Session {
 
 	async login() {
 		await signInWithPopup(auth, new GoogleAuthProvider());
+	}
+
+	/** Local development and e2e only: signs in against the Auth emulator, with no Google popup. */
+	async loginWithEmulator(email: string, password: string) {
+		await signInWithEmailAndPassword(auth, email, password);
 	}
 
 	async logout() {

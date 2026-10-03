@@ -54,3 +54,23 @@ jobs:
         run: pnpm test
         env:
           AI_MODE: mock
+
+      - name: Install Playwright browser
+        run: pnpm -F e2e exec playwright install --with-deps chromium
+
+      - name: E2E (editorial flow against Firebase emulators, AI mock, no credits)
+        run: pnpm -F e2e run e2e
+        env:
+          AI_MODE: mock
+          CI: true
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          retention-days: 7
+

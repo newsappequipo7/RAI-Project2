@@ -4,6 +4,7 @@ packages:
   - "packages/*"
   - "evals"
   - "firebase-tests"
+  - "e2e"
 allowBuilds:
   '@firebase/util': true
   esbuild: true

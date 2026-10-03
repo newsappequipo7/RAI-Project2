@@ -12,3 +12,11 @@ coverage
 .env.local
 .dev.vars
 .DS_Store
+
+# Playwright
+e2e/test-results/
+e2e/playwright-report/
+firestore-debug.log
+ui-debug.log
+auth-debug.log
+
