@@ -82,6 +82,7 @@ pnpm -F mobile start           # Expo (usar --tunnel en redes de la U)
 pnpm -F admin dev              # portal en localhost:5173
 pnpm -F api dev                # Worker local con wrangler
 pnpm -F api deploy
+pnpm -F e2e run e2e             # e2e del portal con Playwright contra emuladores (1ª vez: pnpm -F e2e run install:browsers)
 pnpm evals:chat                # corre el set dorado del chat (gasta créditos, ver PRESUPUESTO-IA.md §5)
 pnpm lint && pnpm typecheck
 ```

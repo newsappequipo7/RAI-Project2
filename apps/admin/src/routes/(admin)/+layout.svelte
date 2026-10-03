@@ -1,8 +1,23 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { USE_AUTH_EMULATOR } from '$lib/firebase';
 	import { session } from '$lib/session.svelte';
 
 	let { children } = $props();
+
+	let emulatorEmail = $state('');
+	let emulatorPassword = $state('');
+	let emulatorError = $state('');
+
+	async function emulatorLogin(event: SubmitEvent) {
+		event.preventDefault();
+		emulatorError = '';
+		try {
+			await session.loginWithEmulator(emulatorEmail, emulatorPassword);
+		} catch (error) {
+			emulatorError = error instanceof Error ? error.message : 'No se pudo entrar';
+		}
+	}
 </script>
 
 {#if session.status === 'loading'}
@@ -11,6 +26,15 @@
 	<main class="centered">
 		<h1>Portal de noticias</h1>
 		<button onclick={() => session.login()}>Continuar con Google</button>
+		{#if USE_AUTH_EMULATOR}
+			<form class="emulator" onsubmit={emulatorLogin}>
+				<p>Entorno de pruebas (emulador de Auth)</p>
+				<label>Correo <input type="email" bind:value={emulatorEmail} /></label>
+				<label>Contraseña <input type="password" bind:value={emulatorPassword} /></label>
+				<button type="submit">Entrar con el emulador</button>
+				{#if emulatorError}<p role="alert">{emulatorError}</p>{/if}
+			</form>
+		{/if}
 	</main>
 {:else if session.status === 'denied'}
 	<main class="centered">
@@ -48,6 +72,15 @@
 		min-height: 100vh;
 		padding: 2rem;
 		text-align: center;
+	}
+
+	.emulator {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1rem;
+		border: 1px dashed #bbb;
+		border-radius: 4px;
 	}
 
 	.uid {
