@@ -143,3 +143,41 @@ y USD 5 por millón de salida; verificar en https://platform.claude.com/docs/en/
 Consecuencias: costo estimado ≈ USD 0.005 por respuesta de chat y ≈ USD 0.004 por enriquecimiento (ver
 PRESUPUESTO-IA.md §4). Si las evals muestran calidad insuficiente en español, evaluar Sonnet solo para `chat_answer`
 con un loop que mida costo vs calidad.
+
+---
+
+## ADR-010 — Fotos subidas en Cloudinary (plan gratuito, upload preset sin firma)
+Estado: aceptada
+Fecha: 2026-10-02 · Autor: Daniel Dubón (Fase 2, F2-07)
+Contexto: el editor necesita subir fotos reales. Firebase Storage exige plan Blaze en proyectos nuevos y el repo es
+público, así que no puede haber secretos de subida en el cliente (regla de oro 6).
+Opciones:
+- A. Firebase Storage: descartado, requiere tarjeta (Blaze).
+- B. Solo enlazar la URL de origen con crédito: costo 0 y sin cuentas, pero la imagen puede desaparecer o bloquear el
+  hotlinking y no sirve para fotos propias del equipo.
+- C. Cloudinary plan gratuito con *upload preset sin firma* limitado a imágenes: el navegador sube directo y obtiene una
+  URL estable (CDN). No hay API secret en el cliente.
+Decisión: C, manteniendo B como alternativa (la pestaña acepta también una URL). El preset debe crearse así en
+Cloudinary → Settings → Upload → Upload presets: *Signing mode: Unsigned*, *Folder: news*, *Allowed formats:
+jpg, png, webp*, *Use filename: off*, *Overwrite: off*, *Unique filename: on*. La app valida además tipo `image/*` y
+máximo 5 MB antes de subir. Variables públicas del portal: `VITE_CLOUDINARY_CLOUD_NAME` y
+`VITE_CLOUDINARY_UPLOAD_PRESET` (no son secretos; solo nombres en `.env.example`).
+Consecuencias: quien conozca el nombre del preset puede subir imágenes a nuestra cuenta (acotado por formatos, carpeta y
+cuota gratuita); si hay abuso se rota el preset. Si Cloudinary no está configurado el portal sigue funcionando con URL
+externa. Vigilar la cuota del plan gratuito antes de la demo.
+Evidencia: `apps/admin/src/lib/cloudinary.ts` y sus pruebas; captura de la pestaña «Subir foto real» (F2-07).
+
+## ADR-011 — Ilustración con IA: endpoint y flag listos, sin proveedor de imágenes
+Estado: aceptada
+Fecha: 2026-10-02 · Autor: Daniel Dubón (Fase 2, F2-07)
+Contexto: IMAGENES.md §4 define la opción 4 (ilustración IA, último recurso, deshabilitada por defecto), pero el único
+proveedor aprobado (Anthropic, ADR-009) no genera imágenes y PRESUPUESTO-IA.md §3 marca `image_generate` como «no aplica».
+Decisión: se implementan todas las salvaguardas sin elegir un proveedor: `POST /admin/image/generate` pasa por el
+gateway (flag `imageGenEnabled`, kill switch y umbrales), el prompt del editor se envuelve con restricciones fijas
+(`wrapImagePrompt`) y la pestaña solo aparece con el flag activo. Con el flag encendido el gateway responde
+`provider_error` («not implemented») hasta que otro ADR adopte un proveedor y su costo.
+Consecuencias: la opción 3 (portada tipográfica) sigue siendo la recomendada y la única automática sin foto. El sello
+incrustado en la imagen se implementa cuando exista una imagen real que sellar. Para activar la opción 4 hace falta:
+ADR con proveedor, precio en `pricing.ts` y presupuesto aprobado.
+Evidencia: pruebas del gateway («image generation») y de la ruta (flag apagado → `forbidden`).
+

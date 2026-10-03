@@ -60,12 +60,15 @@ Response `200 EnrichSuggestion` (tipo en MODELO-DATOS.md). Una sola llamada de I
 hash de contenido ya fue enriquecido, devuelve la sugerencia cacheada (costo 0).
 
 ### `POST /admin/image/search` (admin)
-Request `{ query: string }` → `200 { results: { thumbUrl, url, title, creator, license, licenseUrl, sourceUrl }[] }`.
-Consulta Openverse y Wikimedia Commons. Sin IA.
+Request `{ query: string (2–200 caracteres) }` → `200 { results: { thumbUrl, url, title, creator, license, licenseUrl,
+sourceUrl }[] }`. Consulta Openverse (solo licencias que permiten uso comercial, sin `NC`) y Wikimedia Commons en
+paralelo, hasta 12 resultados de cada una, y descarta los que no traen URLs http(s). Si una fuente falla se devuelven los
+de la otra; si fallan las dos, `502 provider_error`. Sin IA, costo 0. Tipos: `ImageSearchResponse` en `packages/shared`.
 
 ### `POST /admin/image/generate` (admin, deshabilitado por defecto)
-Request `{ newsId, prompt }` → `200 { url, model, costUsd, aiDisclosure }`. Rechaza con `forbidden` si
-`flags.imageGenEnabled = false`. El prompt se envuelve con restricciones fijas (ver IMAGENES.md §4).
+Request `{ newsId, prompt (10–500 caracteres) }` → `200 { url, model, costUsd, aiDisclosure }`. Rechaza con `forbidden` si
+`flags.imageGenEnabled = false` (también por umbral de presupuesto o kill switch). Con el flag encendido responde
+`502 provider_error` hasta que un ADR adopte un proveedor de imágenes (ADR-011). El prompt se envuelve con restricciones fijas (ver IMAGENES.md §4).
 
 ## 3. Índice RAG
 
