@@ -81,7 +81,7 @@ pnpm -F shared test            # pruebas del motor de ranking y esquemas
 pnpm -F mobile start           # Expo (usar --tunnel en redes de la U)
 pnpm -F admin dev              # portal en localhost:5173
 pnpm -F api dev                # Worker local con wrangler
-pnpm -F api deploy
+pnpm -F api run deploy         # con `run`: `pnpm -F api deploy` choca con el comando interno de pnpm
 pnpm -F e2e run e2e             # e2e del portal con Playwright contra emuladores (1ª vez: pnpm -F e2e run install:browsers)
 pnpm seed:editorial --check     # valida los 18 borradores del corpus editorial (F2-11); sin --check, --target=emulator|prod
 pnpm evals:chat                # corre el set dorado del chat (gasta créditos, ver PRESUPUESTO-IA.md §5)

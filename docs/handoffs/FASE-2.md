@@ -20,7 +20,14 @@ Qué cambió respecto a lo escrito en `docs/architecture/` y por qué. Confirmar
 Qué no quedó bien, con severidad y sugerencia.
 
 ## 6. Gasto de IA de la fase
-Total según ledger, total según panel del proveedor, costo medio por tarea.
+Tope de la fase: USD 3.00. Datos al 2026-10-03 (se completan al cerrar la fase).
+- Según el ledger (`/costs`): USD 0.0160 en total, de los cuales `enrich` USD 0.0159 (5 llamadas pagadas y 2
+  cacheadas). El resto es la llamada de prueba de la Fase 1.
+- Según la consola de Anthropic: 6 810 tokens de entrada y 1 821 de salida, que a USD 1 / 5 por millón dan USD 0.0159;
+  saldo USD 19.98. Diferencia con el ledger menor a 1 %. El panel de `/costs` puede marcar la alerta de más de 10 % por el
+  redondeo a centavos de la consola con gastos tan pequeños: la comparación válida es por tokens.
+- Costo medio por tarea: `enrich` USD 0.003183 por llamada pagada (≈ 20 % menos que el supuesto de USD 0.0040).
+  Proyección: 80 noticias ≈ USD 0.25.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar
 Top 3 cosas.

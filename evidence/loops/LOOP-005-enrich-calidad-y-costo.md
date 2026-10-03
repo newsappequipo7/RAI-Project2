@@ -60,7 +60,7 @@ quién tiene razón.
    ponderar la cercanía al lector.
 2. Haití: devolvió alcance `nacional` para un hecho con organismos internacionales.
 3. La cumbre recibió `clima-desastres` en lugar de `medio-ambiente`, que es lo que eligió el editor.
-4. Pendiente de verificar contra el cuerpo (no se pudo comprobar en la conversación): "incluye financiamiento para la
+4. Se dudó de estas afirmaciones porque la revisión se hizo sobre capturas (verificadas después contra el cuerpo: están, ver «Corrección / decisión»): "incluye financiamiento para la
    transición energética" y "organizaciones ambientales piden plazos más estrictos" (cumbre); "ambas partes explican
    metodologías diferentes" (retornados); "se pide a conductores planificar sus desplazamientos" (cierres viales).
    Si no están en el texto, son datos añadidos y violan la regla de resumen sin datos nuevos.
@@ -72,12 +72,25 @@ no indica un error del ledger.
 
 ## Corrección / decisión
 - Mantener `enrich.v1` sin cambios: cumple las reglas estructurales y el costo está por debajo de lo presupuestado.
-- Importancia: seguir tratándola como sugerencia que la persona decide. Probar en una versión siguiente
-  (`enrich.v2`) darle al prompt la rúbrica de importancia por zona del lector. **Pendiente** de decidir; no se ha
-  hecho ningún cambio de prompt.
-- Alcance: revisar en `enrich.v2` la regla que distingue `nacional` de `internacional`. **Pendiente.**
-- Verificar las cuatro afirmaciones del hallazgo 4 contra el cuerpo y, si fallan, endurecer la instrucción de "solo lo
-  que está en el texto". **Pendiente.**
+- Verificación de las cuatro afirmaciones del hallazgo 4 (hecha el 2026-10-03 contra `packages/shared/fixtures/news.json`,
+  que es el texto exacto que recibió el modelo): **las cuatro están en el cuerpo, casi literales** («El acuerdo incluye
+  financiamiento para la transición energética de países en desarrollo», «Organizaciones ambientales piden plazos más
+  estrictos» en `n-glo-001`; «Ambas partes explican metodologías diferentes» en `n-gt-007`; «Se pide a los conductores
+  planificar sus desplazamientos» en `n-gt-002`). En esta muestra el modelo no añadió datos, así que no se endurece el
+  prompt con «solo lo que está en el texto». Límite: el corpus semilla son textos cortos y sintéticos; con noticias
+  reales largas conviene repetir la comprobación.
+- Importancia: **no** se le da al prompt una rúbrica «por zona del lector». `RELEVANCIA.md` §1 define la importancia
+  como propiedad de la noticia «igual para todos» y calcula la cercanía al lector aparte, en código (ADR-002); que el
+  modelo no la pondere es el comportamiento correcto. Las diferencias con la editorial (p. ej. Haití 3 vs 1, donde un
+  brote de cólera encaja en el nivel 3 «salud pública») son desacuerdos de criterio que la tabla «La IA sugirió, se
+  publicó» deja a la vista. En `enrich.v2` solo se aclara que «su zona» en las definiciones es la zona que afecta la
+  noticia, no la del lector.
+- Alcance: **hueco real del prompt.** `enrich.v1` lista los alcances sin definirlos, mientras el editor del portal sí
+  los explica; Haití (brote con organismos internacionales, editorial `internacional`) salió `nacional`. `enrich.v2`
+  agrega esas definiciones. **Pendiente de medir** repitiendo las mismas 5 noticias (≈ USD 0.016) para tener el antes y
+  después.
+- Tema de la cumbre: `clima-desastres` en vez de `medio-ambiente` es ambiguo entre dos temas del catálogo; no se cambia
+  el prompt con una sola observación.
 - Worker devuelto a mock tras la prueba; no se deja en live de un día para otro.
 - No hay ADR nuevo: la decisión de modelo sigue siendo ADR-009.
 
