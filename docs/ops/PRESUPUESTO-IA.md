@@ -38,17 +38,19 @@
 | `temperature = 0`, salida JSON corta | Chat, enrich | Menos tokens de salida |
 | Portada tipográfica por código | Imágenes | Evita generación de imágenes |
 
-## 4. Costo por función (plantilla; llenar con datos reales del ledger)
+## 4. Costo por función (`enrich` ya medido; el resto son estimaciones por llenar con datos reales del ledger)
 
 | Función | Tokens entrada (prom.) | Tokens salida (prom.) | Costo por llamada | Llamadas esperadas | Total esperado |
 |---|---|---|---|---|---|
-| `enrich` | ~1 500 (supuesto) | ~500 (supuesto) | ≈ 0.0040 (estimado) | 80 noticias | ≈ 0.32 |
+| `enrich` | ≈ 1 362 (medido) | ≈ 364 (medido) | **0.003183** (medido, 5 llamadas pagadas; LOOP-005) | 80 noticias | ≈ 0.25 |
 | `chat_answer` | ~3 000 (supuesto) | ~400 (supuesto) | ≈ 0.0050 (estimado) | 1 500 (dev + evals + demo) | ≈ 7.50 sin caché; ≈ 4.50 con 40 % evitado |
 | `digest` | ~3 000 (supuesto) | ~500 (supuesto) | ≈ 0.0055 (estimado) | 8 ubicaciones × ~20 regeneraciones | ≈ 0.88 |
 | `embed` | — | — | 0 créditos | — | 0 |
 | `image_generate` | — | — | no aplica (deshabilitado; Anthropic no genera imágenes) | 0 | 0 |
 
-Estimaciones con Claude Haiku 4.5 a USD 1 / USD 5 por millón de tokens (entrada/salida), precio a verificar en la
+`enrich` se midió el 2026-10-03 con `enrich.v1` sobre 5 noticias semilla: el ledger (USD 0.0159) coincide con la consola
+de Anthropic (6 810 tokens de entrada y 1 821 de salida = USD 0.0159) a menos de 1 %, y salió ≈ 20 % más barato que el
+supuesto. Las demás filas siguen siendo estimaciones con Claude Haiku 4.5 a USD 1 / USD 5 por millón de tokens (entrada/salida), precio a verificar en la
 página oficial. Total estimado ≈ USD 5.7, holgado frente al tope de USD 13 de desarrollo. Reemplazar por datos reales
 del ledger en la primera semana.
 
