@@ -1,0 +1,99 @@
+[
+  {
+    "id": "demo-d1",
+    "locationId": "gt-quetzaltenango",
+    "title": "Alerta por lluvias intensas en Quetzaltenango",
+    "lead": "Un aviso de lluvias intensas pone en alerta a Quetzaltenango; las autoridades piden evitar zonas de riesgo.",
+    "body": "Se emitió una alerta por lluvias intensas en Quetzaltenango y se pide a la población evitar cauces y laderas. Noticia de prueba para el proyecto académico. Aún falta confirmar cuántas familias resultaron afectadas.",
+    "topics": [
+      "clima-desastres"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "GT"
+      ],
+      "cityIds": [
+        "gt-quetzaltenango"
+      ],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 3,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Falta confirmar el número de familias afectadas.",
+    "sources": [
+      {
+        "key": "conred",
+        "name": "CONRED (ejemplo)",
+        "organization": "CONRED",
+        "url": "https://example.org/conred/alerta-quetzaltenango",
+        "type": "primaria",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Se emitió una alerta por lluvias intensas en Quetzaltenango.",
+        "sources": [
+          "conred"
+        ]
+      }
+    ],
+    "image": "cover",
+    "review": "Borrador D1 del guion de la demo (§2): local, esencial, en desarrollo con nota. Fuente de ejemplo."
+  },
+  {
+    "id": "demo-d2",
+    "locationId": "es-madrid",
+    "title": "Banco central europeo mantiene tasas",
+    "lead": "El Banco Central Europeo dejó sin cambios los tipos de interés, según las fuentes de ejemplo.",
+    "body": "El Banco Central Europeo decidió mantener sin cambios los tipos de interés. Noticia de prueba para el proyecto académico.",
+    "topics": [
+      "economia"
+    ],
+    "geo": {
+      "scope": "internacional",
+      "countries": [
+        "DE",
+        "FR"
+      ],
+      "cityIds": [],
+      "regions": [
+        "europa"
+      ]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "agencia",
+        "name": "Agencia de ejemplo",
+        "organization": "Agencia de ejemplo",
+        "url": "https://example.org/agencia/bce-tasas",
+        "type": "agencia",
+        "supports": "confirma"
+      },
+      {
+        "key": "medio",
+        "name": "Medio de ejemplo",
+        "organization": "Medio de ejemplo",
+        "url": "https://example.org/medio/bce-tasas",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "El Banco Central Europeo mantuvo sin cambios los tipos de interés.",
+        "sources": [
+          "agencia",
+          "medio"
+        ]
+      }
+    ],
+    "image": null,
+    "review": "Borrador D2 del guion de la demo (§2): internacional, rutina, confirmada, SIN imagen para elegir la portada tipográfica en vivo."
+  }
+]

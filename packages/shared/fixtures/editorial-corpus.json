@@ -1,0 +1,1019 @@
+[
+  {
+    "id": "ed-gt-001",
+    "locationId": "gt-guatemala",
+    "title": "Jonathan Menkos asume la presidencia del Banco de Guatemala entre amparos del Cacif y de un diputado",
+    "lead": "El 1 de octubre comenzó el periodo 2026-2030 del nuevo titular del Banguat y de la Junta Monetaria, juramentado por el presidente Arévalo; el Cacif y un diputado presentaron amparos contra el nombramiento.",
+    "body": "Jonathan Menkos Zeissig asumió el 1 de octubre de 2026 la presidencia del Banco de Guatemala (Banguat) y de la Junta Monetaria para el periodo 2026-2030. Fue juramentado por el presidente Bernardo Arévalo. Hasta el 30 de septiembre era ministro de Finanzas Públicas.\n\nEl Gobierno había designado también a José Alfredo Blanco como vicepresidente del Banguat y a Juan Carlos Catalán como superintendente de Bancos, según Prensa Latina. Menkos sustituye a Álvaro González.\n\nEl mismo 1 de octubre el Cacif presentó un recurso de amparo porque considera que Menkos conserva la condición de diputado electo (periodo 2024-2028); otro amparo fue presentado por el diputado Allan Estuardo Rodríguez Reyes, según Prensa Libre. El Gobierno sostiene que el nombramiento «tiene pleno fundamento legal», mientras analistas consultados por ese medio advierten de «ruido» institucional e incertidumbre para los inversionistas.",
+    "topics": [
+      "economia",
+      "politica"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "GT"
+      ],
+      "cityIds": [],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "pl",
+        "name": "Prensa Libre",
+        "organization": "Prensa Libre",
+        "url": "https://www.prensalibre.com/economia/jonathan-menkos-asume-el-banguat-entre-impugnaciones-y-advertencias-de-incertidumbre/",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "plat",
+        "name": "Prensa Latina",
+        "organization": "Prensa Latina",
+        "url": "https://www.prensa-latina.cu/2026/09/29/gobierno-nombra-nuevas-autoridades-del-banco-de-guatemala/",
+        "type": "agencia",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Jonathan Menkos asumió el 1 de octubre de 2026 la presidencia del Banguat y de la Junta Monetaria para el periodo 2026-2030.",
+        "sources": [
+          "pl",
+          "plat"
+        ]
+      },
+      {
+        "text": "El Cacif y el diputado Allan Estuardo Rodríguez Reyes presentaron amparos contra el nombramiento.",
+        "sources": [
+          "pl"
+        ]
+      },
+      {
+        "text": "Juan Carlos Catalán fue designado superintendente de Bancos y José Alfredo Blanco vicepresidente del Banguat.",
+        "sources": [
+          "plat"
+        ]
+      }
+    ],
+    "review": "Abrir ambos enlaces. Prensa Libre es del 2 de octubre y Prensa Latina del 29 de septiembre. Confirmar que los amparos siguen vigentes antes de publicar: es un tema que se mueve.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-gt-002",
+    "locationId": "gt-guatemala",
+    "title": "Taiwán financiará un hospital oncológico, seguridad en La Aurora y estudios de la carretera al Atlántico",
+    "lead": "El presidente Arévalo y el canciller taiwanés Lin Chia-lung anunciaron el 2 de octubre proyectos de salud, aeropuerto y carreteras; EFE y Prensa Libre coinciden en lo esencial.",
+    "body": "Taiwán se comprometió a financiar tres proyectos en Guatemala, según anunciaron el 2 de octubre de 2026 el presidente Bernardo Arévalo y el canciller taiwanés Lin Chia-lung:\n\n- Un hospital oncológico en la zona 13 de la capital, con una aportación de 35 millones de dólares.\n- La modernización de la seguridad del aeropuerto La Aurora, con un centro de monitoreo de 18 pantallas y cámaras adicionales (310 donadas por Taiwán). EFE cifra la inversión en 1,22 millones de dólares y Prensa Libre en 9,5 millones de quetzales.\n- Estudios de factibilidad y diseño para ampliar a cuatro carriles el tramo Mayuelas–Puerto Barrios de la CA-9 Norte, con unos 2,5 millones de dólares y un plazo estimado de ocho meses.",
+    "topics": [
+      "politica",
+      "salud"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "GT"
+      ],
+      "cityIds": [],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "efe",
+        "name": "EFE (vía Infobae)",
+        "organization": "EFE",
+        "url": "https://www.infobae.com/america/agencias/2026/10/02/taiwan-se-compromete-a-financiar-la-modernizacion-sanitaria-aerea-y-vial-de-guatemala/",
+        "type": "agencia",
+        "supports": "confirma"
+      },
+      {
+        "key": "pl",
+        "name": "Prensa Libre",
+        "organization": "Prensa Libre",
+        "url": "https://www.prensalibre.com/guatemala/politica/taiwan-amplia-su-cooperacion-con-guatemala-con-proyectos-para-el-aeropuerto-la-aurora-salud-y-carreteras-breaking/",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Taiwán aportará 35 millones de dólares para un hospital oncológico en Guatemala.",
+        "sources": [
+          "efe",
+          "pl"
+        ]
+      },
+      {
+        "text": "Taiwán financiará estudios para ampliar a cuatro carriles un tramo de la CA-9 Norte, por unos 2,5 millones de dólares.",
+        "sources": [
+          "efe",
+          "pl"
+        ]
+      },
+      {
+        "text": "La modernización de La Aurora incluye un centro de monitoreo con 18 pantallas.",
+        "sources": [
+          "efe",
+          "pl"
+        ]
+      }
+    ],
+    "review": "Los montos del aeropuerto se expresan en monedas distintas (1,22 millones de dólares según EFE, 9,5 millones de quetzales según Prensa Libre): comprobar que sean equivalentes. La Hora y el CIV también cubrieron el convenio, pero sus páginas no se pudieron leer al preparar este borrador.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-gt-003",
+    "locationId": "gt-guatemala",
+    "title": "Guatemala empata 0-0 con Surinam y sigue con opciones en la Liga de Naciones de Concacaf",
+    "lead": "El partido de la tercera jornada se jugó en Paramaribo; Surinam lidera el grupo B con siete puntos y Guatemala suma cuatro.",
+    "body": "La selección de Guatemala empató 0-0 con Surinam el 2 de octubre de 2026 en el estadio Dr. Franklin Essed de Paramaribo, por la tercera jornada de la fase de grupos de la Liga de Naciones de Concacaf. Surinam dominó el primer tiempo y Guatemala mejoró en el segundo, según EFE; la Agencia Guatemalteca de Noticias destaca la actuación del guardameta Kenderson Navarro.\n\nSurinam lidera el grupo B con siete puntos y Guatemala tiene cuatro. Ambos equipos se vuelven a ver el lunes 5 de octubre a las 18:00 en el estadio Manuel Felipe Carrera de la capital guatemalteca, donde Guatemala definirá si clasifica a la Final Four.",
+    "topics": [
+      "deportes"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "GT"
+      ],
+      "cityIds": [],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "efe",
+        "name": "EFE (vía Infobae)",
+        "organization": "EFE",
+        "url": "https://www.infobae.com/america/agencias/2026/10/03/0-0-guatemala-empata-con-surinam-y-mantiene-sus-opciones-en-la-liga-de-naciones/",
+        "type": "agencia",
+        "supports": "confirma"
+      },
+      {
+        "key": "agn",
+        "name": "Agencia Guatemalteca de Noticias",
+        "organization": "Agencia Guatemalteca de Noticias",
+        "url": "https://agn.gt/como-quedo-surinam-vs-guatemala-en-la-liga-de-naciones-2026/",
+        "type": "agencia",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Guatemala y Surinam empataron 0-0 el 2 de octubre de 2026 en Paramaribo.",
+        "sources": [
+          "efe",
+          "agn"
+        ]
+      },
+      {
+        "text": "Surinam suma siete puntos y Guatemala cuatro en el grupo B.",
+        "sources": [
+          "efe"
+        ]
+      },
+      {
+        "text": "Guatemala y Surinam se enfrentan de nuevo el lunes 5 de octubre a las 18:00 en la capital guatemalteca.",
+        "sources": [
+          "efe",
+          "agn"
+        ]
+      }
+    ],
+    "review": "La AGN es un medio estatal: está bien como fuente del resultado, pero conviene la agencia (EFE) para los puntos del grupo, que la AGN no detalla. Comprobar el resultado del lunes 5 antes de que quede desactualizada.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-gt-004",
+    "locationId": "gt-quetzaltenango",
+    "title": "Más de 4 000 estudiantes de nivel medio desfilan en Quetzaltenango por la Independencia",
+    "lead": "El desfile cívico del 15 de septiembre, dentro de Xelafer 2026, reunió a 4 113 estudiantes, según Soy502.",
+    "body": "El 15 de septiembre de 2026, Quetzaltenango celebró el desfile de Independencia de nivel medio como parte de Xelafer 2026. Según Soy502, participaron 4 113 estudiantes, con bandas escolares y batonistas de establecimientos como el INVO, el Colegio Encarnación Rosal, el Colegio Shekiná y el Colegio La Patria.\n\nPrensa Libre había anunciado que el recorrido iría del Parque Benito Juárez hacia Tecún Umán, dentro de la programación de Xelafer del 13 al 19 de septiembre. Walter Villanueva, director departamental de Educación, calificó la jornada como «especial para la comunidad educativa».",
+    "topics": [
+      "cultura",
+      "educacion"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "GT"
+      ],
+      "cityIds": [
+        "gt-quetzaltenango"
+      ],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 0,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Solo Soy502 confirma la cifra de participantes; falta una segunda fuente que la respalde.",
+    "sources": [
+      {
+        "key": "soy",
+        "name": "Soy502",
+        "organization": "Soy502",
+        "url": "https://www.soy502.com/articulo/xelafer-2026-desfile-15-septiembre-quetzaltenango-102082",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "pl",
+        "name": "Prensa Libre (programación)",
+        "organization": "Prensa Libre",
+        "url": "https://www.prensalibre.com/vida/escenario/fiestas-de-independencia-2026-en-xela-desfiles-conciertos-y-actividades-de-xelafer-del-13-al-19-de-septiembre/",
+        "type": "medio",
+        "supports": "contexto",
+        "note": "Anuncia el programa; no confirma cifras del desfile."
+      }
+    ],
+    "claims": [
+      {
+        "text": "En el desfile del 15 de septiembre de 2026 participaron 4 113 estudiantes de nivel medio.",
+        "sources": [
+          "soy"
+        ]
+      }
+    ],
+    "review": "Otro medio de Quetzaltenango (La Voz de Xela, Prensa de Occidente) podría dar una segunda fuente y subir la noticia a «confirmada». Las cifras de participantes varían entre notas (se vieron 4 113 y 4 130): usar la del enlace.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-sv-001",
+    "locationId": "sv-san-salvador",
+    "title": "El Salvador cierra el 1 de octubre sin homicidios y suma 234 días sin muertes violentas en 2026",
+    "lead": "Según datos de la Policía Nacional Civil citados por Diario El Salvador, el país terminó el jueves sin homicidios.",
+    "body": "El Salvador terminó el jueves 1 de octubre de 2026 con cero homicidios en todo el país, según los datos oficiales de la Policía Nacional Civil (PNC) citados por Diario El Salvador. Con ese día, el año acumula 234 días sin homicidios.\n\nEl mismo medio recoge que, desde 2019, se han registrado 1 336 días sin homicidios, 1 222 de ellos durante el régimen de excepción.",
+    "topics": [
+      "seguridad"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "SV"
+      ],
+      "cityIds": [],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Una sola fuente periodística; falta el reporte original de la PNC o un segundo medio.",
+    "sources": [
+      {
+        "key": "des",
+        "name": "Diario El Salvador",
+        "organization": "Diario El Salvador",
+        "url": "https://diarioelsalvador.com/depais/el-salvador-inicia-octubre-sin-homicidios/859970",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "El Salvador cerró el 1 de octubre de 2026 con cero homicidios, según la PNC.",
+        "sources": [
+          "des"
+        ]
+      },
+      {
+        "text": "El año 2026 acumula 234 días sin homicidios.",
+        "sources": [
+          "des"
+        ]
+      }
+    ],
+    "review": "Buscar el comunicado de la PNC (fuente primaria) y enlazarlo: con él y esta nota la noticia cumpliría los requisitos para «confirmada». Es un conteo oficial que el Gobierno difunde a diario; conviene citar que lo publica la propia PNC.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-sv-002",
+    "locationId": "sv-san-salvador",
+    "title": "El Salvador permitirá pagar el aguinaldo desde el 1 de octubre y lo exenta de renta hasta 1 500 dólares",
+    "lead": "La Asamblea aprobó con 60 votos reformas que adelantan el pago del aguinaldo, que antes empezaba el 20 de octubre.",
+    "body": "La Asamblea Legislativa de El Salvador aprobó con 60 votos reformas que permiten pagar el aguinaldo desde el 1 de octubre y hasta el 20 de diciembre, y que dejan libre de retención del impuesto sobre la renta hasta 1 500 dólares; solo el excedente se grava. Antes el pago comenzaba el 20 de octubre, según Infobae.\n\nLas medidas alcanzan a trabajadores públicos y privados, pensionados y beneficiarios de pensiones alimenticias, según Diario El Salvador, que detalla reformas a los artículos 197, 200 y 202 del Código de Trabajo y a otras leyes. La iniciativa busca que las familias dispongan antes de ese ingreso para sus gastos de fin de año.",
+    "topics": [
+      "economia",
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "SV"
+      ],
+      "cityIds": [],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Dos medios coinciden, pero falta enlazar el decreto publicado en el Diario Oficial (fuente primaria).",
+    "sources": [
+      {
+        "key": "inf",
+        "name": "Infobae",
+        "organization": "Infobae",
+        "url": "https://www.infobae.com/el-salvador/2026/09/23/el-salvador-asamblea-legislativa-aprueba-que-el-aguinaldo-pueda-pagarse-desde-el-1-de-octubre/",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "des",
+        "name": "Diario El Salvador",
+        "organization": "Diario El Salvador",
+        "url": "https://diarioelsalvador.com/depais/aguinaldo-podra-ser-pagado-desde-el-1-de-octubre-y-estara-libre-de-renta-hasta-1500/856889",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "El aguinaldo podrá pagarse desde el 1 de octubre y hasta el 20 de diciembre.",
+        "sources": [
+          "inf",
+          "des"
+        ]
+      },
+      {
+        "text": "Hasta 1 500 dólares del aguinaldo quedan libres de retención del impuesto sobre la renta.",
+        "sources": [
+          "inf",
+          "des"
+        ]
+      },
+      {
+        "text": "La reforma fue aprobada con 60 votos.",
+        "sources": [
+          "inf",
+          "des"
+        ]
+      }
+    ],
+    "review": "Cuidado: hay una nota de Diario El Mundo con un titular parecido («desde el 20 de octubre») pero es de octubre de 2025, de la reforma anterior. No usarla como fuente de esta noticia. Falta el decreto en el Diario Oficial o el sitio de la Asamblea (su certificado falló al consultarlo).",
+    "image": "cover"
+  },
+  {
+    "id": "ed-sv-003",
+    "locationId": "sv-san-salvador",
+    "title": "El Salvador propone destinar 3 416 millones de dólares a educación en el presupuesto de 2027",
+    "lead": "El proyecto de 12 421 millones, presentado el 30 de septiembre, debe ser votado por la Asamblea.",
+    "body": "El ministro de Hacienda, Jerson Posada, presentó el 30 de septiembre de 2026 el proyecto de Presupuesto 2027 de El Salvador por 12 421 millones de dólares, unos 1 865 millones más que el de 2026 (17,7 %). Para educación se proponen 3 416 millones, el 27,5 % del total y, según Posada, el 8,1 % del PIB estimado de 2027.\n\nEl proyecto incluye 415 millones para computadoras, tablets, conectividad e inteligencia artificial en las escuelas y 562 millones para infraestructura educativa. Debe ser analizado y votado por la Asamblea Legislativa para su aprobación.",
+    "topics": [
+      "educacion",
+      "economia"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "SV"
+      ],
+      "cityIds": [],
+      "regions": [
+        "centroamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Es un proyecto pendiente de aprobación en la Asamblea; falta la fuente oficial del Ministerio de Hacienda.",
+    "sources": [
+      {
+        "key": "inf",
+        "name": "Infobae",
+        "organization": "Infobae",
+        "url": "https://www.infobae.com/el-salvador/2026/10/01/el-gobierno-de-el-salvador-invertira-el-275-del-total-de-su-presupuesto-para-el-ramo-de-educacion/",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "cr",
+        "name": "CR Prensa",
+        "organization": "CR Prensa",
+        "url": "https://crprensa.com/2026/09/30/el-salvador-eleva-presupuesto-a-usd-12-421-millones-con-foco-en-educacion/",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "El proyecto de presupuesto 2027 asciende a 12 421 millones de dólares.",
+        "sources": [
+          "cr"
+        ]
+      },
+      {
+        "text": "El proyecto destina 3 416 millones de dólares a educación, el 27,5 % del total.",
+        "sources": [
+          "inf",
+          "cr"
+        ]
+      },
+      {
+        "text": "Según el ministro Jerson Posada, esa cifra equivale al 8,1 % del PIB estimado de 2027.",
+        "sources": [
+          "inf",
+          "cr"
+        ]
+      }
+    ],
+    "review": "La diferencia con 2026 aparece como 1 865 o 1 866 millones según la nota: se usa «unos 1 865». Las notas sobre la Asamblea (asamblea.gob.sv) no se pudieron leer por un error de certificado; si se consigue, sería la fuente primaria. Hasta que se vote sigue siendo un proyecto.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-mx-001",
+    "locationId": "mx-cdmx",
+    "title": "Alerta amarilla por lluvias en las 16 alcaldías de la CDMX deja inundaciones y retrasos en el transporte",
+    "lead": "Autoridades capitalinas alertaron por lluvia fuerte y posible granizo el 1 de octubre; hubo encharcamientos sobre todo en el oriente y el centro.",
+    "body": "La Ciudad de México activó el 1 de octubre de 2026 una alerta amarilla por lluvias fuertes y posible caída de granizo en las 16 alcaldías, según el aviso que cita La Razón. El medio reporta encharcamientos e inundaciones sobre todo en el oriente y el centro de la capital, con tránsito lento, baja visibilidad por ráfagas de viento y actividad eléctrica; entre las zonas más afectadas menciona Iztapalapa, Iztacalco y Cuauhtémoc.\n\nLa Silla Rota añade retrasos en el Cablebús y que el Metro aplicó marcha de seguridad, es decir, redujo la velocidad de los trenes; informa además de que el agua arrastró un automóvil en San Gregorio Atlapulco, Xochimilco. Las autoridades recomiendan evitar calles con agua y mantenerse lejos de árboles, cables, muros y espectaculares.",
+    "topics": [
+      "clima-desastres",
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "MX"
+      ],
+      "cityIds": [
+        "mx-cdmx"
+      ],
+      "regions": [
+        "norteamerica"
+      ]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Dos medios coinciden, pero falta el parte oficial de Protección Civil y el balance final del día.",
+    "sources": [
+      {
+        "key": "raz",
+        "name": "La Razón de México",
+        "organization": "La Razón de México",
+        "url": "https://www.razon.com.mx/ciudad/2026/10/01/lluvias-en-cdmx-hoy-1-de-octubre-estas-son-las-afectaciones-y-zonas-con-inundaciones/",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "sil",
+        "name": "La Silla Rota",
+        "organization": "La Silla Rota",
+        "url": "https://lasillarota.com/metropoli/2026/10/1/fuertes-lluvias-provocaron-inundaciones-y-retrasos-en-cablebus-cdmx-530938.html",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Se activó una alerta amarilla por lluvias fuertes y posible granizo en las 16 alcaldías de la Ciudad de México.",
+        "sources": [
+          "raz"
+        ]
+      },
+      {
+        "text": "Hubo inundaciones y encharcamientos en varias alcaldías, sobre todo en el oriente y el centro.",
+        "sources": [
+          "raz",
+          "sil"
+        ]
+      },
+      {
+        "text": "El Metro aplicó marcha de seguridad y el Cablebús tuvo retrasos.",
+        "sources": [
+          "sil"
+        ]
+      }
+    ],
+    "review": "Las dos notas no coinciden en la hora (La Silla Rota es de la mañana del 1 de octubre; La Razón habla de la tarde y la noche). Para no mezclar episodios, mantener la noticia en términos generales. NO usar la nota de El Universal sobre lluvias en CDMX que apareció en la búsqueda: es de mayo de 2026.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-us-001",
+    "locationId": "us-nueva-york",
+    "title": "Nueva York congela desde el 1 de octubre las rentas de casi un millón de apartamentos estabilizados",
+    "lead": "La Rent Guidelines Board fijó un aumento de 0 % para contratos de uno y dos años que comiencen entre el 1 de octubre de 2026 y el 30 de septiembre de 2027.",
+    "body": "Desde el 1 de octubre de 2026, los apartamentos de renta estabilizada de Nueva York no podrán subir el alquiler en contratos nuevos ni en renovaciones que comiencen hasta el 30 de septiembre de 2027: la Rent Guidelines Board fijó 0 % tanto para contratos de un año como de dos. Según Infobae, la medida alcanza a cerca de un millón de viviendas y a 2,5 millones de residentes.\n\nLa junta adoptó las pautas el 25 de junio de 2026, según su sitio oficial. La Opinión informa de que propietarios han demandado cuestionando la decisión por supuesta influencia política, pero el tribunal no ha suspendido el congelamiento.",
+    "topics": [
+      "economia",
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "US"
+      ],
+      "cityIds": [
+        "us-nueva-york"
+      ],
+      "regions": [
+        "norteamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "rgb",
+        "name": "Rent Guidelines Board de Nueva York",
+        "organization": "Rent Guidelines Board",
+        "url": "https://rentguidelinesboard.cityofnewyork.us/",
+        "type": "primaria",
+        "supports": "confirma",
+        "note": "Página oficial: confirma la fecha de adopción y el periodo de los contratos; los porcentajes están en la Orden 58."
+      },
+      {
+        "key": "inf",
+        "name": "Infobae",
+        "organization": "Infobae",
+        "url": "https://www.infobae.com/estados-unidos/2026/10/01/tres-nuevas-leyes-de-nueva-york-entran-en-vigor-desde-el-1-de-octubre-que-es-importante-saber/",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "op",
+        "name": "La Opinión",
+        "organization": "La Opinión",
+        "url": "https://laopinion.com/2026/10/01/nueva-york-congela-renta-apartamentos-como-saber-incluido/",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "La Rent Guidelines Board fijó un aumento de 0 % para contratos de uno y de dos años en apartamentos estabilizados.",
+        "sources": [
+          "inf",
+          "op"
+        ]
+      },
+      {
+        "text": "Las pautas rigen para contratos que comiencen entre el 1 de octubre de 2026 y el 30 de septiembre de 2027 y fueron adoptadas el 25 de junio de 2026.",
+        "sources": [
+          "rgb"
+        ]
+      },
+      {
+        "text": "Propietarios han demandado la decisión, pero el tribunal no ha suspendido el congelamiento.",
+        "sources": [
+          "op"
+        ]
+      }
+    ],
+    "review": "La página de la Rent Guidelines Board no muestra los porcentajes en el texto visible (están en la Orden 58); abrir la orden y enlazarla para respaldar el 0 % con la fuente primaria. Vigilar la demanda: puede cambiar la noticia.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-us-002",
+    "locationId": "us-nueva-york",
+    "title": "Nueva York: desde el 1 de octubre las empresas deben permitir cancelar suscripciones por el mismo medio",
+    "lead": "La norma «Click to Cancel» obliga a habilitar la baja en línea a quien contrató por internet; la infracción se sanciona con 525 dólares.",
+    "body": "Entró en vigor en Nueva York la norma conocida como «Click to Cancel»: si un cliente contrató un servicio recurrente por internet, la empresa debe habilitar la baja también en línea, sin obligarlo a llamar por teléfono. Infobae indica que la infracción se sanciona con una multa de 525 dólares.\n\nLa misma nota recuerda una norma local sobre productos íntimos (Ley Local 136), que comienza el 10 de octubre con multas de hasta 250 dólares por caso, y que la temporada de calefacción arranca el 1 de octubre.",
+    "topics": [
+      "economia",
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "US"
+      ],
+      "cityIds": [
+        "us-nueva-york"
+      ],
+      "regions": [
+        "norteamerica"
+      ]
+    },
+    "importance": 1,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Una sola fuente periodística; falta una segunda fuente y el texto de la ley.",
+    "sources": [
+      {
+        "key": "inf",
+        "name": "Infobae",
+        "organization": "Infobae",
+        "url": "https://www.infobae.com/estados-unidos/2026/10/01/tres-nuevas-leyes-de-nueva-york-entran-en-vigor-desde-el-1-de-octubre-que-es-importante-saber/",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Desde el 1 de octubre las empresas deben permitir la baja en línea a quien contrató por internet un servicio recurrente.",
+        "sources": [
+          "inf"
+        ]
+      },
+      {
+        "text": "La infracción de la norma «Click to Cancel» se sanciona con una multa de 525 dólares.",
+        "sources": [
+          "inf"
+        ]
+      }
+    ],
+    "review": "Es la misma nota de Infobae que respalda la noticia de las rentas; para esta norma hace falta una segunda fuente independiente (el sitio del Estado o de la Fiscalía General) antes de plantear «confirmada».",
+    "image": "cover"
+  },
+  {
+    "id": "ed-co-001",
+    "locationId": "co-bogota",
+    "title": "Colombia revierte el aumento de 46 pesos por galón de gasolina anunciado para octubre",
+    "lead": "El Gobierno había fijado una subida del 0,29 % desde el 1 de octubre y, según El Tiempo, ordenó revertirla esa misma noche por instrucción presidencial.",
+    "body": "El 30 de septiembre de 2026 los ministerios de Minas y Energía y de Hacienda anunciaron un aumento promedio de 46 pesos por galón de gasolina corriente (0,29 %) para octubre, vinculado a la actualización del precio reconocido a los productores de etanol; en Bogotá el galón pasaba de 16 331 a 16 377 pesos y el ACPM se mantenía, según Infobae.\n\nEl 1 de octubre por la noche, El Tiempo informó de que el Gobierno revierte ese aumento tras una orden del presidente Abelardo De La Espriella: el promedio de la gasolina corriente se queda en 15 886 pesos por galón y el Estado asume unos 8 300 millones de pesos en octubre para cubrir la diferencia.",
+    "topics": [
+      "economia"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "CO"
+      ],
+      "cityIds": [],
+      "regions": [
+        "sudamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "El anuncio del aumento y su reversión ocurrieron en menos de 24 horas; falta la resolución oficial que fije el precio vigente.",
+    "sources": [
+      {
+        "key": "tiempo",
+        "name": "El Tiempo",
+        "organization": "El Tiempo",
+        "url": "https://www.eltiempo.com/economia/empresas/el-ministerio-de-minas-y-energia-y-el-ministerio-de-hacienda-acatan-la-instruccion-presidencial-y-revierten-el-aumento-de-octubre-en-la-gasolina-3590623",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "inf",
+        "name": "Infobae",
+        "organization": "Infobae",
+        "url": "https://www.infobae.com/colombia/2026/10/01/gasolina-sube-46-desde-el-1-de-octubre-y-acpm-mantiene-su-precio-asi-quedan-los-combustibles-en-colombia/",
+        "type": "medio",
+        "supports": "confirma",
+        "note": "Describe el anuncio original del aumento (30 de septiembre); no recoge la reversión."
+      }
+    ],
+    "claims": [
+      {
+        "text": "Los ministerios de Minas y de Hacienda anunciaron un aumento promedio de 46 pesos por galón de gasolina corriente para octubre.",
+        "sources": [
+          "inf",
+          "tiempo"
+        ]
+      },
+      {
+        "text": "El Gobierno revirtió el aumento por instrucción presidencial y el precio promedio se mantiene en 15 886 pesos por galón.",
+        "sources": [
+          "tiempo"
+        ]
+      }
+    ],
+    "review": "CUIDADO: varios medios (Infobae, Cambio Colombia, El Espectador) publicaron la subida y otros la reversión. Este borrador existe precisamente por eso. Antes de publicar, buscar la resolución del Ministerio de Minas y Energía que fije el precio de octubre. Si la reversión se confirma, el titular y el cuerpo ya la reflejan.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-co-002",
+    "locationId": "co-bogota",
+    "title": "Bogotá prevé cuatro movilizaciones entre el 1 y el 4 de octubre en Fontibón, Santa Fe y Teusaquillo",
+    "lead": "La Alcaldía publicó la agenda de una caravana y tres marchas y pidió planificar los desplazamientos.",
+    "body": "La Alcaldía de Bogotá y Pulzo publicaron el 1 de octubre de 2026 la agenda de movilizaciones previstas hasta el domingo 4:\n\n- Jueves 1, 2:00 p. m.: caravana «Plantón servicio especial», del Hotel Habitel (Fontibón) al aeropuerto El Dorado.\n- Viernes 2, 1:00 p. m.: «Marcha carnaval por la vida», de la calle 19 con carrera 4.ª (Santa Fe) al Concejo de Bogotá.\n- Viernes 2, 2:00 p. m.: «Marcha por el arte, los derechos y los desaparecidos», desde la entrada de la Universidad Nacional por la calle 26 (Teusaquillo).\n- Domingo 4, 10:30 a. m.: «4.ª Marcha Mundial por la Paz y la No Violencia», del Planetario Distrital a la Plaza de Bolívar.\n\nLa Alcaldía pide planificar los desplazamientos y participar de forma pacífica, y señala que gestores de Diálogo Social acompañarán las movilizaciones.",
+    "topics": [
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "CO"
+      ],
+      "cityIds": [
+        "co-bogota"
+      ],
+      "regions": [
+        "sudamerica"
+      ]
+    },
+    "importance": 0,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "alc",
+        "name": "Alcaldía de Bogotá",
+        "organization": "Alcaldía de Bogotá",
+        "url": "https://bogota.gov.co/mi-ciudad/gobierno/marchas-y-manifestaciones-en-bogota-del-1-al-4-de-octubre-de-2026",
+        "type": "primaria",
+        "supports": "confirma"
+      },
+      {
+        "key": "pul",
+        "name": "Pulzo",
+        "organization": "Pulzo",
+        "url": "https://www.pulzo.com/nacion/bogota/marchas-y-movilizaciones-en-bogota-2026-agenda-rutas-y-recomendaciones-oficiales-PP5319125A",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "La Alcaldía de Bogotá prevé una caravana y tres marchas entre el 1 y el 4 de octubre de 2026.",
+        "sources": [
+          "alc",
+          "pul"
+        ]
+      },
+      {
+        "text": "La Alcaldía pide planificar los desplazamientos y participar de forma pacífica.",
+        "sources": [
+          "alc",
+          "pul"
+        ]
+      }
+    ],
+    "review": "Es una agenda: los eventos de los días 1 y 2 ya habrán pasado al publicar. Considerar presentarla como «agenda» o retirarla del feed cuando caduque. Los organizadores no figuran en las fuentes.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-ar-001",
+    "locationId": "ar-buenos-aires",
+    "title": "Argentina: la inflación de agosto fue de 1,7 %, por debajo del 2,1 % de julio, según el INDEC",
+    "lead": "El INDEC informó el 10 de septiembre que los precios acumulan 21,3 % en lo que va de 2026 y 33,5 % interanual.",
+    "body": "El INDEC informó el 10 de septiembre de 2026 que el nivel general de precios al consumidor subió 1,7 % en agosto, frente al 2,1 % de julio, y que acumuló 21,3 % en los primeros ocho meses del año; la variación interanual fue de 33,5 %. La división con mayor aumento mensual fue Vivienda, agua, electricidad, gas y otros combustibles.\n\nSegún Errepar, el dato coincidió con las proyecciones del mercado.",
+    "topics": [
+      "economia"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "AR"
+      ],
+      "cityIds": [],
+      "regions": [
+        "sudamerica"
+      ]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "indec",
+        "name": "INDEC — Informe técnico IPC agosto 2026",
+        "organization": "INDEC",
+        "url": "https://www.indec.gob.ar/uploads/informesdeprensa/ipc_09_26A1BE2DC4CD.pdf",
+        "type": "primaria",
+        "supports": "confirma"
+      },
+      {
+        "key": "gac",
+        "name": "La Gaceta",
+        "organization": "La Gaceta",
+        "url": "https://www.lagaceta.com.ar/nota/1153447/sociedad/inflacion-agosto-fue-17porciento-segun-indec.html",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "err",
+        "name": "Errepar",
+        "organization": "Errepar",
+        "url": "https://documento.errepar.com/actualidad/ipc-agosto-2026-de-cuanto-fue-la-inflacion-20260910190141328",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "El IPC de agosto de 2026 subió 1,7 % mensual y acumuló 21,3 % en el año.",
+        "sources": [
+          "indec",
+          "gac",
+          "err"
+        ]
+      },
+      {
+        "text": "La inflación interanual fue de 33,5 %.",
+        "sources": [
+          "indec",
+          "gac"
+        ]
+      },
+      {
+        "text": "La división con mayor aumento mensual fue Vivienda, agua, electricidad, gas y otros combustibles.",
+        "sources": [
+          "indec"
+        ]
+      }
+    ],
+    "review": "Fuente primaria leída directamente (informe técnico del INDEC del 10 de septiembre). Es el dato de agosto; el de septiembre se publica el 13 de octubre y dejará esta noticia atrás.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-es-001",
+    "locationId": "es-madrid",
+    "title": "La Comunidad de Madrid lleva a los tribunales el desalojo de la acampada por la vivienda en la Puerta del Sol",
+    "lead": "Una jueza elevó al Tribunal Superior de Justicia de Madrid la petición de medidas cautelarísimas; los convocantes hablan de unas 2 000 tiendas.",
+    "body": "La acampada por el derecho a la vivienda en la Puerta del Sol, que empezó la noche del 26 de septiembre de 2026 tras el desahucio de una mujer mayor, Maricarmen, sigue en pie. La Comunidad de Madrid, presidida por Isabel Díaz Ayuso, pidió medidas cautelarísimas para desalojarla y una jueza de lo contencioso-administrativo elevó el asunto al Tribunal Superior de Justicia de Madrid por entender que la competencia le corresponde a este, según elDiario.es; las partes tienen diez días para presentar alegaciones.\n\nEl Tiempo, con información de EFE y AFP, recoge que los organizadores hablan de unas 2 000 tiendas, mientras elDiario.es solo menciona «cientos de personas». El sindicato de inquilinos que convoca la protesta decidió mantener la acampada y estudia ampliarla a la plaza de Callao; Ayuso dijo que buscará protección judicial.",
+    "topics": [
+      "politica",
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "local",
+      "countries": [
+        "ES"
+      ],
+      "cityIds": [
+        "es-madrid"
+      ],
+      "regions": [
+        "europa"
+      ]
+    },
+    "importance": 2,
+    "certainty": "en_desarrollo",
+    "certaintyNote": "Pendiente de la decisión del Tribunal Superior de Justicia de Madrid; las cifras de asistencia no coinciden entre fuentes.",
+    "sources": [
+      {
+        "key": "eld",
+        "name": "elDiario.es",
+        "organization": "elDiario.es",
+        "url": "https://www.eldiario.es/madrid/jueza-eleva-tribunal-superior-madrid-peticion-ayuso-desalojar-puerta-sol_1_13556228.html",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "tie",
+        "name": "El Tiempo (EFE y AFP)",
+        "organization": "El Tiempo",
+        "url": "https://www.eltiempo.com/mundo/europa/protestas-por-la-crisis-de-vivienda-en-madrid-desafian-orden-de-desalojo-y-mantienen-campamento-en-la-puerta-del-sol-3590901",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "La Comunidad de Madrid pidió medidas cautelarísimas para desalojar la acampada de la Puerta del Sol.",
+        "sources": [
+          "eld",
+          "tie"
+        ]
+      },
+      {
+        "text": "Una jueza elevó la petición al Tribunal Superior de Justicia de Madrid, y las partes tienen diez días para alegaciones.",
+        "sources": [
+          "eld"
+        ]
+      },
+      {
+        "text": "Los organizadores hablan de unas 2 000 tiendas de campaña.",
+        "sources": [
+          "tie"
+        ]
+      }
+    ],
+    "review": "Es una noticia viva: la decisión del TSJM puede llegar en cualquier momento y cambiar el texto. La cifra de «2 000 tiendas» es de los organizadores (no verificada de forma independiente); otras notas hablan de unas 500 tiendas el 30 de septiembre. Consultar EFE o la Delegación del Gobierno para una fuente primaria o de agencia.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-es-002",
+    "locationId": "es-madrid",
+    "title": "Entra en vigor la reforma del Reglamento de Circulación: casco en patinetes y guantes para motoristas",
+    "lead": "El Real Decreto 518/2026, publicado en el BOE el 26 de junio, rige desde el 1 de octubre y refuerza la protección de ciclistas, usuarios de patinetes y motoristas.",
+    "body": "Desde el 1 de octubre de 2026 rige en España el Real Decreto 518/2026, de 24 de junio, publicado en el BOE el 26 de junio, que modifica el Reglamento General de Circulación en materia de protección de usuarios vulnerables de la vía.\n\nSegún el texto oficial, entre otros cambios: no podrán conducir vehículos de movilidad personal, como los patinetes eléctricos, los menores de quince años, y se exige casco; los motoristas deberán llevar guantes de protección en vías interurbanas y calzado cerrado en cualquier vía; y los conductores deberán dejar al menos cinco metros de separación con los ciclistas que les precedan, además de 1,5 metros de separación lateral y reducir 20 km/h al adelantarlos en vías interurbanas. El casco de los ciclomotores deberá ser homologado, con un año de plazo.\n\nLibertad Digital y el RACE resumen las novedades para conductores; Libertad Digital menciona sanciones de 200 euros.",
+    "topics": [
+      "sociedad"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "ES"
+      ],
+      "cityIds": [],
+      "regions": [
+        "europa"
+      ]
+    },
+    "importance": 2,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "boe",
+        "name": "BOE — Real Decreto 518/2026",
+        "organization": "Boletín Oficial del Estado",
+        "url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13889",
+        "type": "primaria",
+        "supports": "confirma"
+      },
+      {
+        "key": "ld",
+        "name": "Libertad Digital",
+        "organization": "Libertad Digital",
+        "url": "https://www.libertaddigital.com/servicios/trafico/2026-10-01/las-nuevas-normas-de-circulacion-ya-estan-en-vigor-que-deben-hacer-ahora-conductores-y-ciclistas-7468573/",
+        "type": "medio",
+        "supports": "confirma"
+      },
+      {
+        "key": "race",
+        "name": "Real Automóvil Club de España",
+        "organization": "Real Automóvil Club de España",
+        "url": "https://www.race.es/normativa-dgt",
+        "type": "otro",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "El Real Decreto 518/2026 entra en vigor el 1 de octubre de 2026 y modifica el Reglamento General de Circulación.",
+        "sources": [
+          "boe",
+          "race"
+        ]
+      },
+      {
+        "text": "Los menores de quince años no podrán conducir vehículos de movilidad personal y se exige casco.",
+        "sources": [
+          "boe",
+          "ld",
+          "race"
+        ]
+      },
+      {
+        "text": "Los motoristas deberán llevar guantes de protección en vías interurbanas y calzado cerrado en cualquier vía.",
+        "sources": [
+          "boe",
+          "ld",
+          "race"
+        ]
+      }
+    ],
+    "review": "Leída la versión oficial del BOE. Dos puntos que los medios cuentan distinto y que aquí NO se afirman: el chaleco reflectante (el BOE no lo menciona para patinetes) y la cifra de la sanción (200 € solo aparece en Libertad Digital). Si se quiere incluir la multa, buscar su respaldo oficial.",
+    "image": "cover"
+  },
+  {
+    "id": "ed-es-003",
+    "locationId": "es-madrid",
+    "title": "Antonio Garamendi, reelegido presidente de la CEOE por aclamación para un tercer mandato",
+    "lead": "Fue el único candidato en la asamblea electoral del 1 de octubre y gobernará la patronal otros cuatro años.",
+    "body": "Antonio Garamendi fue reelegido el 1 de octubre de 2026 presidente de la CEOE para los próximos cuatro años, en su tercer mandato. Se presentó como único candidato, por lo que fue proclamado por aclamación y sin votación, según EFE; en 2022 había revalidado el cargo con 534 votos frente a 87 de Virginia Guinda, recuerda The Objective.\n\nEn su intervención, Garamendi lamentó que «llevamos cuatro años sin Presupuestos Generales del Estado» y citó entre los retos la seguridad jurídica y la crisis de vivienda. La CEOE elegirá su comité ejecutivo el 21 de octubre. Durante su mandato anterior, la organización votó eliminar el límite de dos mandatos.",
+    "topics": [
+      "economia",
+      "politica"
+    ],
+    "geo": {
+      "scope": "nacional",
+      "countries": [
+        "ES"
+      ],
+      "cityIds": [],
+      "regions": [
+        "europa"
+      ]
+    },
+    "importance": 1,
+    "certainty": "confirmada",
+    "sources": [
+      {
+        "key": "efe",
+        "name": "EFE (vía Público)",
+        "organization": "EFE",
+        "url": "https://www.publico.es/economia/garamendi-reelegido-presidente-ceoe-proximos-cuatro-anos.html",
+        "type": "agencia",
+        "supports": "confirma"
+      },
+      {
+        "key": "obj",
+        "name": "The Objective",
+        "organization": "The Objective",
+        "url": "https://theobjective.com/economia/2026-10-01/garamendi-cuatro-anos-ceoe-tercer-mandato/",
+        "type": "medio",
+        "supports": "confirma"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Antonio Garamendi fue reelegido el 1 de octubre de 2026 presidente de la CEOE para cuatro años, sin votación al ser el único candidato.",
+        "sources": [
+          "efe",
+          "obj"
+        ]
+      },
+      {
+        "text": "En 2022 Garamendi revalidó el cargo con 534 votos frente a 87 de Virginia Guinda.",
+        "sources": [
+          "obj"
+        ]
+      }
+    ],
+    "review": "Deia (también leída en la búsqueda) devolvió un error al abrirla, por lo que no se usa. Comprobar la cita de Garamendi en el enlace de EFE antes de publicar.",
+    "image": "cover"
+  }
+]
