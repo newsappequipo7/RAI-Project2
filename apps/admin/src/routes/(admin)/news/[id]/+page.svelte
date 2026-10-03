@@ -14,6 +14,7 @@
 	import ClaimsSection from '$lib/components/ClaimsSection.svelte';
 	import ClassificationSection from '$lib/components/ClassificationSection.svelte';
 	import ContentSection from '$lib/components/ContentSection.svelte';
+	import ImageSection from '$lib/components/ImageSection.svelte';
 	import PublicationStatus from '$lib/components/PublicationStatus.svelte';
 	import PublishSection from '$lib/components/PublishSection.svelte';
 	import SourcesSection from '$lib/components/SourcesSection.svelte';
@@ -178,6 +179,7 @@
 	<ClassificationSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<SourcesSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<ClaimsSection bind:news {issues} {touched} {readonly} onedit={edited} />
+	<ImageSection bind:news {readonly} onchange={() => saver.schedule()} />
 	<PublishSection
 		bind:news
 		result={publishResult}

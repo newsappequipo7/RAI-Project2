@@ -112,3 +112,28 @@ export function buildCoverSpec(input: CoverInput): CoverSpec {
     layout: COVER_LAYOUT,
   };
 }
+
+/** Greedy word wrap of the cover title, capped at `titleMaxLines` (the last line gets an ellipsis). */
+export function wrapCoverTitle(title: string, maxCharsPerLine = 24): string[] {
+  const words = title.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = '';
+
+  for (const word of words) {
+    const candidate = current === '' ? word : `${current} ${word}`;
+    if (candidate.length <= maxCharsPerLine || current === '') {
+      current = candidate;
+    } else {
+      lines.push(current);
+      current = word;
+    }
+  }
+  if (current !== '') lines.push(current);
+
+  if (lines.length <= COVER_LAYOUT.titleMaxLines) return lines;
+
+  const kept = lines.slice(0, COVER_LAYOUT.titleMaxLines);
+  const last = kept[COVER_LAYOUT.titleMaxLines - 1] ?? '';
+  kept[COVER_LAYOUT.titleMaxLines - 1] = `${last.replace(/…$/, '').slice(0, maxCharsPerLine - 1)}…`;
+  return kept;
+}

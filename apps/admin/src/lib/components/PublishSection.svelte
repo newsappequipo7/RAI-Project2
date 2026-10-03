@@ -127,7 +127,7 @@
 								Ir al campo
 							</button>
 						{:else}
-							<small>(se resuelve en la sección de imagen, que llega con F2-07)</small>
+							<small>(sin sección asociada)</small>
 						{/if}
 					</li>
 				{/each}

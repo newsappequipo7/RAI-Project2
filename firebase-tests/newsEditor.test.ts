@@ -3,6 +3,7 @@ import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/
 import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createEmptyDraft } from '../packages/shared/src/editorial/draft';
+import { buildCoverImage, buildFreeLicenseImage } from '../packages/shared/src/editorial/images';
 import {
   buildSource,
   createClaim,
@@ -175,44 +176,44 @@ describe('F2-05 certainty, note and checklist persistence', () => {
   });
 });
 
-describe('F2-06 publish and index', () => {
-  const publishable = (id: string): News => ({
-    ...createEmptyDraft(id, 'admin-a', NOW),
-    title: 'Titular',
-    lead: 'Entradilla.',
-    body: 'Cuerpo.',
-    topics: ['salud'],
-    geo: { scope: 'nacional', countries: ['GT'], cityIds: [], regions: ['centroamerica'] },
-    certainty: 'en_desarrollo',
-    certaintyNote: 'Falta una segunda fuente.',
-    sources: [
-      {
-        id: 's1',
-        name: 'Ministerio de Salud',
-        organization: 'Ministerio de Salud',
-        url: 'https://example.org/salud',
-        type: 'primaria',
-        accessedAt: NOW.toISOString(),
-        supports: 'confirma',
-      },
-    ],
-    claims: [],
-    image: {
-      kind: 'portada_generada',
-      url: '',
-      credit: 'Portada generada por la app (no es una fotografía)',
-      altText: 'Portada generada para: Titular',
+const publishable = (id: string): News => ({
+  ...createEmptyDraft(id, 'admin-a', NOW),
+  title: 'Titular',
+  lead: 'Entradilla.',
+  body: 'Cuerpo.',
+  topics: ['salud'],
+  geo: { scope: 'nacional', countries: ['GT'], cityIds: [], regions: ['centroamerica'] },
+  certainty: 'en_desarrollo',
+  certaintyNote: 'Falta una segunda fuente.',
+  sources: [
+    {
+      id: 's1',
+      name: 'Ministerio de Salud',
+      organization: 'Ministerio de Salud',
+      url: 'https://example.org/salud',
+      type: 'primaria',
+      accessedAt: NOW.toISOString(),
+      supports: 'confirma',
     },
-    checklist: {
-      fuentes_revisadas: true,
-      afirmaciones_con_respaldo: true,
-      titulo_no_sensacionalista: true,
-      imagen_etiquetada: true,
-      alcance_geo_revisado: true,
-      certeza_justificada: true,
-    },
-  });
+  ],
+  claims: [],
+  image: {
+    kind: 'portada_generada',
+    url: '',
+    credit: 'Portada generada por la app (no es una fotografía)',
+    altText: 'Portada generada para: Titular',
+  },
+  checklist: {
+    fuentes_revisadas: true,
+    afirmaciones_con_respaldo: true,
+    titulo_no_sensacionalista: true,
+    imagen_etiquetada: true,
+    alcance_geo_revisado: true,
+    certeza_justificada: true,
+  },
+});
 
+describe('F2-06 publish and index', () => {
   it('CA1: publishes in one transaction with version snapshot and a pending index mark', async () => {
     const news = publishable('pub-a');
     await setDoc(doc(db, 'news', news.id), news);
@@ -292,5 +293,55 @@ describe('F2-06 publish and index', () => {
     expect(sent).toEqual([['pub-1', 'pub-a', 'pub-c']]);
     const after = await loadNews(db, 'pub-c');
     expect(after && 'indexPending' in after).toBe(false);
+  });
+});
+
+describe('F2-07 images', () => {
+  const found = {
+    thumbUrl: 'https://upload.example.org/t.jpg',
+    url: 'https://upload.example.org/volcan.jpg',
+    title: 'Volcán de Fuego',
+    creator: 'Ana Pérez',
+    license: 'CC BY 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    sourceUrl: 'https://commons.example.org/volcan',
+  };
+
+  it('stores the image, and removes the field instead of writing undefined (CA1)', async () => {
+    const draft = createEmptyDraft('img-1', 'admin-a', NOW);
+    await setDoc(doc(db, 'news', draft.id), draft);
+
+    const image = buildFreeLicenseImage(found, 'Volcán en erupción');
+    await saveNewsFields(db, { ...draft, image });
+    expect((await loadNews(db, 'img-1'))?.image).toEqual(image);
+
+    await saveNewsFields(db, { ...draft, image: undefined });
+    const cleared = await loadNews(db, 'img-1');
+    expect(cleared && 'image' in cleared).toBe(false);
+  });
+
+  it('CA1: a news without photo publishes with a free-license image and another with a cover', async () => {
+    const withLicense = {
+      ...publishable('img-free'),
+      image: buildFreeLicenseImage(found, 'Volcán'),
+    };
+    const withCover = { ...publishable('img-cover'), image: buildCoverImage('Titular') };
+    await setDoc(doc(db, 'news', withLicense.id), withLicense);
+    await setDoc(doc(db, 'news', withCover.id), withCover);
+
+    expect((await publishNews(db, 'img-free', 'admin-a')).image?.kind).toBe('licencia_libre');
+    expect((await publishNews(db, 'img-cover', 'admin-a')).image?.kind).toBe('portada_generada');
+  });
+
+  it('refuses to publish an image without credit', async () => {
+    const noCredit = {
+      ...publishable('img-nocredit'),
+      image: { ...buildCoverImage('Titular'), credit: '' },
+    };
+    await setDoc(doc(db, 'news', noCredit.id), noCredit);
+
+    await expect(publishNews(db, 'img-nocredit', 'admin-a')).rejects.toBeInstanceOf(
+      PublishBlockedError,
+    );
   });
 });

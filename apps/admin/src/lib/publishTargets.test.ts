@@ -21,8 +21,9 @@ describe('PUBLISH_FIELD_TARGETS', () => {
 		expect(Object.keys(PUBLISH_FIELD_TARGETS).sort()).toEqual([...fields].sort());
 	});
 
-	it('has no jump target for the image until its section exists', () => {
-		expect(hasJumpTarget('image')).toBe(false);
-		expect(hasJumpTarget('sources')).toBe(true);
+	it('points every field, image included, to a section of the editor', () => {
+		for (const field of Object.keys(PUBLISH_FIELD_TARGETS) as PublishField[]) {
+			expect(hasJumpTarget(field), field).toBe(true);
+		}
 	});
 });

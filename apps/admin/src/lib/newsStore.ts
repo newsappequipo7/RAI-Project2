@@ -10,6 +10,7 @@ const EDITABLE_FIELDS = [
 	'importance',
 	'sources',
 	'claims',
+	'image',
 	'certainty',
 	'certaintyNote',
 	'checklist'

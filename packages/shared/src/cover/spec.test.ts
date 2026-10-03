@@ -8,6 +8,7 @@ import {
   COVER_LAYOUT,
   COVER_NEUTRAL_COLOR,
   readableTextColor,
+  wrapCoverTitle,
 } from './spec';
 
 const national: NewsGeo = { scope: 'nacional', countries: ['GT'], cityIds: [], regions: [] };
@@ -71,5 +72,33 @@ describe('buildCoverSpec', () => {
       place({ scope: 'regional', countries: ['GT', 'SV', 'HN', 'NI'], cityIds: [], regions: [] }),
     ).toBe('Guatemala · El Salvador y 2 más');
     expect(place({ scope: 'nacional', countries: [], cityIds: [], regions: [] })).toBeNull();
+  });
+});
+
+describe('wrapCoverTitle', () => {
+  it('wraps greedily without splitting words', () => {
+    expect(wrapCoverTitle('Sismo sacude el occidente del país', 16)).toEqual([
+      'Sismo sacude el',
+      'occidente del',
+      'país',
+    ]);
+  });
+
+  it('keeps an overlong single word on its own line', () => {
+    expect(wrapCoverTitle('Electroencefalografía en Guatemala', 10)).toEqual([
+      'Electroencefalografía',
+      'en',
+      'Guatemala',
+    ]);
+  });
+
+  it('never returns more than the maximum lines and marks the cut', () => {
+    const lines = wrapCoverTitle('uno dos tres cuatro cinco seis siete ocho nueve diez', 6);
+    expect(lines).toHaveLength(COVER_LAYOUT.titleMaxLines);
+    expect(lines.at(-1)?.endsWith('…')).toBe(true);
+  });
+
+  it('returns no lines for an empty title', () => {
+    expect(wrapCoverTitle('   ')).toEqual([]);
   });
 });
