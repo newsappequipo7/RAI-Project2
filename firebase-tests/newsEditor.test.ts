@@ -454,3 +454,52 @@ describe('F2-08 corrections and retraction', () => {
     });
   });
 });
+
+describe('F2-04 AI suggestions persistence', () => {
+  const suggestion = {
+    topics: [{ key: 'salud', confidence: 0.9 }],
+    geo: { scope: 'nacional' as const, countries: ['GT'], cityIds: [], regions: ['centroamerica'] },
+    importance: { value: 2 as const, rationale: 'Afecta a muchas personas.' },
+    claims: [{ text: 'Hay 12 casos.', needsSource: true }],
+    summary: 'Resumen sugerido.',
+    sensationalismFlag: { flagged: true, reason: 'El título exagera la cifra.' },
+    model: 'claude-haiku-4-5-20251001',
+    costUsd: 0.004,
+    createdAt: '2026-10-03T12:00:00.000Z',
+  };
+
+  it('stores the suggestion and the approved summary, and removes the summary when dropped (CA3)', async () => {
+    const draft = createEmptyDraft('ai-1', 'admin-a', NOW);
+    await setDoc(doc(db, 'news', draft.id), draft);
+
+    // Asking the model only records the suggestion: no field the editor owns changes.
+    await saveNewsFields(db, { ...draft, aiSuggestions: suggestion });
+    const asked = await loadNews(db, 'ai-1');
+    expect(asked?.aiSuggestions).toEqual(suggestion);
+    expect(asked).toMatchObject({ topics: [], importance: 0, claims: [], title: '' });
+    expect(asked && 'aiSummary' in asked).toBe(false);
+
+    const approved = {
+      text: 'Resumen aprobado.',
+      approvedBy: 'admin-a',
+      approvedAt: '2026-10-03T12:05:00.000Z',
+    };
+    await saveNewsFields(db, { ...draft, aiSuggestions: suggestion, aiSummary: approved });
+    expect((await loadNews(db, 'ai-1'))?.aiSummary).toEqual(approved);
+
+    await saveNewsFields(db, { ...draft, aiSuggestions: suggestion, aiSummary: undefined });
+    const dropped = await loadNews(db, 'ai-1');
+    expect(dropped && 'aiSummary' in dropped).toBe(false);
+    expect(dropped?.aiSuggestions).toEqual(suggestion);
+  });
+
+  it('keeps the suggestion in the published version for the audit trail', async () => {
+    const news = { ...publishable('ai-pub'), aiSuggestions: suggestion };
+    await setDoc(doc(db, 'news', news.id), news);
+
+    const published = await publishNews(db, news.id, 'admin-a');
+    expect(published.aiSuggestions).toEqual(suggestion);
+    const version = await getDoc(doc(db, 'news', news.id, 'versions', '1'));
+    expect(version.data()?.aiSuggestions).toEqual(suggestion);
+  });
+});

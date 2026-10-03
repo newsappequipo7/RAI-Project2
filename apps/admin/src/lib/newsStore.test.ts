@@ -24,6 +24,8 @@ describe('pickEditableFields', () => {
 	it('returns only the fields the editor may write', () => {
 		const draft = createEmptyDraft('n1', 'uid-1', NOW);
 		expect(Object.keys(pickEditableFields(draft)).sort()).toEqual([
+			'aiSuggestions',
+			'aiSummary',
 			'body',
 			'certainty',
 			'certaintyNote',

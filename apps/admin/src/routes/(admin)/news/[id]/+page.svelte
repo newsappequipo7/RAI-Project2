@@ -19,11 +19,13 @@
 	import ClaimsSection from '$lib/components/ClaimsSection.svelte';
 	import ClassificationSection from '$lib/components/ClassificationSection.svelte';
 	import ContentSection from '$lib/components/ContentSection.svelte';
+	import EnrichPanel from '$lib/components/EnrichPanel.svelte';
 	import HistorySection from '$lib/components/HistorySection.svelte';
 	import ImageSection from '$lib/components/ImageSection.svelte';
 	import PublicationStatus from '$lib/components/PublicationStatus.svelte';
 	import PublishSection from '$lib/components/PublishSection.svelte';
 	import SourcesSection from '$lib/components/SourcesSection.svelte';
+	import SuggestionAudit from '$lib/components/SuggestionAudit.svelte';
 	import { db } from '$lib/firebase';
 	import { fetchHealth, removeFromIndex, upsertNews } from '$lib/indexApi';
 	import { loadNews, saveNewsFields } from '$lib/newsStore';
@@ -356,6 +358,7 @@
 	{/if}
 
 	<ContentSection bind:news {issues} {touched} {readonly} onedit={edited} />
+	<EnrichPanel bind:news {readonly} onchange={afterChange} />
 	<ClassificationSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<SourcesSection bind:news {issues} {touched} {readonly} onedit={edited} />
 	<ClaimsSection bind:news {issues} {touched} {readonly} onedit={edited} />
@@ -419,6 +422,7 @@
 	{#if publishError}
 		<p role="alert" class="publish-error">{publishError}</p>
 	{/if}
+	<SuggestionAudit {news} />
 	{#if news.workflow === 'publicada'}
 		<PublicationStatus
 			{news}

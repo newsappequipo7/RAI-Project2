@@ -237,3 +237,21 @@ export const imageGenerateRequestSchema = z
     prompt: z.string().trim().min(IMAGE_PROMPT_MIN).max(IMAGE_PROMPT_MAX),
   })
   .strict();
+
+export const ENRICH_TITLE_MAX = 300;
+export const ENRICH_LEAD_MAX = 600;
+export const ENRICH_BODY_MAX = 20000;
+export const ENRICH_MAX_SOURCES = 20;
+
+export const enrichRequestSchema = z
+  .object({
+    newsId: z.string().min(1),
+    title: z.string().trim().min(1).max(ENRICH_TITLE_MAX),
+    lead: z.string().trim().max(ENRICH_LEAD_MAX).default(''),
+    body: z.string().trim().min(1).max(ENRICH_BODY_MAX),
+    sources: z
+      .array(z.object({ name: z.string().max(200), url: z.string().max(2000) }).strict())
+      .max(ENRICH_MAX_SOURCES)
+      .default([]),
+  })
+  .strict();
