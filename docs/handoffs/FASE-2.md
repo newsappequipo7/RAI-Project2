@@ -83,9 +83,9 @@ Detalle y enlaces en `docs/PLAN.md` §6. Las pruebas automáticas cuentan como e
 | F2-03 | ☑ | `sources.test.ts`, emulador, e2e (URL inválida rechazada, afirmación «Respaldada») | CA1 y CA2 |
 | F2-04 | ◐ | PR #9, LOOP-005, `enrich*.test.ts` | CA1–CA4 hechos con créditos reales (Diego). Falta la iteración `enrich.v2` con antes/después y capturas |
 | F2-05 | ☑ | `validatePublish.test.ts` (27), e2e (botón bloqueado, «Ir al campo») | CA1 y CA2 |
-| F2-06 | ◐ | `publishFlow.test.ts`, emulador (publicar, rechazo, reintento, reconstrucción) | Falta CA1 contra el Worker real: que `/health` muestre un `indexVersion` nuevo. El e2e usa un Worker simulado |
-| F2-07 | ◐ | ADR-010/011, `images.test.ts`, `image.test.ts` (Worker), emulador | Falta recorrer las pestañas en navegador, una subida real desde el portal y capturas; la búsqueda real de Openverse/Commons solo se probó con respuestas simuladas |
-| F2-08 | ◐ | `revision.test.ts`, emulador (corregir, retractar, historial) | Falta recorrer la interfaz y comprobar `/admin/index/remove` contra el Worker real |
+| F2-06 | ☑ | `publishFlow.test.ts`, emulador (publicar, rechazo, reintento, reconstrucción); recorrido manual con el Worker real: `indexVersion` 6 → 7 (`evidence/captures/F2-06-*`) | CA1 y CA2 |
+| F2-07 | ☑ | ADR-010/011, `images.test.ts`, `image.test.ts` (Worker), emulador; recorrido manual: subida real a Cloudinary (HTTP 200), búsqueda real en Openverse/Commons, portada y ausencia de la pestaña IA (`evidence/captures/F2-07-*`) | CA1 y CA2. Falta una captura de la pestaña «Subir foto real» con una imagen neutral (la de prueba era un meme) |
+| F2-08 | ☑ | `revision.test.ts`, emulador; recorrido manual con el Worker real: versiones 1, 2 y 3, `indexVersion` 8 → 9 por el `remove` (`evidence/captures/F2-08-*`) | CA1 y CA2 |
 | F2-09 | ☑ | `costsView.test.ts`, prueba del Worker contra una lectura independiente del ledger, uso real (saldo registrado, costos leídos en LOOP-005) | CA1 y CA2 |
 | F2-10 | ☑ | `e2e/tests/publish-flow.spec.ts` (se rompió el bloqueo del botón a propósito y falló); CI verde en el PR #12 (confirmado por el equipo) | CA1: el CI corre unitarias y e2e en mock, sin créditos |
 | F2-11 | ◐ | `corpus.test.ts`, `docs/ops/CORPUS-EDITORIAL.md`, LOOP-006 | 16 borradores + 2 de demo listos y validados (CA2). **Falta que una persona los revise y publique** para llegar a 56 publicadas (CA1 pide ≥ 55) |
@@ -116,7 +116,6 @@ Los docs de `docs/architecture/` están actualizados con todo lo de esta lista.
 |-----------|----------|------------|
 | Alta | Las 16 noticias reales siguen sin publicar (F2-11 CA1: ≥ 55 publicadas) | Que una persona abra cada enlace, marque el checklist y publique desde el portal, con la guía `CORPUS-EDITORIAL.md`. Antes, cargarlas a producción con `pnpm seed:editorial --target=prod` |
 | Alta | La key de Anthropic vence el **2026-10-29**, antes de la presentación | Renovarla y volver a subirla con `wrangler secret put` (Diego) |
-| Alta | El recorrido manual con login real de F2-06 a F2-08 no se hizo: faltan `indexVersion` real, `/admin/index/remove` real, las pestañas de imagen y la interfaz de correcciones | Una sesión de 20 minutos con el Worker en mock y capturas en `evidence/captures/` |
 | Media | `enrich.v2` (definiciones de alcance) no está medido: Haití devolvía `nacional` | Repetir las 5 noticias de LOOP-005 con el Worker en live (≈ USD 0.016) y registrar el antes/después |
 | Media | `Allowed formats` del preset de Cloudinary no se encontró en la interfaz: el preset sin firma acepta cualquier formato de imagen | Buscarlo en la pestaña *Advanced*; el portal ya valida JPG/PNG/WebP y 5 MB antes de subir, pero no protege contra uso externo del preset |
 | Media | La ilustración IA no tiene proveedor (Anthropic no genera imágenes) | Decidir con un ADR si se quiere; la portada tipográfica cubre el caso |
