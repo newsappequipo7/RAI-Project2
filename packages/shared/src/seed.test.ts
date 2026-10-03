@@ -119,3 +119,30 @@ describe('seed corpus', () => {
     expect(inputs.every((input) => input.sources.length > 0)).toBe(true);
   });
 });
+
+describe('geographic scope convention of the editorial corpus (documented in enrich.v2)', () => {
+  const catalogCountries = new Set(LOCATIONS.map((location) => location.countryIso));
+
+  it('nacional is a country that has catalog cities; internacional is one that does not', () => {
+    for (const item of news) {
+      const { scope, countries } = item.geo;
+      if (scope === 'nacional') {
+        expect(
+          countries.every((iso) => catalogCountries.has(iso)),
+          item.id,
+        ).toBe(true);
+      }
+      if (scope === 'internacional') {
+        expect(
+          countries.some((iso) => catalogCountries.has(iso)),
+          item.id,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('actually exercises both sides of the rule', () => {
+    expect(news.some((item) => item.geo.scope === 'nacional')).toBe(true);
+    expect(news.some((item) => item.geo.scope === 'internacional')).toBe(true);
+  });
+});

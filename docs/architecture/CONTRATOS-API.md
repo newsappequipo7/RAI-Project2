@@ -58,7 +58,7 @@ Request:
 ```
 Límites: `title` 1–300 caracteres, `lead` hasta 600, `body` 1–20 000, hasta 20 `sources`; campos desconocidos → `422`.
 Response `200 EnrichSuggestion` (tipo en MODELO-DATOS.md). Una sola llamada de IA por contenido distinto, con el prompt
-versionado `enrich.v1` (`services/api/src/ai/prompts/enrich.v1.ts`) y `temperature = 0`. El Worker valida la salida y la
+versionado `enrich.v2` (`services/api/src/ai/prompts/enrich.v2.ts`; `enrich.v1` se conserva como referencia) y `temperature = 0`. El Worker valida la salida y la
 normaliza en código: descarta temas, regiones, ciudades y países fuera de los catálogos, acota importancia 0–3, deja
 a lo sumo 3 temas, 8 afirmaciones y 2 oraciones de resumen. Una salida que no es JSON válido responde `502 provider_error`
 (y no se cachea).
