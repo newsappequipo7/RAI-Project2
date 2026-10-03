@@ -91,6 +91,16 @@ Detalle y enlaces en `docs/PLAN.md` §6. Las pruebas automáticas cuentan como e
 | F2-11 | ◐ | `corpus.test.ts`, `docs/ops/CORPUS-EDITORIAL.md`, LOOP-006 | 16 borradores + 2 de demo listos y validados (CA2). **Falta que una persona los revise y publique** para llegar a 56 publicadas (CA1 pide ≥ 55) |
 | F2-12 | ◐ | este handoff, LOOP-006/007/008 | La vista previa móvil `[PLUS]` no se hizo. Falta el recorrido de Nelson (CA1) y el tag |
 
+**Reporte de cierre (2026-10-03).** Diego informó a Daniel que ejecutó sus pendientes de cierre (cargar el corpus a
+producción, probar `enrich.v2` con créditos reales, registrar el saldo y renovar la key) y que «probó y todo bien».
+Lo que se pudo comprobar desde el repositorio: el Worker desplegado está en `mock` (`GET /health` → `aiMode: "mock"`, como
+exige la prueba de `enrich.v2`) y `indexVersion` pasó de 9 (lectura del 2026-10-02) a 10, es decir, hubo actividad de
+indexación posterior. **Todavía no hay datos registrados** para cerrar F2-04 y F2-11, así que sus filas siguen en ◐:
+- F2-04: el alcance de Haití con `enrich.v2` (¿`internacional`?), el costo de la corrida y la comparación con LOOP-005.
+- F2-11: resultado de la carga a producción (`Done: 18 created…`) y cuántas de las 16 noticias quedaron publicadas.
+- Saldo real registrado en `/costs` y fecha en que se renovó la key (no el valor).
+Con esos datos se actualizan `PLAN.md` y el LOOP-005, y solo entonces se propone el tag `fase-2-done`.
+
 ## 4. Desviaciones respecto a contratos o docs
 Los docs de `docs/architecture/` están actualizados con todo lo de esta lista.
 - **Rutas del portal en inglés** (`/news`, `/costs`), como pide el doc de fase; los valores de dominio (`borrador`,
