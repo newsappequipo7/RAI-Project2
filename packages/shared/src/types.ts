@@ -241,3 +241,11 @@ export interface ImageGenerateResponse {
   costUsd: number;
   aiDisclosure: string;
 }
+
+export interface EnrichRequest {
+  newsId: string;
+  title: string;
+  lead?: string;
+  body: string;
+  sources?: { name: string; url: string }[];
+}

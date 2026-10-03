@@ -14,6 +14,8 @@ export const EDITABLE_FIELDS = [
   'certainty',
   'certaintyNote',
   'checklist',
+  'aiSuggestions',
+  'aiSummary',
 ] as const satisfies readonly (keyof News)[];
 
 export type EditableField = (typeof EDITABLE_FIELDS)[number];

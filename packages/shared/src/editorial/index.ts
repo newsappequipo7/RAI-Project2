@@ -5,3 +5,4 @@ export * from './sources';
 export * from './validatePublish';
 export * from './images';
 export * from './revision';
+export * from './suggestions';
