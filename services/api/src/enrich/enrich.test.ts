@@ -106,7 +106,7 @@ describe('enrichNews', () => {
     expect(mock).not.toBe(live);
     expect(mock).toContain(':mock:');
     expect(live).toContain(':live:');
-    expect(live).toContain('enrich.v1');
+    expect(live).toContain('enrich.v2');
   });
 
   it('does not cache an unusable model answer, and reports provider_error', async () => {

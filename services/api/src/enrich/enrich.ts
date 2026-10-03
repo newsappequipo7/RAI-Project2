@@ -5,7 +5,7 @@ import {
   buildEnrichPrompt,
   ENRICH_MAX_TOKENS,
   ENRICH_PROMPT_VERSION,
-} from '../ai/prompts/enrich.v1';
+} from '../ai/prompts/enrich.v2';
 import type { Bindings } from '../env';
 import { providerError } from '../errors';
 import { normalizeSuggestion, parseModelJson } from './normalize';

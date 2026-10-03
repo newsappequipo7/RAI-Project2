@@ -8,7 +8,7 @@ import {
 } from '@repo/shared';
 import { z } from 'zod';
 import { providerError } from '../errors';
-import { ENRICH_MAX_CLAIMS } from '../ai/prompts/enrich.v1';
+import { ENRICH_MAX_CLAIMS } from '../ai/prompts/enrich.v2';
 
 const MAX_TOPICS = 3;
 const MAX_SUMMARY_SENTENCES = 2;
