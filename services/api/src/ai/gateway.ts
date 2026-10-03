@@ -96,6 +96,7 @@ async function recordCallSafely(
   route: TaskRoute,
   now: Date,
   entry: Required<LedgerEntry>,
+  cached = false,
 ): Promise<void> {
   const record = {
     id: crypto.randomUUID(),
@@ -107,7 +108,7 @@ async function recordCallSafely(
     outputTokens: entry.usage.outputTokens,
     costUsd: entry.costUsd,
     uid: ctx.uid ?? null,
-    cached: false,
+    cached,
     outcome: entry.outcome,
     env: ctx.env.ENV,
   };
@@ -121,4 +122,20 @@ async function recordCallSafely(
   }
 }
 
-export const gateway = { run };
+/**
+ * Records that a result was served from cache instead of calling a model: a zero-cost row marked
+ * `cached`, so the dashboard can show how many paid calls were avoided.
+ */
+async function recordCacheHit(task: AiTask, ctx: GatewayContext): Promise<void> {
+  const route = resolveRoute(task, ctx.env) ?? UNROUTED;
+  await recordCallSafely(
+    ctx,
+    task,
+    route,
+    ctx.now?.() ?? new Date(),
+    { outcome: 'ok', usage: NO_USAGE, costUsd: 0 },
+    true,
+  );
+}
+
+export const gateway = { run, recordCacheHit };

@@ -1,5 +1,6 @@
 import {
   budgetSnapshotRequestSchema,
+  enrichRequestSchema,
   flagsPatchSchema,
   imageGenerateRequestSchema,
   imageSearchRequestSchema,
@@ -18,6 +19,7 @@ import {
 import { Hono } from 'hono';
 import { gateway } from '../ai/gateway';
 import { loadCosts } from '../costs';
+import { enrichNews } from '../enrich/enrich';
 import type { AppEnv } from '../env';
 import { providerError } from '../errors';
 import { parseJsonBody } from '../http';
@@ -73,6 +75,11 @@ export const adminRoutes = new Hono<AppEnv>()
 
     return c.json(body);
   })
+  .post('/enrich', async (c) => {
+    const request = await parseJsonBody(c, enrichRequestSchema);
+    return c.json(await enrichNews(c.env, c.var.uid, request));
+  })
+
   .post('/image/search', async (c) => {
     const { query } = await parseJsonBody(c, imageSearchRequestSchema);
 

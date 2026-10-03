@@ -56,8 +56,15 @@ Request:
 ```json
 { "newsId": "abc", "title": "...", "lead": "...", "body": "...", "sources": [{ "name": "...", "url": "..." }] }
 ```
-Response `200 EnrichSuggestion` (tipo en MODELO-DATOS.md). Una sola llamada de IA. Si el mismo `newsId` con el mismo
-hash de contenido ya fue enriquecido, devuelve la sugerencia cacheada (costo 0).
+Límites: `title` 1–300 caracteres, `lead` hasta 600, `body` 1–20 000, hasta 20 `sources`; campos desconocidos → `422`.
+Response `200 EnrichSuggestion` (tipo en MODELO-DATOS.md). Una sola llamada de IA por contenido distinto, con el prompt
+versionado `enrich.v1` (`services/api/src/ai/prompts/enrich.v1.ts`) y `temperature = 0`. El Worker valida la salida y la
+normaliza en código: descarta temas, regiones, ciudades y países fuera de los catálogos, acota importancia 0–3, deja
+a lo sumo 3 temas, 8 afirmaciones y 2 oraciones de resumen. Una salida que no es JSON válido responde `502 provider_error`
+(y no se cachea).
+Caché en KV por `sha256(title + lead + body)` más la versión del prompt y el modo de IA (`mock`/`live`, para que un
+resultado simulado no se sirva nunca en `live`), 30 días. Un acierto de caché no llama al modelo, responde con
+`costUsd = 0` y queda en el ledger como llamada `cached`. `newsId` y `sources` no entran en la clave.
 
 ### `POST /admin/image/search` (admin)
 Request `{ query: string (2–200 caracteres) }` → `200 { results: { thumbUrl, url, title, creator, license, licenseUrl,
