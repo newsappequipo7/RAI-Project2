@@ -26,4 +26,5 @@ Total según ledger, total según panel del proveedor, costo medio por tarea.
 Top 3 cosas.
 
 ## 8. Loops registrados en esta fase
-- LOOP-XXX: …
+- [LOOP-005](../../evidence/loops/LOOP-005-enrich-calidad-y-costo.md): calidad del prompt `enrich.v1` y costo medio
+  (USD 0.003183 por llamada, ledger y Console coinciden a menos de 1 %; importancia y alcance de Haití por afinar).
