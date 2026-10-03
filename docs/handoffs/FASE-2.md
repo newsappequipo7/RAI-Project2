@@ -87,7 +87,7 @@ Detalle y enlaces en `docs/PLAN.md` §6. Las pruebas automáticas cuentan como e
 | F2-07 | ◐ | ADR-010/011, `images.test.ts`, `image.test.ts` (Worker), emulador | Falta recorrer las pestañas en navegador, una subida real desde el portal y capturas; la búsqueda real de Openverse/Commons solo se probó con respuestas simuladas |
 | F2-08 | ◐ | `revision.test.ts`, emulador (corregir, retractar, historial) | Falta recorrer la interfaz y comprobar `/admin/index/remove` contra el Worker real |
 | F2-09 | ☑ | `costsView.test.ts`, prueba del Worker contra una lectura independiente del ledger, uso real (saldo registrado, costos leídos en LOOP-005) | CA1 y CA2 |
-| F2-10 | ◐ | `e2e/tests/publish-flow.spec.ts` (pasa local; se rompió el bloqueo del botón a propósito y falló) | Falta confirmar la corrida en GitHub Actions (CA1) en el primer PR |
+| F2-10 | ☑ | `e2e/tests/publish-flow.spec.ts` (se rompió el bloqueo del botón a propósito y falló); CI verde en el PR #12 (confirmado por el equipo) | CA1: el CI corre unitarias y e2e en mock, sin créditos |
 | F2-11 | ◐ | `corpus.test.ts`, `docs/ops/CORPUS-EDITORIAL.md`, LOOP-006 | 16 borradores + 2 de demo listos y validados (CA2). **Falta que una persona los revise y publique** para llegar a 56 publicadas (CA1 pide ≥ 55) |
 | F2-12 | ◐ | este handoff, LOOP-006/007/008 | La vista previa móvil `[PLUS]` no se hizo. Falta el recorrido de Nelson (CA1) y el tag |
 
@@ -122,7 +122,6 @@ Los docs de `docs/architecture/` están actualizados con todo lo de esta lista.
 | Media | La ilustración IA no tiene proveedor (Anthropic no genera imágenes) | Decidir con un ADR si se quiere; la portada tipográfica cubre el caso |
 | Media | Las noticias semilla no tienen versiones guardadas (nacieron fuera del portal): su Historial sale vacío hasta que se les haga una corrección. Además el estado de sus afirmaciones se asignó a mano y no coincide con la regla calculada | No bloquea nada; considerar regenerarlas desde el portal |
 | Media | Falta el primer saldo real posterior al gasto (19.98) en `/costs`: la alerta de desvío puede seguir en rojo por el redondeo a centavos de la consola | Registrarlo; con gastos de centavos la comparación válida es por tokens |
-| Baja | Los 3 PR de cierre (`f2-10-e2e`, `f2-11-editorial-corpus`, `f2-12-close`) están apilados | Mergear en ese orden |
 | Baja | El e2e cubre un solo recorrido (publicar) y con Worker simulado; correcciones, retractación e imágenes no tienen e2e | Ampliar si hay tiempo |
 | Baja | Una prueba de tiempo real del emulador falló dos veces sin causa confirmada | Ver LOOP-007; el mensaje de error ahora diagnostica |
 | Baja | Playwright quedó en 1.62.0 porque 1.63.0 salió hace menos de las 24 h que exige la política de pnpm | Subir cuando cumpla |
