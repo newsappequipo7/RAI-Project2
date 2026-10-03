@@ -13,14 +13,15 @@
 		news = $bindable(),
 		result,
 		readonly,
+		publishing = false,
 		onchange,
 		onpublish
 	}: {
 		news: News;
 		result: PublishValidation;
 		readonly: boolean;
+		publishing?: boolean;
 		onchange: () => void;
-		/** Wired by F2-06; until then the button stays disabled even when the news is ready. */
 		onpublish?: () => void;
 	} = $props();
 
@@ -135,12 +136,13 @@
 	</div>
 
 	<div class="actions">
-		<button type="button" disabled={readonly || !result.ok || !onpublish} onclick={onpublish}>
-			Publicar
+		<button
+			type="button"
+			disabled={readonly || publishing || !result.ok || !onpublish}
+			onclick={onpublish}
+		>
+			{publishing ? 'Publicando…' : 'Publicar'}
 		</button>
-		{#if result.ok && !onpublish && !readonly}
-			<small>La publicación se activa con F2-06.</small>
-		{/if}
 	</div>
 </section>
 

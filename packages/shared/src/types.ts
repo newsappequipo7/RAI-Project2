@@ -94,6 +94,7 @@ export interface News {
   createdAt: string;
   publishedAt?: string;
   updatedAt: string;
+  indexPending?: boolean; // publicada pero aún sin confirmar en el índice del Worker; se reintenta desde el portal
 }
 
 export interface UserProfile {

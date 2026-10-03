@@ -10,6 +10,14 @@ import {
 } from '../packages/shared/src/editorial/sources';
 import type { News } from '../packages/shared/src/types';
 import { loadNews, SaveBlockedError, saveNewsFields } from '../apps/admin/src/lib/newsStore';
+import {
+  clearIndexPending,
+  indexNews,
+  NotPublishableError,
+  PublishBlockedError,
+  publishNews,
+  rebuildIndex,
+} from '../apps/admin/src/lib/publishFlow';
 
 let testEnv: RulesTestEnvironment;
 let db: Firestore;
@@ -164,5 +172,125 @@ describe('F2-05 certainty, note and checklist persistence', () => {
     const cleared = await loadNews(db, 'draft-4');
     expect(cleared?.certainty).toBe('confirmada');
     expect(cleared && 'certaintyNote' in cleared).toBe(false);
+  });
+});
+
+describe('F2-06 publish and index', () => {
+  const publishable = (id: string): News => ({
+    ...createEmptyDraft(id, 'admin-a', NOW),
+    title: 'Titular',
+    lead: 'Entradilla.',
+    body: 'Cuerpo.',
+    topics: ['salud'],
+    geo: { scope: 'nacional', countries: ['GT'], cityIds: [], regions: ['centroamerica'] },
+    certainty: 'en_desarrollo',
+    certaintyNote: 'Falta una segunda fuente.',
+    sources: [
+      {
+        id: 's1',
+        name: 'Ministerio de Salud',
+        organization: 'Ministerio de Salud',
+        url: 'https://example.org/salud',
+        type: 'primaria',
+        accessedAt: NOW.toISOString(),
+        supports: 'confirma',
+      },
+    ],
+    claims: [],
+    image: {
+      kind: 'portada_generada',
+      url: '',
+      credit: 'Portada generada por la app (no es una fotografía)',
+      altText: 'Portada generada para: Titular',
+    },
+    checklist: {
+      fuentes_revisadas: true,
+      afirmaciones_con_respaldo: true,
+      titulo_no_sensacionalista: true,
+      imagen_etiquetada: true,
+      alcance_geo_revisado: true,
+      certeza_justificada: true,
+    },
+  });
+
+  it('CA1: publishes in one transaction with version snapshot and a pending index mark', async () => {
+    const news = publishable('pub-a');
+    await setDoc(doc(db, 'news', news.id), news);
+
+    const published = await publishNews(db, news.id, 'admin-a', new Date('2026-10-03T10:00:00Z'));
+    expect(published).toMatchObject({ workflow: 'publicada', version: 1, indexPending: true });
+
+    const stored = await loadNews(db, news.id);
+    expect(stored).toMatchObject({
+      workflow: 'publicada',
+      version: 1,
+      publishedBy: 'admin-a',
+      publishedAt: '2026-10-03T10:00:00.000Z',
+      indexPending: true,
+    });
+    const version = await getDoc(doc(db, 'news', news.id, 'versions', '1'));
+    expect(version.data()).toMatchObject({ title: 'Titular', version: 1, workflow: 'publicada' });
+  });
+
+  it('refuses to publish what validatePublish rejects, leaving no trace', async () => {
+    const incomplete = { ...publishable('pub-b'), sources: [] };
+    await setDoc(doc(db, 'news', incomplete.id), incomplete);
+
+    await expect(publishNews(db, incomplete.id, 'admin-a')).rejects.toBeInstanceOf(
+      PublishBlockedError,
+    );
+    expect((await loadNews(db, incomplete.id))?.workflow).toBe('borrador');
+    expect((await getDoc(doc(db, 'news', incomplete.id, 'versions', '1'))).exists()).toBe(false);
+  });
+
+  it('does not publish twice, nor a missing news', async () => {
+    await expect(publishNews(db, 'pub-a', 'admin-a')).rejects.toBeInstanceOf(NotPublishableError);
+    await expect(publishNews(db, 'does-not-exist', 'admin-a')).rejects.toBeInstanceOf(
+      NotPublishableError,
+    );
+    expect((await loadNews(db, 'pub-a'))?.version).toBe(1);
+  });
+
+  it('CA2: with the Worker down the mark stays; the retry clears it', async () => {
+    const deps = (upsert: () => Promise<{ indexVersion: number }>) => ({
+      upsert,
+      clearPending: (id: string) => clearIndexPending(db, id),
+    });
+    const published = (await loadNews(db, 'pub-a')) as News;
+
+    const down = await indexNews(
+      published,
+      deps(() => Promise.reject(new Error('Worker apagado'))),
+    );
+    expect(down.status).toBe('pending');
+    expect((await loadNews(db, 'pub-a'))?.indexPending).toBe(true);
+
+    const retried = await indexNews(
+      published,
+      deps(() => Promise.resolve({ indexVersion: 12 })),
+    );
+    expect(retried).toEqual({ status: 'indexed', indexVersion: 12 });
+    const cleared = await loadNews(db, 'pub-a');
+    expect(cleared && 'indexPending' in cleared).toBe(false);
+  });
+
+  it('rebuilds from every published news and clears the marks it resolved', async () => {
+    const second = publishable('pub-c');
+    await setDoc(doc(db, 'news', second.id), second);
+    await publishNews(db, second.id, 'admin-a');
+
+    const sent: string[][] = [];
+    const result = await rebuildIndex(db, {
+      rebuild: async (items) => {
+        sent.push(items.map((item) => item.id).sort());
+        return { indexVersion: 20, upserted: items.length };
+      },
+    });
+
+    // Every published news is sent (pub-1 comes from the F2-02 tests); drafts such as pub-b are not.
+    expect(result).toEqual({ indexVersion: 20, upserted: 3 });
+    expect(sent).toEqual([['pub-1', 'pub-a', 'pub-c']]);
+    const after = await loadNews(db, 'pub-c');
+    expect(after && 'indexPending' in after).toBe(false);
   });
 });
