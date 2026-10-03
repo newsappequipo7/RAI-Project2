@@ -1,0 +1,14 @@
+Evidencia de F2-06 y F2-08: versión del índice del Worker real (GET /health), durante el recorrido manual del 2026-10-02.
+Worker: https://news-api.diegovalenzuela.workers.dev  (aiMode: mock)
+
+  indexVersion 6   antes de empezar (estado de la Fase 1)
+  indexVersion 7   tras publicar la noticia de prueba           -> F2-06 CA1 (curl del 2026-10-02)
+  indexVersion 8   tras guardar la corrección (versión 2)       -> visible en F2-08-correccion-version-2-indexversion-8.png
+  indexVersion 9   tras retractar la noticia (versión 3)        -> F2-08 CA1 (curl del 2026-10-02): /admin/index/remove ejecutado
+
+Estado de la noticia en Firestore (emulador) tras retractar: workflow=publicada, certainty=retractada, version=3,
+corrections=[correccion "ASDASD", retractacion "NO ES MAÑANA"]. La noticia NO se borra.
+
+Foto subida a Cloudinary (F2-07): la noticia guardó image.kind=foto_real con una URL res.cloudinary.com/<cloud>/image/upload/...,
+y la URL respondió HTTP 200 image/jpeg. La captura de esa pestaña no se incluye porque la imagen de prueba era un meme
+posiblemente con derechos; repetirla con una imagen neutral si se quiere la captura.
