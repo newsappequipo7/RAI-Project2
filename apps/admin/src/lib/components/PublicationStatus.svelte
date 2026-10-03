@@ -25,7 +25,12 @@
 	{#if pending}
 		<p>
 			<strong>Publicada, pero la indexación está pendiente.</strong>
-			La noticia ya está en Firestore y la app la puede mostrar, pero el chat aún no la encuentra.
+			{#if news.certainty === 'retractada'}
+				La retractación ya está guardada, pero el chat todavía podría citar la noticia hasta que se
+				retire del índice.
+			{:else}
+				La noticia ya está en Firestore y la app la puede mostrar, pero el chat aún no la encuentra.
+			{/if}
 		</p>
 		{#if outcome?.status === 'pending'}<p class="detail">{outcome.error}</p>{/if}
 		<button type="button" onclick={onretry} disabled={busy}>
@@ -33,7 +38,12 @@
 		</button>
 	{:else}
 		<p>
-			<strong>Publicada (versión {news.version}) y añadida al índice.</strong>
+			{#if news.certainty === 'retractada'}
+				<strong>Retractada (versión {news.version}) y retirada del índice.</strong>
+				El chat ya no la cita; sigue visible con su corrección.
+			{:else}
+				<strong>Publicada (versión {news.version}) y añadida al índice.</strong>
+			{/if}
 			{#if outcome?.status === 'indexed'}Versión del índice: {outcome.indexVersion}.{/if}
 		</p>
 		{#if aiMode === 'mock'}

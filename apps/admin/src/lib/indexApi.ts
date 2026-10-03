@@ -2,6 +2,7 @@ import {
 	toIndexInput,
 	type HealthResponse,
 	type IndexInput,
+	type IndexRemoveResponse,
 	type IndexUpsertResponse,
 	type News
 } from '@repo/shared';
@@ -11,6 +12,13 @@ export function upsertNews(news: News): Promise<IndexUpsertResponse> {
 	return apiFetch<IndexUpsertResponse>('/admin/index/upsert', {
 		method: 'POST',
 		body: JSON.stringify({ news: [toIndexInput(news)] })
+	});
+}
+
+export function removeFromIndex(id: string): Promise<IndexRemoveResponse> {
+	return apiFetch<IndexRemoveResponse>('/admin/index/remove', {
+		method: 'POST',
+		body: JSON.stringify({ ids: [id] })
 	});
 }
 

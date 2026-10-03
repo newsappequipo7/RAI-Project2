@@ -1,32 +1,16 @@
-import { saveBlockers, type GeoScope, type News } from '@repo/shared';
+import {
+	pickEditableFields,
+	saveBlockers,
+	type EditableField,
+	type EditablePatch,
+	type GeoScope,
+	type News
+} from '@repo/shared';
 import { deleteField, doc, getDoc, updateDoc, type Firestore } from 'firebase/firestore';
 
-const EDITABLE_FIELDS = [
-	'title',
-	'lead',
-	'body',
-	'topics',
-	'geo',
-	'importance',
-	'sources',
-	'claims',
-	'image',
-	'certainty',
-	'certaintyNote',
-	'checklist'
-] as const satisfies readonly (keyof News)[];
-
-export type EditableField = (typeof EDITABLE_FIELDS)[number];
-export type EditablePatch = Pick<News, EditableField>;
+export { pickEditableFields, type EditableField, type EditablePatch };
 
 export class SaveBlockedError extends Error {}
-
-/** The fields the editor sections may write. Workflow, version and publication data are not here. */
-export function pickEditableFields(news: News): EditablePatch {
-	return Object.fromEntries(
-		EDITABLE_FIELDS.map((field) => [field, news[field]])
-	) as unknown as EditablePatch;
-}
 
 /** Drops the geography that a scope does not use (global: nothing; non-local: no cities). */
 export function normalizeGeo(geo: News['geo'], scope: GeoScope): News['geo'] {

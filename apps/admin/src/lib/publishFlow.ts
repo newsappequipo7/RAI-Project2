@@ -63,6 +63,8 @@ export async function publishNews(
 
 export interface IndexDeps {
 	upsert: (news: News) => Promise<{ indexVersion: number }>;
+	/** Used for retracted news, so the chat stops citing them at once. */
+	remove: (id: string) => Promise<{ indexVersion: number }>;
 	clearPending: (id: string) => Promise<void>;
 }
 
@@ -73,13 +75,15 @@ const describeError = (error: unknown) =>
 	error instanceof Error ? error.message : 'Error desconocido';
 
 /**
- * Sends a published news to the search index. It never throws: if the Worker is unreachable the
- * news keeps `indexPending: true` and the editor can retry. Upserting twice is harmless.
+ * Brings the search index in line with a published news: upsert, or remove when it was retracted.
+ * It never throws: if the Worker is unreachable the news keeps `indexPending: true` and the editor
+ * can retry. Repeating either call is harmless.
  */
 export async function indexNews(news: News, deps: IndexDeps): Promise<IndexOutcome> {
 	let indexVersion: number;
 	try {
-		({ indexVersion } = await deps.upsert(news));
+		({ indexVersion } =
+			news.certainty === 'retractada' ? await deps.remove(news.id) : await deps.upsert(news));
 	} catch (error) {
 		return { status: 'pending', error: describeError(error) };
 	}
