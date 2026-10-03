@@ -11,7 +11,8 @@
     "typecheck": "pnpm -r --if-present run typecheck",
     "test": "pnpm -r --if-present run test",
     "evals:chat": "pnpm -F evals run chat",
-    "seed": "pnpm -F shared run seed --"
+    "seed": "pnpm -F shared run seed --",
+    "seed:editorial": "pnpm -F shared run seed:editorial --"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.18.0",

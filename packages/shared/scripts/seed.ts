@@ -1,20 +1,16 @@
-import { execFileSync } from 'node:child_process';
 import seedJson from '../fixtures/news.json';
 import { firebaseConfig } from '../src/config/firebase';
+import {
+  accessToken,
+  DEFAULT_EMULATOR_API_URL,
+  DEFAULT_PROD_API_URL,
+  firestoreBaseUrl,
+  NEWS_COLLECTION,
+  toFirestoreFields,
+  type Target,
+} from './firestore-rest';
 import { newsSchema } from '../src/schemas';
 import { buildSeedNews, toIndexInput, type SeedNews } from '../src/seed';
-
-type Target = 'emulator' | 'prod';
-
-const DEFAULT_EMULATOR_HOST = '127.0.0.1:8080';
-const DEFAULT_EMULATOR_API_URL = 'http://127.0.0.1:8787';
-const DEFAULT_PROD_API_URL = 'https://news-api.diegovalenzuela.workers.dev';
-const EMULATOR_ADMIN_TOKEN = 'owner';
-const NEWS_COLLECTION = 'news';
-
-interface FirestoreValue {
-  [kind: string]: unknown;
-}
 
 function parseArgs(argv: string[]): { target: Target; dryRun: boolean } {
   const targetArg = argv.find((arg) => arg.startsWith('--target='))?.split('=')[1];
@@ -24,41 +20,6 @@ function parseArgs(argv: string[]): { target: Target; dryRun: boolean } {
   if (targetArg === 'emulator' || targetArg === 'prod') return { target: targetArg, dryRun };
 
   throw new Error('Usage: pnpm seed --target=emulator|prod [--dry-run]');
-}
-
-function toFirestoreValue(value: unknown): FirestoreValue {
-  if (value === null || value === undefined) return { nullValue: null };
-  if (typeof value === 'string') return { stringValue: value };
-  if (typeof value === 'boolean') return { booleanValue: value };
-  if (typeof value === 'number') {
-    return Number.isInteger(value) ? { integerValue: String(value) } : { doubleValue: value };
-  }
-  if (Array.isArray(value)) return { arrayValue: { values: value.map(toFirestoreValue) } };
-  if (typeof value === 'object') return { mapValue: { fields: toFirestoreFields(value) } };
-
-  throw new Error(`Unsupported value for Firestore: ${typeof value}`);
-}
-
-function toFirestoreFields(record: object): Record<string, FirestoreValue> {
-  return Object.fromEntries(
-    Object.entries(record)
-      .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => [key, toFirestoreValue(value)]),
-  );
-}
-
-function firestoreBaseUrl(target: Target): string {
-  const documents = `v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`;
-  if (target === 'prod') return `https://firestore.googleapis.com/${documents}`;
-
-  const host = process.env.FIRESTORE_EMULATOR_HOST ?? DEFAULT_EMULATOR_HOST;
-  return `http://${host}/${documents}`;
-}
-
-function accessToken(target: Target): string {
-  if (target === 'emulator') return EMULATOR_ADMIN_TOKEN;
-
-  return execFileSync('gcloud', ['auth', 'print-access-token'], { encoding: 'utf8' }).trim();
 }
 
 async function writeNews(target: Target, news: ReturnType<typeof buildSeedNews>): Promise<void> {
