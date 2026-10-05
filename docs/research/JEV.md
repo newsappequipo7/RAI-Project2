@@ -29,6 +29,7 @@ Fuente [V]: https://docs.typesafe.ai/model-jaggedness/jev-1.13.md
 - Pierde precisión con indirecciones y dobles negaciones.
 - Pierde precisión con `state` grande lleno de detalle irrelevante: filtrar antes.
 - Contenido adversarial (instrucciones inyectadas) puede mover la respuesta; no lo trata como hostil por defecto.
+- Se inclina por la primera opción de un Choice (revisado 2026-10-04): poner primero la opción conservadora.
 - No garantiza invariantes estructurales (una Noul y su negación no tienen por qué sumar 1).
 - **No sirve para generar texto.** Para eso, un modelo generativo.
 - [V] Idioma: inglés es el idioma principal de entrenamiento; otros idiomas se manejan "pero no igual de bien" y la
@@ -39,8 +40,8 @@ Fuente [V]: https://docs.typesafe.ai/model-jaggedness/jev-1.13.md
 
 ## 3. Precio, velocidad, recursos
 
-- [V] Precio: USD 0.042 por millón de tokens de entrada; salida gratis. Límites: 250 000 tokens/s y
-  1 200 solicitudes/min (ajustándose dinámicamente). Contexto: 64k tokens por solicitud; 32k para `state` + la pregunta
+- [V] Precio: USD 0.042 por millón de tokens de entrada; salida gratis. Límites (revisado 2026-10-04): 100K tokens/s y
+  80 solicitudes/s (ajustándose dinámicamente; antes decía 250 000 tokens/s y 1 200/min). Contexto: 64k tokens por solicitud; 32k para `state` + la pregunta
   más larga. Solo texto (sin imagen/audio). Fuente: https://docs.typesafe.ai/models.md
 - [V] Cloudflare Workers AI lo ofrece como `typesafe/jev`, marcado como **"Zero data retention"**, con el mismo precio
   de entrada, contexto de 32k. Fuente: https://developers.cloudflare.com/ai/models/typesafe/jev/
