@@ -144,6 +144,7 @@ export interface UserProfile {
   personalization: boolean;           // toggle "ver sin personalizar" = false
   readNewsIds: string[];              // últimas 200
   updatedAt: string;
+  interestsDecayedAt?: string;        // reloj de decaimiento diario; ISO 8601, opcional en perfiles antiguos
 }
 
 export interface UserEvent {
@@ -173,6 +174,17 @@ Cada peso es finito, de 0 a 1, y `wI + wG + wR > 0`; el motor normaliza su suma.
 debe ser finito y positivo (default 72); `demoMode` es booleano (default false).
 `resolvePublicFeedConfig(value)` valida con zod y recupera defaults por campo si el documento está ausente
 o es inválido. No hace lecturas ni escrituras. La capa F3-01 será responsable de escuchar `config/public`.
+
+Desde F3-08 (función pura), `createDefaultProfile` inicializa `interestsDecayedAt`. El esquema actualizado
+acepta documentos antiguos sin ese campo; `updateInterests` usa su `updatedAt` como referencia inicial y
+devuelve el campo nuevo sin requerir una migración masiva. La app debe persistirlo al integrar las señales
+y conservarlo al cambiar ubicación u otros campos. Los clientes que lean perfiles con el campo nuevo deben
+usar el esquema actualizado (el esquema anterior era estricto).
+
+`InterestSignal` y `UpdateInterestsInput` son contratos locales, validados por `interestSignalSchema` y
+`updateInterestsInputSchema`. `updateInterests({ profile, signal?, now })` devuelve un `UserProfile`, sin
+escribirlo. Acciones y decaimiento están en [RELEVANCIA §7](../domain/RELEVANCIA.md#7-aprendizaje-de-intereses-determinista).
+El contrato persistido de `UserEvent` no cambia; `reset` y `unmute` son solo controles locales.
 
 `RankFeedInput`, `RankedItem`, `RankedFeed` y `Reason` son contratos calculados en memoria, no colecciones.
 Su semántica, esquema de salida, exclusiones, desempates y métricas están en

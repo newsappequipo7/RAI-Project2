@@ -8,3 +8,4 @@ export * from './config';
 export * from './editorial';
 export * from './cover/spec';
 export { rankFeed } from './ranking/rankFeed';
+export { updateInterests } from './interests/update';

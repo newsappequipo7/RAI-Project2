@@ -17,5 +17,6 @@ export function createDefaultProfile(
     personalization: DEFAULT_PERSONALIZATION,
     readNewsIds: [],
     updatedAt: now.toISOString(),
+    interestsDecayedAt: now.toISOString(),
   };
 }
