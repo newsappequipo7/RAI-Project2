@@ -117,6 +117,67 @@ export interface UserEvent {
   at: string;
 }
 
+export interface RankingWeights {
+  wI: number;
+  wG: number;
+  wA: number;
+  wR: number;
+}
+
+export interface PublicFeedConfig {
+  feedWindowHours: number;
+  rankingWeights: RankingWeights;
+  demoMode: boolean;
+}
+
+export interface Reason {
+  code:
+    | 'essential'
+    | 'city'
+    | 'country'
+    | 'region'
+    | 'global'
+    | 'affinity'
+    | 'national_quota'
+    | 'international_quota'
+    | 'recent'
+    | 'important';
+  text: string;
+  contribution: number;
+}
+
+export interface RankedItem {
+  news: News;
+  score: number;
+  /** Raw normalized components; penalties is the applied multiplier (1 or 0.35). */
+  components: {
+    importance: number;
+    proximity: number;
+    affinity: number;
+    recency: number;
+    penalties: number;
+  };
+  tier: 'hero' | 'grande' | 'mediana' | 'compacta';
+  reasons: Reason[];
+  guaranteedBy?: 'esencial' | 'cuota_nacional' | 'cuota_internacional';
+}
+
+export interface RankedFeed {
+  /** All eligible essentials. The UI previews five and offers “ver todas”. */
+  mustKnow: RankedItem[];
+  feed: RankedItem[];
+  /** Distinct topics (including secondary topics) and scopes in feed's first ten. */
+  diversity: { topics: number; scopes: Record<GeoScope, number> };
+}
+
+export interface RankFeedInput {
+  news: News[];
+  profile: UserProfile;
+  locationId: string;
+  now: Date;
+  weights?: RankingWeights;
+}
+
 export type ChatMode = 'full' | 'retrieval_only';
 export type ApiEnv = 'dev' | 'demo';
 /** `mock` = fixtures and fake embeddings, no provider spend; `live` = real models. */
