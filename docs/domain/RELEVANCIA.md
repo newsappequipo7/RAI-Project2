@@ -33,7 +33,8 @@ Función pura y determinista: mismas entradas → misma salida. Sin llamadas de 
 Contrato implementado en F3-02: tipos en `types.ts` y esquemas zod `rankingWeightsSchema`,
 `rankedItemSchema`, `rankedFeedSchema` y `publicFeedConfigSchema` en `schemas.ts`.
 `Reason = { code, text, contribution }`; `code` es una clave del catálogo de §6 y `contribution` está en [0,1].
-En F3-02 `reasons` es un arreglo vacío: su generación y las condiciones de §6 corresponden a F3-03.
+Desde F3-03, cada ítem devuelto por `rankFeed` contiene de 1 a 3 razones, generadas después de las cuotas.
+La semántica de contribución, los códigos adicionales y los desempates se detallan en §6.
 
 La capa de datos (F3-01) entrega noticias únicas por ID, ya filtradas por la ventana configurable. El motor
 excluye además borradores, retractadas y fechas de publicación ausentes, inválidas o futuras. No aplica otra
@@ -144,6 +145,45 @@ Las noticias `en_desarrollo` muestran siempre un borde o chip "En desarrollo" in
 | importance ≥ 2 | "El equipo editorial la marcó como importante" |
 
 El panel muestra además barras simples con la contribución de cada componente y un botón "Menos de esto".
+
+### Contrato de las explicaciones (F3-03)
+
+Implementación: `packages/shared/src/explain/reasons.ts`. `rankFeed` devuelve las razones tanto en `feed`
+como en `mustKnow`; las esenciales usan los mismos componentes y pesos sin personalización que su score.
+El panel visual corresponde a F3-06.
+
+- `contribution = peso efectivo normalizado × componente × penalización de lectura`. No es el valor bruto
+  del componente ni un porcentaje del total. Se omiten razones de puntaje con contribución cero.
+- Se eligen como máximo tres, ordenadas por contribución descendente. Empates conservan el orden:
+  ciudad, país, región, global, afinidad, recencia, importancia.
+- Una garantía esencial o cuota reserva un espacio entre las tres razones. Su contribución es **0**:
+  explica la inclusión/promoción por una regla, que no suma puntos al score. Se muestra después de las
+  razones con aporte numérico. No interpretar ese cero como falta de importancia de la garantía.
+- Afinidad requiere personalización activa, A ≥ 0.6, aporte positivo y ningún tema silenciado. Se nombra
+  el tema de la noticia con mayor interés (acotado a [0,10]); en empate se usa el primero en `topics`.
+  Nombres de ciudad, país y tema salen de catálogos; regiones tienen nombres en español. Si el tema más
+  afín no está en el catálogo, el texto usa «los temas de esta noticia» sin inventar otro tema.
+- La suma de las razones visibles puede ser menor al score: el límite de tres no enumera todos sus aportes.
+
+Códigos del catálogo original: `essential`, `city`, `country`, `region`, `global`, `affinity`,
+`international_quota`, `national_quota`, `recent`, `important`.
+
+El catálogo original deja sin texto algunas noticias lejanas, antiguas o de importancia baja. Si ninguna
+condición aplica y no existe garantía, se explica el **mayor aporte positivo real** usando estos textos.
+En empate se prefiere importancia, proximidad, afinidad y recencia, en ese orden.
+
+| Código | Texto |
+|---|---|
+| `importance_score` | Su nivel de importancia editorial contribuye a su relevancia |
+| `proximity_score` | Su cercanía a la ubicación seleccionada contribuye a su relevancia |
+| `affinity_score` | Su afinidad temática contribuye a su relevancia |
+| `recency_score` | Su fecha de publicación contribuye a su relevancia |
+| `available` | Forma parte de las noticias publicadas disponibles |
+
+`available` se usa solo si todos los aportes son cero, con contribución 0. Los otros cuatro no afirman
+que una noticia sea importante, local, reciente ni que exista historial de lectura. `Reason.code` y
+`reasonSchema` contienen estos códigos; `rankedItemSchema` exige entre una y tres razones. El cambio es
+local al resultado calculado: no requiere migración de documentos de Firestore.
 
 ## 7. Aprendizaje de intereses (determinista)
 

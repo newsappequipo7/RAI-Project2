@@ -1,6 +1,7 @@
 import { findLocation } from '../catalogs/locations';
 import { DEFAULT_RANKING_WEIGHTS } from '../config/feed';
 import { rankingWeightsSchema } from '../schemas';
+import { buildReasons } from '../explain/reasons';
 import type { RankedFeed, RankFeedInput } from '../types';
 import { applyQuotas, diversify, isEssential } from './antibubble';
 import { compareIds, compareScores, normalizeWeights, scoreNews } from './score';
@@ -51,7 +52,10 @@ export function rankFeed({
       applyQuotas(candidates.sort(compareScores), location.countryIso),
       location.countryIso,
     ),
-  );
+  ).map((item) => ({
+    ...item,
+    reasons: buildReasons(item, location, profile, personalizedWeights),
+  }));
   const scopes: RankedFeed['diversity']['scopes'] = {
     local: 0,
     nacional: 0,
@@ -64,5 +68,12 @@ export function rankFeed({
     scopes[item.news.geo.scope]++;
     item.news.topics.forEach((topic) => topics.add(topic));
   }
-  return { mustKnow, feed, diversity: { topics: topics.size, scopes } };
+  return {
+    mustKnow: mustKnow.map((item) => ({
+      ...item,
+      reasons: buildReasons(item, location, neutralProfile, neutralWeights),
+    })),
+    feed,
+    diversity: { topics: topics.size, scopes },
+  };
 }

@@ -214,6 +214,11 @@ export const reasonSchema = z
       'international_quota',
       'recent',
       'important',
+      'importance_score',
+      'proximity_score',
+      'affinity_score',
+      'recency_score',
+      'available',
     ]),
     text: z.string().min(1),
     contribution: unitIntervalSchema,
@@ -234,7 +239,7 @@ export const rankedItemSchema = z
       })
       .strict(),
     tier: z.enum(['hero', 'grande', 'mediana', 'compacta']),
-    reasons: z.array(reasonSchema).max(3),
+    reasons: z.array(reasonSchema).min(1).max(3),
     guaranteedBy: z.enum(['esencial', 'cuota_nacional', 'cuota_internacional']).optional(),
   })
   .strict();
