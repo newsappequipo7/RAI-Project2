@@ -1,0 +1,65 @@
+# pnpm lint
+$ eslint .
+
+
+# pnpm typecheck
+$ pnpm -r --if-present run typecheck
+Scope: 6 of 7 workspace projects
+e2e typecheck$ tsc --noEmit
+firebase-tests typecheck$ tsc --noEmit
+packages/shared typecheck$ tsc --noEmit
+e2e typecheck: Done
+packages/shared typecheck: Done
+firebase-tests typecheck: Done
+apps/admin typecheck$ svelte-kit sync && svelte-check --tsconfig ./tsconfig.json
+services/api typecheck$ tsc --noEmit
+apps/mobile typecheck$ tsc --noEmit
+services/api typecheck: Done
+apps/admin typecheck: Done
+apps/mobile typecheck: Done
+
+
+# pnpm test
+$ pnpm -r --if-present run test
+Scope: 6 of 7 workspace projects
+firebase-tests test$ firebase emulators:exec --only firestore --project ai-news-app-f24cf "vitest run"
+packages/shared test$ vitest run
+firebase-tests test: i  emulators: Starting emulators: firestore
+firebase-tests test: i  firestore: Firestore Emulator logging to firestore-debug.log
+firebase-tests test: ✔  firestore: Firestore Emulator was started in standard edition.
+firebase-tests test: ✔  firestore: Firestore Emulator UI websocket is running on 9150.
+firebase-tests test: i  Running script: vitest run
+firebase-tests test:  RUN  v5.0.2 /home/nelson/Documents/Uvg/Responsable_AI/RAI-Project2/firebase-tests
+packages/shared test:  RUN  v5.0.2 /home/nelson/Documents/Uvg/Responsable_AI/RAI-Project2/packages/shared
+packages/shared test:  Test Files  19 passed (19)
+packages/shared test:       Tests  258 passed (258)
+packages/shared test:    Start at  16:04:15
+packages/shared test:    Duration  2.05s (transform 53%, import 25%, tests 18%, worker 3%)
+packages/shared test:   Transform  transforming modules took 3.65s · 53% of tracked time, re-done on every run
+packages/shared test:              persist transforms across runs with fsModuleCache: true
+packages/shared test:              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+packages/shared test: Done
+firebase-tests test:  Test Files  4 passed (4)
+firebase-tests test:       Tests  40 passed (40)
+firebase-tests test:    Start at  16:04:13
+firebase-tests test:    Duration  9.35s (tests 89%, import 8%, transform 3%)
+firebase-tests test: ✔  Script exited successfully (code 0)
+firebase-tests test: i  emulators: Shutting down emulators.
+firebase-tests test: i  firestore: Stopping Firestore Emulator
+firebase-tests test: i  hub: Stopping emulator hub
+firebase-tests test: i  logging: Stopping Logging Emulator
+firebase-tests test: Done
+apps/admin test$ vitest run
+services/api test$ vitest run
+apps/admin test:  RUN  v5.0.2 /home/nelson/Documents/Uvg/Responsable_AI/RAI-Project2/apps/admin
+apps/admin test:  Test Files  12 passed (12)
+apps/admin test:       Tests  71 passed (71)
+apps/admin test:    Start at  16:04:24
+apps/admin test:    Duration  823ms (transform 63%, import 28%, tests 6%, worker 3%)
+apps/admin test: Done
+services/api test:  RUN  v5.0.2 /home/nelson/Documents/Uvg/Responsable_AI/RAI-Project2/services/api
+services/api test:  Test Files  13 passed (13)
+services/api test:       Tests  144 passed (144)
+services/api test:    Start at  16:04:26
+services/api test:    Duration  8.56s (import 63%, transform 22%, tests 15%)
+services/api test: Done

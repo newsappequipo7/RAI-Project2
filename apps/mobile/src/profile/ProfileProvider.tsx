@@ -1,12 +1,21 @@
 import type { UserProfile } from '@repo/shared';
 import { useRouter, useSegments } from 'expo-router';
 import { onAuthStateChanged, type User } from 'firebase/auth';
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Button } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
-import { getFirebaseAuth } from '@/src/services/firebase';
-import { createProfile, loadProfile, updateProfileLocation } from '@/src/services/profile';
+import { getFirebaseAuth, getFirebaseDb } from '@/src/services/firebase';
+import { createProfile, updateProfileLocation } from '@/src/services/profile';
+import { watchProfile } from '@/src/services/profileWatch';
 
 type ProfileState =
   | { status: 'signed_out' }
@@ -37,24 +46,28 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const segments = useSegments();
 
   useEffect(() => {
-    return onAuthStateChanged(getFirebaseAuth(), (user) => {
+    let stopProfile: (() => void) | undefined;
+    const stopAuth = onAuthStateChanged(getFirebaseAuth(), (user) => {
+      stopProfile?.();
+      stopProfile = undefined;
       if (!user) {
         setState({ status: 'signed_out' });
         return;
       }
 
       setState({ status: 'loading' });
-      loadProfile(user.uid)
-        .then((profile) =>
+      stopProfile = watchProfile(
+        getFirebaseDb(),
+        user.uid,
+        (profile) =>
           setState(profile ? { status: 'ready', profile } : { status: 'needs_location' }),
-        )
-        .catch((error: unknown) =>
-          setState({
-            status: 'error',
-            message: error instanceof Error ? error.message : 'No se pudo cargar tu perfil',
-          }),
-        );
+        (error) => setState({ status: 'error', message: error.message }),
+      );
     });
+    return () => {
+      stopProfile?.();
+      stopAuth();
+    };
   }, [attempt]);
 
   useEffect(() => {
@@ -73,7 +86,17 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           ? await updateProfileLocation(state.profile, locationId)
           : await createProfile(user.uid, user.displayName ?? FALLBACK_DISPLAY_NAME, locationId);
 
-      setState({ status: 'ready', profile });
+      setState((current) => ({
+        status: 'ready',
+        profile:
+          current.status === 'ready' && current.profile.uid === profile.uid
+            ? {
+                ...current.profile,
+                locationId: profile.locationId,
+                updatedAt: profile.updatedAt,
+              }
+            : profile,
+      }));
     },
     [state],
   );
