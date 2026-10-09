@@ -141,8 +141,14 @@ export interface Reason {
     | 'national_quota'
     | 'international_quota'
     | 'recent'
-    | 'important';
+    | 'important'
+    | 'importance_score'
+    | 'proximity_score'
+    | 'affinity_score'
+    | 'recency_score'
+    | 'available';
   text: string;
+  /** Effective weighted component, including read penalty; policy/availability reasons use zero. */
   contribution: number;
 }
 
@@ -158,6 +164,7 @@ export interface RankedItem {
     penalties: number;
   };
   tier: 'hero' | 'grande' | 'mediana' | 'compacta';
+  /** One to three explanations in the public rankFeed output. */
   reasons: Reason[];
   guaranteedBy?: 'esencial' | 'cuota_nacional' | 'cuota_internacional';
 }

@@ -177,7 +177,12 @@ o es inválido. No hace lecturas ni escrituras. La capa F3-01 será responsable 
 `RankFeedInput`, `RankedItem`, `RankedFeed` y `Reason` son contratos calculados en memoria, no colecciones.
 Su semántica, esquema de salida, exclusiones, desempates y métricas están en
 [`RELEVANCIA.md`](../domain/RELEVANCIA.md). El bloque `mustKnow` contiene todas las esenciales para que la UI
-pueda mostrar cinco y ofrecer «ver todas». F3-03 llenará el arreglo `reasons`, vacío durante F3-02.
+pueda mostrar cinco y ofrecer «ver todas». Desde F3-03, `reasons` contiene entre una y tres entradas
+`{ code, text, contribution }`, ordenadas por contribución ponderada (incluye penalización de lectura).
+Las garantías editoriales tienen aporte numérico 0 y un espacio reservado. El enum de `Reason.code`
+incluye `importance_score`, `proximity_score`, `affinity_score`, `recency_score` y `available` para noticias
+sin una condición del catálogo original; reglas y textos completos en RELEVANCIA §6. `reasonSchema` y
+`rankedItemSchema` validan el contrato. No se escribe este resultado en Firestore.
 
 `indexPending` lo escribe el portal en la misma transacción que publica (`true`) y lo borra al confirmar
 `/admin/index/upsert`; si el Worker falla queda en `true` y el portal ofrece «Reintentar indexación». Los clientes

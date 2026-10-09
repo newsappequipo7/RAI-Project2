@@ -5,6 +5,8 @@ import { createDefaultProfile } from '../profile';
 import { findLocation } from '../catalogs/locations';
 import type { News, UserProfile } from '../types';
 import { rankFeed } from './rankFeed';
+import { rankedFeedSchema } from '../schemas';
+import { DEFAULT_RANKING_WEIGHTS } from '../config/feed';
 
 const now = new Date('2026-10-09T12:00:00.000Z');
 const news = buildSeedNews(corpus as SeedNews[], now);
@@ -23,6 +25,136 @@ const personas: UserProfile[] = [
 ];
 const rank = (profile: UserProfile, items: News[] = news) =>
   rankFeed({ news: items, profile, locationId: profile.locationId, now });
+
+describe('F3-03: explanations for every persona', () => {
+  it.each(['GT', 'JP'])(
+    'explains a real quota promotion when the majority country is %s',
+    (country) => {
+      const base = news[0]!;
+      const items: News[] = Array.from({ length: 12 }, (_, index) => ({
+        ...base,
+        id: `majority-${index}`,
+        importance: 2,
+        publishedAt: now.toISOString(),
+        topics: [index % 2 ? 'salud' : 'economia'],
+        geo: { scope: 'nacional', countries: [country], regions: [], cityIds: [] },
+      }));
+      items.push({
+        ...base,
+        id: 'minority',
+        importance: 0,
+        publishedAt: now.toISOString(),
+        topics: ['cultura'],
+        geo: {
+          scope: 'nacional',
+          countries: [country === 'GT' ? 'JP' : 'GT'],
+          regions: [],
+          cityIds: [],
+        },
+      });
+      const result = rank(personas[0]!, items);
+      const promoted = result.feed.find((item) => item.news.id === 'minority')!;
+      expect(result.feed.indexOf(promoted)).toBeLessThan(10);
+      expect(promoted.reasons).toContainEqual({
+        code: country === 'GT' ? 'international_quota' : 'national_quota',
+        text:
+          country === 'GT'
+            ? 'Para que no te pierdas lo que pasa fuera de tu país'
+            : 'Para que no te pierdas lo que pasa en tu país',
+        contribution: 0,
+      });
+    },
+  );
+
+  it('uses normalized custom weights, the selected location, and the read multiplier together', () => {
+    const item: News = {
+      ...news[0]!,
+      id: 'custom',
+      importance: 2,
+      publishedAt: now.toISOString(),
+      geo: { scope: 'local', countries: ['MX'], cityIds: ['mx-cdmx'], regions: [] },
+    };
+    const result = rankFeed({
+      news: [item],
+      locationId: 'mx-cdmx',
+      now,
+      profile: { ...personas[0]!, readNewsIds: ['custom'] },
+      weights: { wI: 1, wG: 1, wA: 0, wR: 1 },
+    });
+    expect(result.feed[0]!.reasons.map((reason) => reason.code)).toEqual([
+      'city',
+      'recent',
+      'important',
+    ]);
+    expect(result.feed[0]!.reasons[0]!.text).toBe('Ocurre en tu ciudad (Ciudad de México)');
+    expect(result.feed[0]!.reasons[0]!.contribution).toBeCloseTo(0.35 / 3);
+    expect(result.feed[0]!.reasons[2]!.contribution).toBeCloseTo((2 / 3) * (1 / 3) * 0.35);
+  });
+
+  it.each(personas)(
+    'explains every item for $uid without contradicting its components',
+    (profile) => {
+      const result = rank(profile);
+      expect(rankedFeedSchema.safeParse(result).success).toBe(true);
+      for (const item of [...result.mustKnow, ...result.feed]) {
+        expect(item.reasons.length, item.news.id).toBeGreaterThanOrEqual(1);
+        expect(item.reasons.length).toBeLessThanOrEqual(3);
+        expect(item.reasons.map((reason) => reason.contribution)).toEqual(
+          [...item.reasons.map((reason) => reason.contribution)].sort((a, b) => b - a),
+        );
+        for (const reason of item.reasons) {
+          if (reason.code === 'city') expect(item.components.proximity).toBe(1);
+          if (reason.code === 'country') expect(item.components.proximity).toBe(0.75);
+          if (reason.code === 'region') expect(item.components.proximity).toBe(0.4);
+          if (reason.code === 'global') expect(item.components.proximity).toBe(0.6);
+          if (reason.code === 'recent') expect(item.components.recency).toBeGreaterThanOrEqual(0.8);
+          if (reason.code === 'important') expect(item.news.importance).toBeGreaterThanOrEqual(2);
+          if (reason.code === 'essential') expect(item.guaranteedBy).toBe('esencial');
+          if (reason.code === 'national_quota') expect(item.guaranteedBy).toBe('cuota_nacional');
+          if (reason.code === 'international_quota')
+            expect(item.guaranteedBy).toBe('cuota_internacional');
+          if (reason.code === 'affinity') {
+            expect(profile.personalization).toBe(true);
+            expect(item.components.affinity).toBeGreaterThanOrEqual(0.6);
+            expect(item.news.topics.some((topic) => profile.mutedTopics.includes(topic))).toBe(
+              false,
+            );
+          }
+          const weights =
+            item.guaranteedBy === 'esencial'
+              ? { wI: 0.35 / 0.8, wG: 0.3 / 0.8, wA: 0, wR: 0.15 / 0.8 }
+              : DEFAULT_RANKING_WEIGHTS;
+          const expected = {
+            importance: weights.wI * item.components.importance * item.components.penalties,
+            proximity: weights.wG * item.components.proximity * item.components.penalties,
+            affinity: weights.wA * item.components.affinity * item.components.penalties,
+            recency: weights.wR * item.components.recency * item.components.penalties,
+          };
+          if (['city', 'country', 'region', 'global', 'proximity_score'].includes(reason.code))
+            expect(reason.contribution).toBeCloseTo(expected.proximity);
+          if (['important', 'importance_score'].includes(reason.code))
+            expect(reason.contribution).toBeCloseTo(expected.importance);
+          if (['affinity', 'affinity_score'].includes(reason.code))
+            expect(reason.contribution).toBeCloseTo(expected.affinity);
+          if (['recent', 'recency_score'].includes(reason.code))
+            expect(reason.contribution).toBeCloseTo(expected.recency);
+          if (reason.code.endsWith('_score'))
+            expect(reason.contribution).toBeCloseTo(Math.max(...Object.values(expected)));
+          if (
+            ['essential', 'national_quota', 'international_quota', 'available'].includes(
+              reason.code,
+            )
+          )
+            expect(reason.contribution).toBe(0);
+          if (reason.code === 'available') expect(item.score).toBe(0);
+        }
+        expect(
+          item.reasons.reduce((sum, reason) => sum + reason.contribution, 0),
+        ).toBeLessThanOrEqual(item.score + 1e-12);
+      }
+    },
+  );
+});
 
 describe('RELEVANCIA §8: nine acceptance properties', () => {
   it('1: keeps essential GT news for both GT personas despite muted politics', () => {

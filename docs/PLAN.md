@@ -127,7 +127,7 @@ por tarea al iniciar su fase.
 | F2-12 | [PLUS] Vista previa móvil y cierre | ◐ | [`docs/handoffs/FASE-2.md`](handoffs/FASE-2.md) completo y [LOOP-006 a 008](../evidence/loops/) (con LOOP-005 son 4 loops en la fase; meta ≥ 3). **No hecho:** la vista previa móvil `[PLUS]`, el recorrido de Nelson siguiendo solo el handoff (CA1) y `git tag fase-2-done`, que espera la confirmación explícita y que se resuelvan los ◐ de arriba |
 | F3-01 | Capa de datos del feed | ☐ | |
 | F3-02 | Motor de ranking (TDD) | ◐ | [Evidencia F3-02](../evidence/F3-02-ranking.md), [LOOP-009](../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md). CA1: nueve propiedades y casos adicionales automatizados. CA2 pendiente: medir 200 noticias en <20 ms en teléfono real con Expo Go. |
-| F3-03 | Explicaciones ("¿Por qué veo esto?") | ☐ | |
+| F3-03 | Explicaciones ("¿Por qué veo esto?") | ☑ | [Evidencia F3-03](../evidence/F3-03-explanations.md), [LOOP-010](../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md). CA1: cada ítem de las cuatro personas tiene 1–3 razones coherentes con sus componentes; pruebas de catálogo, umbrales, pesos efectivos y garantías. Motor puro; panel visual en F3-06. |
 | F3-04 | Pantalla de feed con jerarquía visual | ☐ | |
 | F3-05 | Imágenes y portada tipográfica en la app | ☐ | |
 | F3-06 | Panel "¿Por qué veo esto?" y control del usuario | ☐ | |
