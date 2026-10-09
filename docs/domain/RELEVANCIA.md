@@ -197,8 +197,38 @@ Actualización de `interests[tema]` (acotado a [0, 10]) para cada tema de la not
 | `less_like_this` | −3.0 y agrega el tema a `mutedTopics` si queda en 0 |
 | `chat_topic` (tema detectado en la pregunta del chat) | +0.5 |
 
-Decaimiento diario: `interests[t] *= 0.9` aplicado al abrir la app si pasó ≥ 1 día desde `updatedAt`.
+Decaimiento diario: `interests[t] *= 0.9 ** díasCompletos`, donde cada día equivale a 24 h desde
+`interestsDecayedAt`. Se aplica al abrir la app y antes de una señal; el reloj avanza solo los días completos
+para conservar la fracción restante. Los perfiles antiguos usan `updatedAt` una vez como punto de partida.
+El reloj independiente evita que lecturas o cambios de ubicación pospongan indefinidamente el decaimiento.
 El usuario puede ver y reiniciar sus intereses en Perfil ("Esto es lo que la app cree que te interesa").
+
+### Contrato puro (F3-08, paso 1)
+
+`updateInterests({ profile, signal?, now: Date }): UserProfile`, exportado por `@repo/shared`, valida con
+`updateInterestsInputSchema` y no muta las entradas. Omitir `signal` aplica solamente el decaimiento pendiente.
+No lee el reloj del sistema ni Firestore, ni invoca modelos. La integración móvil y los controles siguen pendientes.
+
+- `open`, `dwell`, `more_like_this` y `less_like_this` reciben `topics` (temas de la noticia). El delta se
+  aplica una vez por tema distinto; los intereses ausentes empiezan en 0. `dwell` recibe además `seconds`
+  finitos y no negativos; menos de 20 s no suma. `chat_topic` recibe un solo `topic` del catálogo.
+- `why_opened` no modifica intereses por sí mismo. Todas las acciones pueden aplicar decaimiento pendiente.
+- Los intereses se acotan a [0,10] antes del decaimiento y después de cada delta. Señales nuevas solo aceptan
+  temas del catálogo; entradas antiguas con otras claves se conservan y decaen. NaN e infinitos se rechazan.
+- Solo `less_like_this` que llega a 0 añade un silencio, sin duplicados. Leer o consultar el chat no elimina
+  silencios explícitos. `more_like_this` suma 2 y reactiva esos temas; `unmute` recibe `topic` y lo reactiva
+  sin sumar puntos. El decaimiento hasta 0 no crea silencios.
+- `reset` vacía intereses y silencios y reinicia el reloj en `now`. Conserva ubicación, historial y toggle.
+  `reset` y `unmute` son controles locales; no se añaden al enum persistido de `UserEvent`.
+- El toggle controla el ranking: esta función aplica las señales recibidas incluso si `personalization`
+  está apagado. La captura de eventos corresponde a la app; `rankFeed` ignora intereses, silencios e historial
+  en ese modo. Esta función no añade IDs a `readNewsIds`.
+- Los perfiles nuevos inicializan `interestsDecayedAt`. Al modificar intereses, silencios o su reloj,
+  se actualiza `updatedAt = now`; sin cambios se devuelve el perfil original. Se exigen fechas ISO válidas,
+  `interestsDecayedAt <= updatedAt <= now`; una entrada inválida lanza un error zod sin modificar el perfil.
+- La app debe mapear `UserEvent` + `News.topics` a `InterestSignal`, deduplicar eventos y persistir la
+  transición con debounce (un write del perfil por sesión de lectura). No persistir el resultado fuera
+  de orden ni reemplazar otros campos usando un perfil obsoleto; esa integración se probará al retomarla.
 
 ## 8. Pruebas obligatorias (`packages/shared/src/ranking/*.test.ts` y `evals/ranking-personas.test.ts`)
 

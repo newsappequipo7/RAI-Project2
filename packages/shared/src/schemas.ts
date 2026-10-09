@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { findTopic } from './catalogs/topics';
 
 export const geoScopeSchema = z.enum(['local', 'nacional', 'regional', 'internacional', 'global']);
 export const workflowSchema = z.enum(['borrador', 'en_revision', 'publicada', 'rechazada']);
@@ -146,6 +147,7 @@ export const userProfileSchema = z
     personalization: z.boolean(),
     readNewsIds: z.array(z.string()),
     updatedAt: z.string(),
+    interestsDecayedAt: z.string().datetime({ offset: true }).optional(),
   })
   .strict();
 
@@ -179,6 +181,54 @@ export const userEventSchema = z
     at: z.string(),
   })
   .strict();
+
+const interestTopicSchema = z.string().refine((topic) => findTopic(topic) !== undefined, {
+  message: 'El tema debe pertenecer al catálogo.',
+});
+const interestTopicsSchema = z.array(interestTopicSchema).min(1);
+export const interestSignalSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('open'), topics: interestTopicsSchema }).strict(),
+  z
+    .object({
+      type: z.literal('dwell'),
+      topics: interestTopicsSchema,
+      seconds: z.number().finite().nonnegative(),
+    })
+    .strict(),
+  z.object({ type: z.literal('more_like_this'), topics: interestTopicsSchema }).strict(),
+  z.object({ type: z.literal('less_like_this'), topics: interestTopicsSchema }).strict(),
+  z.object({ type: z.literal('chat_topic'), topic: interestTopicSchema }).strict(),
+  z.object({ type: z.literal('why_opened') }).strict(),
+  z.object({ type: z.literal('unmute'), topic: interestTopicSchema }).strict(),
+  z.object({ type: z.literal('reset') }).strict(),
+]);
+
+export const updateInterestsInputSchema = z
+  .object({
+    profile: userProfileSchema.extend({
+      interests: z.record(z.string(), z.number().finite()),
+      updatedAt: z.string().datetime({ offset: true }),
+    }),
+    signal: interestSignalSchema.optional(),
+    now: z.date(),
+  })
+  .strict()
+  .superRefine(({ profile, now }, context) => {
+    const updated = Date.parse(profile.updatedAt);
+    if (updated > now.getTime())
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['now'],
+        message: 'La actualización no puede retroceder en el tiempo.',
+      });
+    if (profile.interestsDecayedAt && Date.parse(profile.interestsDecayedAt) > updated) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['profile', 'interestsDecayedAt'],
+        message: 'El decaimiento no puede ser posterior a la actualización del perfil.',
+      });
+    }
+  });
 
 const unitIntervalSchema = z.number().finite().min(0).max(1);
 export const rankingWeightsSchema = z

@@ -106,6 +106,8 @@ export interface UserProfile {
   personalization: boolean; // toggle "ver sin personalizar" = false
   readNewsIds: string[]; // últimas 200
   updatedAt: string;
+  /** Independent daily-decay clock; legacy profiles fall back to updatedAt once. */
+  interestsDecayedAt?: string;
 }
 
 export interface UserEvent {
@@ -115,6 +117,22 @@ export interface UserEvent {
   seconds?: number;
   locationId: string;
   at: string;
+}
+
+/** Local actions; persistence maps UserEvent + News.topics into these inputs. */
+export type InterestSignal =
+  | { type: 'open' | 'more_like_this' | 'less_like_this'; topics: string[] }
+  | { type: 'dwell'; topics: string[]; seconds: number }
+  | { type: 'chat_topic'; topic: string }
+  | { type: 'why_opened' }
+  | { type: 'unmute'; topic: string }
+  | { type: 'reset' };
+
+export interface UpdateInterestsInput {
+  profile: UserProfile;
+  /** Omit on app open to apply elapsed daily decay only. */
+  signal?: InterestSignal;
+  now: Date;
 }
 
 export interface RankingWeights {

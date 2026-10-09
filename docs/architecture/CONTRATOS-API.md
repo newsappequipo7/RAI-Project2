@@ -8,6 +8,10 @@ El feed y el comparador no usan un endpoint del Worker: ambos importan `rankFeed
 El contrato local de F3-02/F3-03 se documenta en [`RELEVANCIA.md`](../domain/RELEVANCIA.md) y la configuración en
 [`MODELO-DATOS.md`](MODELO-DATOS.md). No hay llamadas a modelos ni cambios en los endpoints por este motor.
 Desde F3-03, cada resultado local lleva de una a tres razones con texto en español y contribución ponderada.
+F3-08 añade `updateInterests({ profile, signal?, now }): UserProfile` en `@repo/shared`, también local y
+sin endpoint del Worker. Tipos `InterestSignal`/`UpdateInterestsInput`, esquemas zod y semántica en
+[RELEVANCIA §7](../domain/RELEVANCIA.md#7-aprendizaje-de-intereses-determinista); el campo opcional
+`UserProfile.interestsDecayedAt` se documenta en MODELO-DATOS. La persistencia móvil se integra después.
 
 Códigos de error comunes: `unauthorized` (401), `forbidden` (403), `not_found` (404), `invalid_input` (422),
 `rate_limited` (429), `budget_blocked` (503, kill switch activo), `provider_error` (502), `internal_error` (500,
