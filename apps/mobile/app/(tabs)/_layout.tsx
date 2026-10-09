@@ -11,7 +11,8 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="chat"
         options={{
@@ -29,6 +30,7 @@ export default function TabLayout() {
         name="feed"
         options={{
           title: 'Noticias',
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{ ios: 'newspaper', android: 'article', web: 'article' }}
