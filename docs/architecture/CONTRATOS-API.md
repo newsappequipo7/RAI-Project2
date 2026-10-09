@@ -4,6 +4,10 @@ Base URL: `https://news-api.<subdominio>.workers.dev`. Todas las rutas (excepto 
 `Authorization: Bearer <Firebase ID token>`. Errores con forma `{ error: { code: string, message: string } }`.
 Validación con zod; esquemas exportados desde `packages/shared/src/schemas.ts`.
 
+El feed y el comparador no usan un endpoint del Worker: ambos importan `rankFeed` de `@repo/shared`.
+El contrato local de F3-02 se documenta en [`RELEVANCIA.md`](../domain/RELEVANCIA.md) y la configuración en
+[`MODELO-DATOS.md`](MODELO-DATOS.md). No hay llamadas a modelos ni cambios en los endpoints por este motor.
+
 Códigos de error comunes: `unauthorized` (401), `forbidden` (403), `not_found` (404), `invalid_input` (422),
 `rate_limited` (429), `budget_blocked` (503, kill switch activo), `provider_error` (502), `internal_error` (500,
 sin detalles internos; el detalle va al log del Worker).

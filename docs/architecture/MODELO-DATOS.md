@@ -167,6 +167,18 @@ export interface UserEvent {
 | `users/{uid}/events/{id}` | `UserEvent` | dueño | dueño (solo create) |
 | `config/public` | `{ feedWindowHours, rankingWeights, demoMode }` | autenticados | admins |
 
+Configuración del feed (F3-02): `PublicFeedConfig` y `RankingWeights` se exportan desde `@repo/shared`.
+`rankingWeights = { wI, wG, wA, wR }`, defaults `{ wI: 0.35, wG: 0.30, wA: 0.20, wR: 0.15 }`.
+Cada peso es finito, de 0 a 1, y `wI + wG + wR > 0`; el motor normaliza su suma. `feedWindowHours`
+debe ser finito y positivo (default 72); `demoMode` es booleano (default false).
+`resolvePublicFeedConfig(value)` valida con zod y recupera defaults por campo si el documento está ausente
+o es inválido. No hace lecturas ni escrituras. La capa F3-01 será responsable de escuchar `config/public`.
+
+`RankFeedInput`, `RankedItem`, `RankedFeed` y `Reason` son contratos calculados en memoria, no colecciones.
+Su semántica, esquema de salida, exclusiones, desempates y métricas están en
+[`RELEVANCIA.md`](../domain/RELEVANCIA.md). El bloque `mustKnow` contiene todas las esenciales para que la UI
+pueda mostrar cinco y ofrecer «ver todas». F3-03 llenará el arreglo `reasons`, vacío durante F3-02.
+
 `indexPending` lo escribe el portal en la misma transacción que publica (`true`) y lo borra al confirmar
 `/admin/index/upsert`; si el Worker falla queda en `true` y el portal ofrece «Reintentar indexación». Los clientes
 móviles pueden ignorarlo.

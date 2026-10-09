@@ -180,6 +180,87 @@ export const userEventSchema = z
   })
   .strict();
 
+const unitIntervalSchema = z.number().finite().min(0).max(1);
+export const rankingWeightsSchema = z
+  .object({
+    wI: unitIntervalSchema,
+    wG: unitIntervalSchema,
+    wA: unitIntervalSchema,
+    wR: unitIntervalSchema,
+  })
+  .strict()
+  .refine((w) => w.wI + w.wG + w.wR > 0, {
+    message: 'Debe existir peso fuera de la afinidad para poder desactivar la personalización.',
+  });
+
+export const publicFeedConfigSchema = z
+  .object({
+    feedWindowHours: z.number().finite().positive(),
+    rankingWeights: rankingWeightsSchema,
+    demoMode: z.boolean(),
+  })
+  .strict();
+
+export const reasonSchema = z
+  .object({
+    code: z.enum([
+      'essential',
+      'city',
+      'country',
+      'region',
+      'global',
+      'affinity',
+      'national_quota',
+      'international_quota',
+      'recent',
+      'important',
+    ]),
+    text: z.string().min(1),
+    contribution: unitIntervalSchema,
+  })
+  .strict();
+
+export const rankedItemSchema = z
+  .object({
+    news: newsSchema,
+    score: unitIntervalSchema,
+    components: z
+      .object({
+        importance: unitIntervalSchema,
+        proximity: unitIntervalSchema,
+        affinity: unitIntervalSchema,
+        recency: unitIntervalSchema,
+        penalties: z.union([z.literal(1), z.literal(0.35)]),
+      })
+      .strict(),
+    tier: z.enum(['hero', 'grande', 'mediana', 'compacta']),
+    reasons: z.array(reasonSchema).max(3),
+    guaranteedBy: z.enum(['esencial', 'cuota_nacional', 'cuota_internacional']).optional(),
+  })
+  .strict();
+
+const countSchema = z.number().int().nonnegative();
+export const rankedFeedSchema = z
+  .object({
+    mustKnow: z.array(rankedItemSchema),
+    feed: z.array(rankedItemSchema),
+    diversity: z
+      .object({
+        topics: countSchema,
+        scopes: z
+          .object({
+            local: countSchema,
+            nacional: countSchema,
+            regional: countSchema,
+            internacional: countSchema,
+            global: countSchema,
+          })
+          .strict(),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const MAX_INDEX_BATCH = 200;
 export const MAX_SEARCH_TOP_K = 20;
 

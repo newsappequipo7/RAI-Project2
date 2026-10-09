@@ -7,3 +7,4 @@ export * from './catalogs';
 export * from './config';
 export * from './editorial';
 export * from './cover/spec';
+export { rankFeed } from './ranking/rankFeed';

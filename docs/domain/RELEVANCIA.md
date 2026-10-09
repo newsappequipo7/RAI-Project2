@@ -22,13 +22,23 @@ interface RankedItem {
   guaranteedBy?: 'esencial' | 'cuota_nacional' | 'cuota_internacional';
 }
 interface RankedFeed {
-  mustKnow: RankedItem[];       // bloque "Lo que debes saber" (no personalizado)
+  mustKnow: RankedItem[];       // todas las esenciales; la UI muestra 5 + "ver todas"
   feed: RankedItem[];           // resto, ordenado y con tiers
   diversity: { topics: number; scopes: Record<GeoScope, number> };  // para métrica anti-burbuja
 }
 ```
 
 Función pura y determinista: mismas entradas → misma salida. Sin llamadas de red.
+
+Contrato implementado en F3-02: tipos en `types.ts` y esquemas zod `rankingWeightsSchema`,
+`rankedItemSchema`, `rankedFeedSchema` y `publicFeedConfigSchema` en `schemas.ts`.
+`Reason = { code, text, contribution }`; `code` es una clave del catálogo de §6 y `contribution` está en [0,1].
+En F3-02 `reasons` es un arreglo vacío: su generación y las condiciones de §6 corresponden a F3-03.
+
+La capa de datos (F3-01) entrega noticias únicas por ID, ya filtradas por la ventana configurable. El motor
+excluye además borradores, retractadas y fechas de publicación ausentes, inválidas o futuras. No aplica otra
+ventana al feed regular: permite ampliar la ventana por configuración sin perder esas noticias al ordenar.
+Rechaza ubicación simulada desconocida, `now` inválido y pesos explícitos inválidos.
 
 ## 1. Separar importancia de relevancia
 
@@ -66,22 +76,43 @@ Función pura y determinista: mismas entradas → misma salida. Sin llamadas de 
 Pesos default (`config/public.rankingWeights`): `wI = 0.35, wG = 0.30, wA = 0.20, wR = 0.15`.
 Con `profile.personalization = false`: `wA = 0` y se redistribuye proporcionalmente (modo "ver sin personalizar").
 
+También se ignoran silenciados e historial de lectura: de lo contrario la penalización por leída contradice
+la prueba 6. La afinidad neutral reportada es 0.3, con contribución ponderada cero.
+
+Cada peso debe ser finito y estar en [0,1]; `wI + wG + wR > 0` para que el modo sin personalización sea válido.
+Se normaliza la suma antes de calcular el puntaje. `resolvePublicFeedConfig(snapshot.data())` valida los campos
+independientemente y usa defaults para los ausentes/inválidos (72 h, pesos anteriores, `demoMode=false`).
+El helper no consulta Firestore: F3-01 y el comparador le pasan el documento y luego `rankingWeights` a `rankFeed`.
+Los componentes reportados son valores sin ponderar; `components.penalties` es el multiplicador 1 o 0.35.
+Desempates: puntaje descendente, publicación descendente, ID ascendente por código de caracteres (sin locale).
+
 Justificación de los pesos para la presentación: importancia y proximidad dominan (lo que la persona **debería**
 saber), la afinidad solo desempata dentro de lo relevante. La afinidad nunca puede superar a la importancia: una
 noticia esencial con afinidad 0 siempre supera a una rutina con afinidad 1 en la misma zona.
-Esa propiedad es una prueba automática (ver §7).
+Esa propiedad es una prueba automática (ver §8), bajo pesos default, misma recencia y sin penalización de lectura.
+Pesos personalizados pueden cambiar esa comparación numérica; no alteran la inclusión del bloque esencial.
 
 ## 4. Reglas anti-burbuja (se aplican en este orden)
 
 1. **Lo que debes saber (no personalizado):** toda noticia `importance == 3` con `G ≥ 0.40` o `scope == 'global'`,
    publicada en las últimas 72 h, va a `mustKnow` ordenada por recencia. No depende de intereses ni de silenciados.
-   Máximo 5; si hay más, se muestran 5 y un "ver todas".
+   La salida conserva **todas** para no perder esenciales. La UI muestra máximo 5 y, si hay más, "ver todas"
+   (`MUST_KNOW_PREVIEW_LIMIT`). La ventana esencial es siempre 72 h, inclusive, independiente de la del feed.
+   Sus componentes y puntajes también se calculan sin personalización; desempates por ID. No se duplican en `feed`.
 2. **Cuotas en los primeros 10 del feed:** al menos 1 noticia nacional (`loc.country ∈ countries`) y al menos
    1 internacional (sin coincidencia de país). Si no entran por puntaje, se promueve la mejor de cada tipo a las
    posiciones 5 y 8 respectivamente y se marca `guaranteedBy`.
-3. **Diversidad de temas:** no más de 2 noticias consecutivas con el mismo tema principal. Se reordena de forma
-   voraz tomando la siguiente mejor que no viole la regla.
+3. **Diversidad de temas:** no más de 2 noticias consecutivas con el mismo tema principal cuando el conjunto
+   lo permite. Se reordena de forma voraz, conservando separadores para el resto y ambas cuotas del top 10.
+   La diversidad puede mover las posiciones de promoción iniciales, pero conserva su marca `guaranteedBy`.
+   Si los temas disponibles hacen imposible evitar triples (por ejemplo, solo existe un tema), se conservan
+   todas las noticias y se priorizan las cuotas disponibles: no se ocultan noticias para aparentar diversidad.
 4. **Silenciar no oculta lo esencial:** `mutedTopics` baja la afinidad pero nunca saca una noticia de `mustKnow`.
+
+La cuota nacional se determina por coincidencia de país (también puede cubrirla una noticia local o regional);
+la internacional es la ausencia de coincidencia (incluye globales fuera del bloque esencial).
+`diversity` mide solo las primeras 10 de `feed`: temas distintos incluyendo secundarios y conteos por el
+`geo.scope` original; no suma `mustKnow` ni renombra los alcances para contar cuotas.
 
 ## 5. Jerarquía visual (tiers)
 
