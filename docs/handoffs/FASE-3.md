@@ -12,6 +12,9 @@ Responsable: Nelson · Estado: **en curso** · Fecha de cierre y tag: pendientes
 - F3-04: pantalla de Noticias conectada al servicio F3-01 y a `rankFeed`, con esenciales, cuatro tiers,
   ubicación simulada, chips, pies de imagen, actualización al deslizar y estados de carga/vacío/error.
   Pendiente validar su presentación en Expo Go. La fase no está cerrada.
+- F3-05: portada móvil desde el mismo `buildCoverSpec` del portal; cada imagen lleva pie y una hoja táctil
+  de procedencia. Ilustraciones IA tienen sello y advertencia; compactas usan ícono con tooltip. Pendiente
+  revisión en Expo Go con teléfono real.
 
 ## 2. Cómo correrlo desde cero
 Con Node 24 y pnpm 11.6.0:
@@ -36,7 +39,8 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
 | F3-08 | ◐ | [Evidencia](../../evidence/F3-08-interests.md), [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md) | Paso 1 y CA1 verificados; persistencia, controles y CA2/CA3 en la app pendientes |
 | F3-01 | ◐ | [Evidencia](../../evidence/F3-01-feed-data.md) | CA1 en emulador (<5 s), falta recorrido del proveedor React en Expo Go |
 | F3-04 | ◐ | [Evidencia](../../evidence/F3-04-feed-ui.md) | UI implementada; CA1/CA2/CA3 pendientes de revisión visual en dispositivos reales |
-| F3-05 … F3-07, F3-09 … F3-12 | ☐ | | No implementadas todavía |
+| F3-05 | ◐ | [Evidencia](../../evidence/F3-05-images.md) | Componentes y pruebas completados; falta inspección táctil y visual en teléfono real |
+| F3-06 … F3-07, F3-09 … F3-12 | ☐ | | No implementadas todavía |
 
 ## 4. Desviaciones respecto a contratos o docs
 - Contratos nuevos de ranking, razones y configuración en `types.ts`/`schemas.ts`, documentados en
@@ -63,6 +67,9 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
   `config.rankingWeights` y ubicación del perfil. Los cuatro tiers determinan tarjetas distintas; esenciales
   quedan arriba, cinco visibles y opción de desplegar todas. Toda imagen visible tiene pie. La imagen de
   portada usa `buildCoverSpec`; el detalle de procedencia de la imagen se completa en F3-05.
+- F3-05 no cambia contratos persistidos. `NewsImage` usa `imageCaption` para los cuatro tipos y la portada
+  usa `buildCoverSpec`/`wrapCoverTitle`, con la leyenda también dentro de la imagen. La hoja utiliza
+  `Modal` y `Linking` de React Native, compatibles con Expo Go; URLs de origen solo se abren si son http(s).
 
 ## 5. Deuda y problemas conocidos
 - Alta: CA2 de F3-02 sin medir en Expo Go sobre teléfono de gama media; no marcar Done todavía.
@@ -72,6 +79,8 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
   la publicación del portal y las reglas; falta comprobar el proveedor React y navegación real en dispositivo.
 - Alta: revisar F3-04 en Expo Go en iPhone pequeño y Android grande. Los tests de corpus prueban orden,
   tiers y etiquetas; no prueban tamaño, recortes ni accesibilidad visual en ambos dispositivos.
+- Media: revisar F3-05 en Expo Go: portada, pie, sello IA cuando haya ejemplo, hoja de procedencia y tooltip
+  compacto; registrar teléfono y evidencia. El corpus semilla solo incluye portada y licencia libre.
 - Media: datos editoriales pueden quedar fuera de ventana. Nelson reportó una noticia publicada y pausó
   las restantes; no se modificó ningún checklist ni noticia desde el agente.
 - Media: completar F3-08 después de lectura/F3-06: mapear eventos a señales, mantener `readNewsIds`,
@@ -80,7 +89,7 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
   `rankFeed` no sustituyen esa evidencia visible.
 
 ## 6. Gasto de IA de la fase
-F3-01, F3-02, F3-03, F3-04 y función pura de F3-08: USD 0 en llamadas a modelos desde este trabajo; no se invocaron proveedores reales ni el gateway desplegado.
+F3-01, F3-02, F3-03, F3-04, F3-05 y función pura de F3-08: USD 0 en llamadas a modelos desde este trabajo; no se invocaron proveedores reales ni el gateway desplegado.
 Ledger/panel del proveedor: no consultados para esta tarea. Total de fase se verificará al cierre.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar

@@ -1,8 +1,9 @@
-import { buildCoverSpec, findTopic, imageCaption, type News, type RankedItem } from '@repo/shared';
+import { findTopic, type News, type RankedItem } from '@repo/shared';
 import { useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { NewsImage } from './NewsImage';
 import { newsLabels, relativePublishedAt } from './presentation';
 import { feedSpacing as space, feedType, type FeedPalette } from '../theme/feed';
 
@@ -39,52 +40,6 @@ export function NewsChips({ news, palette }: { news: News; palette: FeedPalette 
           <Text style={[styles.chipText, { color: palette.warning }]}>{labels.certainty}</Text>
         </View>
       ) : null}
-    </View>
-  );
-}
-
-function NewsArtwork({
-  news,
-  palette,
-  mini = false,
-}: {
-  news: News;
-  palette: FeedPalette;
-  mini?: boolean;
-}) {
-  const cover = buildCoverSpec(news);
-  const image = news.image;
-  const artworkStyle = mini ? styles.artworkMini : styles.artworkWide;
-  const generated = !image || image.kind === 'portada_generada' || !image.url;
-  const caption = image && !generated ? imageCaption(image) : cover.caption;
-
-  return (
-    <View style={mini ? styles.artworkMiniWrap : styles.artworkWideWrap}>
-      {generated ? (
-        <View style={[artworkStyle, styles.cover, { backgroundColor: cover.background }]}>
-          <Text style={[styles.coverKicker, { color: cover.foreground }]} numberOfLines={1}>
-            {cover.kicker ?? 'ACTUALIDAD'}
-          </Text>
-          <Text
-            style={[mini ? styles.coverTitleMini : styles.coverTitle, { color: cover.foreground }]}
-            numberOfLines={mini ? 3 : 4}
-          >
-            {cover.title}
-          </Text>
-        </View>
-      ) : (
-        <Image
-          source={{ uri: image.url }}
-          style={artworkStyle}
-          resizeMode="cover"
-          accessibilityLabel={image.altText}
-        />
-      )}
-      <Text
-        style={[mini ? styles.captionMini : styles.caption, { color: palette.subtle }]}
-      >
-        {caption}
-      </Text>
     </View>
   );
 }
@@ -126,7 +81,7 @@ export function HeroCard({ item, now, palette }: CardProps) {
       news={news}
       style={[styles.hero, { backgroundColor: palette.surface, borderColor: palette.line }]}
     >
-      <NewsArtwork news={news} palette={palette} />
+      <NewsImage news={news} palette={palette} />
       <View style={styles.heroBody}>
         <TopicMark news={news} palette={palette} />
         <Text style={[styles.heroTitle, { color: palette.ink }]}>{news.title}</Text>
@@ -147,7 +102,7 @@ export function LargeCard({ item, now, palette }: CardProps) {
       news={news}
       style={[styles.large, { backgroundColor: palette.surface, borderColor: palette.line }]}
     >
-      <NewsArtwork news={news} palette={palette} />
+      <NewsImage news={news} palette={palette} />
       <View style={styles.largeBody}>
         <Text style={[styles.largeTitle, { color: palette.ink }]}>{news.title}</Text>
         <NewsChips news={news} palette={palette} />
@@ -164,7 +119,7 @@ export function MediumRow({ item, now, palette }: CardProps) {
       news={news}
       style={[styles.medium, { backgroundColor: palette.surface, borderColor: palette.line }]}
     >
-      <NewsArtwork news={news} palette={palette} mini />
+      <NewsImage news={news} palette={palette} variant="mini" />
       <View style={styles.mediumBody}>
         <Text style={[styles.mediumTitle, { color: palette.ink }]} numberOfLines={4}>
           {news.title}
@@ -182,6 +137,7 @@ export function CompactRow({ item, now, palette }: CardProps) {
     <ArticleLink news={news} style={[styles.compact, { borderColor: palette.line }]}>
       <TopicMark news={news} palette={palette} />
       <Text style={[styles.compactTitle, { color: palette.ink }]}>{news.title}</Text>
+      <NewsImage news={news} palette={palette} variant="compact" />
       <NewsChips news={news} palette={palette} />
       <TimeLabel news={news} now={now} palette={palette} />
     </ArticleLink>
@@ -267,16 +223,6 @@ const styles = StyleSheet.create({
   chip: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 4 },
   chipText: { fontSize: feedType.label, fontWeight: '700' },
   time: { fontSize: feedType.label, fontWeight: '600', marginTop: space.sm },
-  artworkWideWrap: { width: '100%' },
-  artworkWide: { width: '100%', aspectRatio: 16 / 9 },
-  artworkMiniWrap: { width: 102, flexShrink: 0 },
-  artworkMini: { width: 102, height: 102 },
-  cover: { justifyContent: 'space-between', padding: space.md },
-  coverKicker: { fontSize: feedType.label, fontWeight: '900', letterSpacing: 1.5 },
-  coverTitle: { fontSize: feedType.large, fontWeight: '900', lineHeight: 26 },
-  coverTitleMini: { fontSize: 12, fontWeight: '900', lineHeight: 14 },
-  caption: { fontSize: 11, paddingHorizontal: space.lg, paddingTop: space.xs },
-  captionMini: { fontSize: 9, paddingTop: space.xs },
   hero: { borderWidth: 1, borderRadius: 13, overflow: 'hidden', marginBottom: space.xl },
   heroBody: { padding: space.lg, paddingTop: space.md },
   heroTitle: { fontSize: feedType.hero, lineHeight: 32, fontWeight: '900' },
