@@ -173,7 +173,14 @@ Configuración del feed (F3-02): `PublicFeedConfig` y `RankingWeights` se export
 Cada peso es finito, de 0 a 1, y `wI + wG + wR > 0`; el motor normaliza su suma. `feedWindowHours`
 debe ser finito y positivo (default 72); `demoMode` es booleano (default false).
 `resolvePublicFeedConfig(value)` valida con zod y recupera defaults por campo si el documento está ausente
-o es inválido. No hace lecturas ni escrituras. La capa F3-01 será responsable de escuchar `config/public`.
+o es inválido. No hace lecturas ni escrituras. F3-01 escucha `config/public` y reabre la consulta
+principal cuando cambia la ventana. El hook móvil `useNewsFeed()` escucha dos consultas de `news`, ambas
+con `workflow == 'publicada'`: una con `publishedAt` dentro de `feedWindowHours` y otra con
+`importance == 3` de las últimas 72 h. Fusiona por ID y versión, excluye retractadas y fechas futuras,
+y reevalúa el tiempo para que las noticias caduquen sin recargar. Los índices compuestos declarados abajo
+cubren esas consultas. El hook entrega `news`, configuración, estado `loading | ready | empty | error`,
+mensaje de error y `retry`. `useProfile()` recibe `users/{uid}` por listener y cancela la suscripción al
+cerrar sesión. Se reutilizan `newsSchema` y `userProfileSchema`; no cambian los documentos persistidos.
 
 Desde F3-08 (función pura), `createDefaultProfile` inicializa `interestsDecayedAt`. El esquema actualizado
 acepta documentos antiguos sin ese campo; `updateInterests` usa su `updatedAt` como referencia inicial y
