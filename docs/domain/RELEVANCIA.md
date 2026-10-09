@@ -127,6 +127,13 @@ la internacional es la ausencia de coincidencia (incluye globales fuera del bloq
 Ajuste: si una noticia en posición 2–9 tiene `score ≥ 0.85`, sube a `grande` aunque esté más abajo (máximo 3 grandes).
 Las noticias `en_desarrollo` muestran siempre un borde o chip "En desarrollo" independientemente del tier.
 
+Implementación móvil F3-04: `feed.tsx` llama a `rankFeed` con noticias y configuración de F3-01,
+perfil y hora actuales. `MustKnowBlock` muestra las primeras cinco esenciales y «Ver todas» despliega
+el resto sin cambiar el ranking. `HeroCard`, `LargeCard`, `MediumRow` y `CompactRow` usan el `tier`
+calculado, conservan chips de tema y alcance, y añaden certeza cuando no es confirmada. La imagen
+visible lleva pie mediante `imageCaption`; las portadas dibujadas por código usan `buildCoverSpec` y
+su leyenda. La vista de lectura detallada y el panel de explicación corresponden a F3-07 y F3-06.
+
 ## 6. "¿Por qué veo esto?"
 
 `reasons` se genera por código a partir de los componentes (nunca por LLM). Catálogo:

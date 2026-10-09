@@ -128,7 +128,7 @@ por tarea al iniciar su fase.
 | F3-01 | Capa de datos del feed | ◐ | [Evidencia F3-01](../evidence/F3-01-feed-data.md). Servicio y hooks implementados; prueba del emulador: publicación con `publishNews` llega a la suscripción abierta en <5 s, con reglas reales. Ventana configurable, esenciales, retractadas, estados y perfil en tiempo real. Falta recorrido del proveedor React en Expo Go con teléfono real. |
 | F3-02 | Motor de ranking (TDD) | ◐ | [Evidencia F3-02](../evidence/F3-02-ranking.md), [LOOP-009](../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md). CA1: nueve propiedades y casos adicionales automatizados. CA2 pendiente: medir 200 noticias en <20 ms en teléfono real con Expo Go. |
 | F3-03 | Explicaciones ("¿Por qué veo esto?") | ☑ | [Evidencia F3-03](../evidence/F3-03-explanations.md), [LOOP-010](../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md). CA1: cada ítem de las cuatro personas tiene 1–3 razones coherentes con sus componentes; pruebas de catálogo, umbrales, pesos efectivos y garantías. Motor puro; panel visual en F3-06. |
-| F3-04 | Pantalla de feed con jerarquía visual | ☐ | |
+| F3-04 | Pantalla de feed con jerarquía visual | ◐ | [Evidencia F3-04](../evidence/F3-04-feed-ui.md). Pantalla conectada a `rankFeed`, esenciales y cuatro tiers, chips, ubicación y refresh; corpus de cuatro personas con cabeceras distintas y etiquetas verificadas por pruebas. Pendientes CA1 visual y CA3 en iPhone pequeño y Android grande con Expo Go; CA2 requiere revisión visual de todos los tiers. |
 | F3-05 | Imágenes y portada tipográfica en la app | ☐ | |
 | F3-06 | Panel "¿Por qué veo esto?" y control del usuario | ☐ | |
 | F3-07 | Vista de lectura con procedencia | ☐ | |
