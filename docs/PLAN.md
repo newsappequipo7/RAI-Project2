@@ -132,7 +132,7 @@ por tarea al iniciar su fase.
 | F3-05 | Imágenes y portada tipográfica en la app | ◐ | [Evidencia F3-05](../evidence/F3-05-images.md). Componentes `CoverArt` y `NewsImage`, pie obligatorio, hoja de procedencia, sello IA y tooltip compacto; prueba de componente para los cuatro tipos, 519 pruebas verdes y exports Android/iOS. Falta inspección táctil/visual en Expo Go con teléfono real. |
 | F3-06 | Panel "¿Por qué veo esto?" y control del usuario | ◐ | [Evidencia F3-06](../evidence/F3-06-why-panel.md). Botón «?» en todas las tarjetas, hoja con razones/barras y controles; `why_opened` y preferencias en Firestore probados con emulador. CA1 verificado por ranking; falta recorrido táctil/visual en Expo Go. |
 | F3-07 | Vista de lectura con procedencia | ☐ | |
-| F3-08 | Señales e intereses | ◐ | [Evidencia F3-08](../evidence/F3-08-interests.md), [LOOP-011](../evidence/loops/LOOP-011-reloj-de-decaimiento.md). Paso 1 y CA1: función pura de deltas, límites, silencios y decaimiento; 46 pruebas nuevas con integración de ranking. Pendientes pasos 2–4 (captura, persistencia y Perfil) y CA2/CA3 en la app real. |
+| F3-08 | Señales e intereses | ◐ | [Evidencia F3-08](../evidence/F3-08-interests.md), [LOOP-011](../evidence/loops/LOOP-011-reloj-de-decaimiento.md). Pasos 1–4 implementados: apertura y permanencia, una actualización del perfil por lectura, barras y controles en Perfil. CA1 y persistencia verificadas con pruebas; CA2/CA3 pendientes de recorrido en Expo Go con teléfonos reales. |
 | F3-09 | Cambio de ubicación en caliente | ☐ | |
 | F3-10 | Tiempo real y avisos | ☐ | |
 | F3-11 | Comparador de ubicaciones (portal) | ☐ | |

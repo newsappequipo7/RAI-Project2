@@ -1,13 +1,24 @@
 import type { News } from '@repo/shared';
-import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  AppState,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { NewsDetailContent } from '@/src/news/NewsDetailContent';
+import { useProfile } from '@/src/profile/ProfileProvider';
 import { getFirebaseDb } from '@/src/services/firebase';
 import { watchNewsDetail } from '@/src/services/newsDetail';
+import { startReadingSession } from '@/src/services/readingSignals';
 import { feedPalette, feedSpacing as space } from '@/src/theme/feed';
 
 type DetailState =
@@ -25,6 +36,48 @@ export default function NewsDetailScreen() {
   const [attempt, setAttempt] = useState(0);
   const scheme = useColorScheme();
   const palette = feedPalette[scheme === 'dark' ? 'dark' : 'light'];
+  const { profile } = useProfile();
+  const uid = profile?.uid;
+  const locationId = profile?.locationId;
+  const newsId = state.status === 'ready' ? state.news.id : null;
+  const topicsKey = state.status === 'ready' ? state.news.topics.join('|') : '';
+  const readingNews = useMemo(
+    () => (newsId ? { id: newsId, topics: topicsKey.split('|') } : null),
+    [newsId, topicsKey],
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!readingNews || !uid || !locationId) return;
+      let session: ReturnType<typeof startReadingSession> | null = startReadingSession(
+        getFirebaseDb(),
+        uid,
+        readingNews,
+        locationId,
+      );
+      const finish = () => {
+        const current = session;
+        session = null;
+        if (current) {
+          void current
+            .finish()
+            .catch(() =>
+              Alert.alert('No se guardó la lectura', 'Revisa tu conexión e inténtalo de nuevo.'),
+            );
+        }
+      };
+      const subscription = AppState.addEventListener('change', (nextState) => {
+        if (nextState !== 'active') finish();
+        else if (!session) {
+          session = startReadingSession(getFirebaseDb(), uid, readingNews, locationId);
+        }
+      });
+      return () => {
+        subscription.remove();
+        finish();
+      };
+    }, [readingNews, uid, locationId]),
+  );
 
   useEffect(() => {
     setState({ status: 'loading', news: null, error: null });
