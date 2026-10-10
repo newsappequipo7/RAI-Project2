@@ -14,8 +14,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { CompactRow, HeroCard, LargeCard, MediumRow, MustKnowBlock } from '@/src/feed/FeedCards';
+import { WhyPanel } from '@/src/feed/WhyPanel';
 import { useNewsFeed } from '@/src/feed/useNewsFeed';
 import { useProfile } from '@/src/profile/ProfileProvider';
+import { getFirebaseDb } from '@/src/services/firebase';
+import {
+  recordWhyOpened,
+  submitFeedFeedback,
+  type FeedbackType,
+} from '@/src/services/feedFeedback';
 import { feedPalette, feedSpacing as space, feedType } from '@/src/theme/feed';
 
 function dateLabel(now: Date): string {
@@ -36,6 +43,9 @@ export default function FeedScreen() {
   const [now, setNow] = useState(() => new Date());
   const [expandedMustKnow, setExpandedMustKnow] = useState(false);
   const [requestedRefresh, setRequestedRefresh] = useState(false);
+  const [selected, setSelected] = useState<RankedItem | null>(null);
+  const [feedbackBusy, setFeedbackBusy] = useState(false);
+  const [panelError, setPanelError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60_000);
@@ -78,8 +88,37 @@ export default function FeedScreen() {
     retry();
   }
 
+  function explain(item: RankedItem) {
+    if (!profile) return;
+    setSelected(item);
+    setPanelError(null);
+    void recordWhyOpened(getFirebaseDb(), profile.uid, item.news.id, profile.locationId).catch(
+      () => {
+        setPanelError(
+          'No se pudo registrar la apertura del panel. Puedes seguir consultando la explicación.',
+        );
+      },
+    );
+  }
+
+  async function submitFeedback(type: FeedbackType) {
+    if (!profile || !selected || feedbackBusy) return;
+    setFeedbackBusy(true);
+    setPanelError(null);
+    try {
+      await submitFeedFeedback(getFirebaseDb(), profile.uid, selected.news, type);
+      setSelected(null);
+    } catch (problem) {
+      setPanelError(
+        problem instanceof Error ? problem.message : 'No se pudo guardar tu preferencia.',
+      );
+    } finally {
+      setFeedbackBusy(false);
+    }
+  }
+
   function renderCard({ item }: { item: RankedItem }) {
-    const props = { item, now, palette };
+    const props = { item, now, palette, onExplain: explain };
     switch (item.tier) {
       case 'hero':
         return <HeroCard {...props} />;
@@ -170,6 +209,7 @@ export default function FeedScreen() {
                   palette={palette}
                   expanded={expandedMustKnow}
                   onToggle={() => setExpandedMustKnow((previous) => !previous)}
+                  onExplain={explain}
                 />
                 <View style={styles.feedHeading}>
                   <Text style={[styles.sectionTitle, { color: palette.ink }]}>
@@ -198,6 +238,18 @@ export default function FeedScreen() {
             </View>
           ) : null
         }
+      />
+      <WhyPanel
+        item={selected}
+        weights={config.rankingWeights}
+        personalization={profile?.personalization ?? false}
+        palette={palette}
+        busy={feedbackBusy}
+        error={panelError}
+        onClose={() => {
+          if (!feedbackBusy) setSelected(null);
+        }}
+        onFeedback={(type) => void submitFeedback(type)}
       />
     </SafeAreaView>
   );

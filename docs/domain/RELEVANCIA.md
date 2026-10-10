@@ -151,13 +151,17 @@ su leyenda. La vista de lectura detallada y el panel de explicación corresponde
 | R ≥ 0.8 | "Publicada hace poco" |
 | importance ≥ 2 | "El equipo editorial la marcó como importante" |
 
-El panel muestra además barras simples con la contribución de cada componente y un botón "Menos de esto".
+El panel móvil F3-06 muestra las razones y cuatro barras de contribución efectiva (importancia, proximidad,
+afinidad y recencia) con los mismos pesos normalizados de `rankFeed`, más «Más como esto» y «Menos de esto».
+Al abrir se registra `why_opened`; los botones guardan evento y preferencias en una transacción de Firestore
+que relee el perfil vigente. Las esenciales muestran afinidad cero y una nota de que no dependen de preferencias.
+`normalizeWeights` se exporta desde `@repo/shared` para que las barras usen exactamente el cálculo del ranking.
 
 ### Contrato de las explicaciones (F3-03)
 
 Implementación: `packages/shared/src/explain/reasons.ts`. `rankFeed` devuelve las razones tanto en `feed`
 como en `mustKnow`; las esenciales usan los mismos componentes y pesos sin personalización que su score.
-El panel visual corresponde a F3-06.
+El panel visual está implementado en F3-06; la revisión táctil/visual en Expo Go sigue pendiente.
 
 - `contribution = peso efectivo normalizado × componente × penalización de lectura`. No es el valor bruto
   del componente ni un porcentaje del total. Se omiten razones de puntaje con contribución cero.
@@ -214,7 +218,8 @@ El usuario puede ver y reiniciar sus intereses en Perfil ("Esto es lo que la app
 
 `updateInterests({ profile, signal?, now: Date }): UserProfile`, exportado por `@repo/shared`, valida con
 `updateInterestsInputSchema` y no muta las entradas. Omitir `signal` aplica solamente el decaimiento pendiente.
-No lee el reloj del sistema ni Firestore, ni invoca modelos. La integración móvil y los controles siguen pendientes.
+No lee el reloj del sistema ni Firestore, ni invoca modelos. F3-06 integra `why_opened` y los botones
+`more_like_this`/`less_like_this`; las señales de lectura, el debounce y los controles de Perfil siguen en F3-08.
 
 - `open`, `dwell`, `more_like_this` y `less_like_this` reciben `topics` (temas de la noticia). El delta se
   aplica una vez por tema distinto; los intereses ausentes empiezan en 0. `dwell` recibe además `seconds`

@@ -8,4 +8,5 @@ export * from './config';
 export * from './editorial';
 export * from './cover/spec';
 export { rankFeed } from './ranking/rankFeed';
+export { normalizeWeights } from './ranking/score';
 export { updateInterests } from './interests/update';
