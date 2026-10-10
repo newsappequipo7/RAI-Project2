@@ -1,114 +1,98 @@
-# Handoff FASE-3 → FASE-4 (por completar al cerrar la fase 3)
+# Handoff FASE-3 → FASE-4
 
-Responsable: Nelson · Estado: **en curso** · Fecha de cierre y tag: pendientes
+Responsable: Nelson · Estado: **F3-01 a F3-11 integradas; cierre F3-12 en curso** · Fecha de cierre y tag `fase-3-done`: pendientes
+
+Nelson informó el 2026-10-10 que probó la app y que «todo funciona bien». El [registro de prueba](../../evidence/F3-12-manual-review.md) distingue ese reporte de los criterios que aún necesitan modelo de teléfono, tiempos o capturas. La fase no se declara cerrada por un reporte general.
 
 ## 1. Qué quedó funcionando (demostrable)
-- F3-02: `rankFeed` puro en `@repo/shared`, configuración con defaults y métricas de diversidad.
-- F3-03: cada ítem de `rankFeed` incluye 1–3 explicaciones por código, ordenadas por contribución efectiva.
-- F3-08, paso 1: `updateInterests` puro con deltas, límites, silencios, reinicio y decaimiento diario.
-- F3-01: servicio móvil con listeners de `config/public`, noticias publicadas y perfil propio; el hook del
-  feed expone carga, vacío, error, reintento, noticias únicas y configuración. El servicio está verificado
-  contra el emulador con una publicación real de `publishNews`.
-- F3-04: pantalla de Noticias conectada al servicio F3-01 y a `rankFeed`, con esenciales, cuatro tiers,
-  ubicación simulada, chips, pies de imagen, actualización al deslizar y estados de carga/vacío/error.
-  Pendiente validar su presentación en Expo Go. La fase no está cerrada.
-- F3-05: portada móvil desde el mismo `buildCoverSpec` del portal; cada imagen lleva pie y una hoja táctil
-  de procedencia. Ilustraciones IA tienen sello y advertencia; compactas usan ícono con tooltip. Pendiente
-  revisión en Expo Go con teléfono real.
-- F3-06: botón «?» en todos los tiers y esenciales, hoja con razones y aportes reales, evento `why_opened`
-  y botones «Más/Menos» que guardan preferencias y evento en una transacción. Pendiente revisión en Expo Go.
+
+- **F3-01 a F3-04:** la app escucha noticias publicadas y `config/public` en Firestore; excluye retractadas del feed; aplica `rankFeed` de `@repo/shared` según la ubicación **simulada**; muestra esenciales, cuatro niveles de tarjeta y razones «¿Por qué veo esto?». El ranking y las explicaciones son código local, sin modelos.
+- **F3-05/06:** portada tipográfica compartida con el portal, pie y detalle de procedencia de cada imagen; panel «¿Por qué veo esto?» con contribuciones y controles «Más/Menos como esto» que guardan preferencias.
+- **F3-07/08:** lectura con fuentes, certeza, correcciones, versiones, afirmaciones y etiquetas de IA. Una retractada sigue accesible por enlace directo, con aviso rojo y texto tachado. La app registra apertura y permanencia, aprende intereses y ofrece controles en Perfil.
+- **F3-09/10:** cambiar ciudad simulada reordena el feed antes de esperar a Firestore; una publicación nueva en top 3 o esenciales activa «Nueva noticia».
+- **F3-11:** `/compare` en el portal usa el mismo `rankFeed` para ocho ciudades y cuatro perfiles, con posición/nivel, esenciales y diversidad. Escucha publicaciones y configuración en tiempo real. `/comparador` redirige a `/compare`.
+- Chat y búsqueda conversacional pertenecen a Fase 4; feed, lectura y comparador no necesitan el Worker ni créditos de IA.
 
 ## 2. Cómo correrlo desde cero
-Con Node 24 y pnpm 11.6.0:
+
+Requisitos: Node 24, pnpm 11.6.0, Expo Go compatible con SDK 57, teléfono real y acceso a Firebase. En Linux con nvm, activar Node 24 antes de usar pnpm; en la máquina de Nelson, Node 20 no lo encuentra en `PATH`.
 
 ```bash
+git clone https://github.com/newsappequipo7/RAI-Project2.git
+cd RAI-Project2
+nvm use 24                         # instalar Node 24 antes si aún no está disponible
+corepack enable                    # expone pnpm si aún no está en PATH
+node --version && pnpm --version   # esperado: Node 24 y pnpm 11.6.0
 pnpm install --frozen-lockfile
-pnpm lint && pnpm typecheck
-pnpm -F @repo/shared test
-pnpm -F @repo/shared exec tsx scripts/benchmark-ranking.ts
-pnpm -F firebase-tests test
-pnpm -F mobile start
+pnpm lint && pnpm typecheck && pnpm test
+pnpm -F mobile start --tunnel
 ```
 
-El ranking no requiere variables de entorno, Firestore, Worker ni créditos. El benchmark anterior es de
-escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de las siguientes tareas.
+Abrir el QR de Metro en Expo Go, iniciar sesión con Google, elegir una de las ocho ciudades simuladas y entrar a «Noticias». Abrir una tarjeta para leerla, usar «?» para entender el orden y Perfil para personalización. El login móvil usa el puente web desplegado en `/auth/mobile`. Si falla el túnel, reintentar o usar LAN/hotspot. La app apunta al Firestore del proyecto mediante la configuración **pública** de `@repo/shared`; no necesita `.env` ni clave de IA.
+
+En otra terminal, para comparar con los mismos datos publicados:
+
+```bash
+pnpm -F admin dev
+```
+
+Abrir `http://localhost:5173/compare` e iniciar sesión con una cuenta cuyo UID esté en `admins/{uid}`. El portal usa Firestore del proyecto por defecto. `E1`, `E2`… son posiciones en «Lo que debes saber»; las demás son posiciones del feed. «—» significa que la noticia no aparece en el ranking actual. Seleccionar una noticia para seguirla entre ciudades; cambiar el perfil de prueba para ver otro orden. El panel inferior muestra diversidad de los primeros diez lugares. Si no hay noticias recientes, revisar la ventana de recencia antes de concluir que falló la suscripción.
+
+Variables opcionales del portal (ver `apps/admin/.env.example`): `VITE_API_URL` cambia el Worker; `VITE_EXPO_PROJECT_URL` alimenta el QR de «Instalar»; `VITE_CLOUDINARY_CLOUD_NAME` y `VITE_CLOUDINARY_UPLOAD_PRESET` habilitan subida de imágenes. `VITE_AUTH_EMULATOR` y `VITE_FIRESTORE_EMULATOR` son solo para desarrollo local del portal y no deben activarse al compararlo con la app móvil conectada a producción. Ninguna variable de cliente contiene claves de proveedores de IA.
+
+`pnpm test` levanta el emulador de Firestore y ejecuta pruebas con IA en mock. `pnpm seed --target=emulator` carga las 40 noticias semilla para explorar datos en ese emulador; no modifica producción. Las noticias editoriales reales se publican únicamente tras revisión humana en el portal. No publicar `demo-d1` ni `demo-d2`.
 
 ## 3. Estado de tareas
-| ID | Estado | Evidencia | Nota |
-|----|--------|-----------|------|
-| F3-02 | ◐ | [Evidencia](../../evidence/F3-02-ranking.md), [LOOP-009](../../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md) | CA1 automatizado; CA2 pendiente en teléfono real |
-| F3-03 | ☑ | [Evidencia](../../evidence/F3-03-explanations.md), [LOOP-010](../../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md) | CA1 verificado para feed y esenciales de las cuatro personas; panel implementado en F3-06 |
-| F3-08 | ◐ | [Evidencia](../../evidence/F3-08-interests.md), [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md) | Paso 1 y feedback de F3-06 verificados; lectura, debounce, Perfil y CA2/CA3 en la app pendientes |
-| F3-01 | ◐ | [Evidencia](../../evidence/F3-01-feed-data.md) | CA1 en emulador (<5 s), falta recorrido del proveedor React en Expo Go |
-| F3-04 | ◐ | [Evidencia](../../evidence/F3-04-feed-ui.md) | UI implementada; CA1/CA2/CA3 pendientes de revisión visual en dispositivos reales |
-| F3-05 | ◐ | [Evidencia](../../evidence/F3-05-images.md) | Componentes y pruebas completados; falta inspección táctil y visual en teléfono real |
-| F3-06 | ◐ | [Evidencia](../../evidence/F3-06-why-panel.md) | CA1 automatizado; falta recorrido táctil/visual en teléfono real |
-| F3-07, F3-09 … F3-12 | ☐ | | No implementadas todavía |
+
+`☑` = criterios verificados con evidencia; `◐` = código integrado, pero falta evidencia específica. Detalle en [PLAN.md §6](../PLAN.md). El reporte manual general de Nelson está en [F3-12](../../evidence/F3-12-manual-review.md), sin atribuirle tiempos o dispositivos no registrados.
+
+| ID | Estado | Evidencia | Falta para cierre |
+|---|---|---|---|
+| F3-01 | ◐ | [Feed y emulador](../../evidence/F3-01-feed-data.md) | Identificar teléfono y recorrido del feed en Expo Go. |
+| F3-02 | ◐ | [9 pruebas y benchmark de escritorio](../../evidence/F3-02-ranking.md) | Medir 200 noticias en <20 ms en teléfono de gama media. |
+| F3-03 | ☑ | [Explicaciones](../../evidence/F3-03-explanations.md) | CA automatizado verificado. |
+| F3-04 | ◐ | [Jerarquía visual](../../evidence/F3-04-feed-ui.md) | Capturas y revisión de cuatro perfiles, chips y tamaños en iPhone pequeño y Android grande. |
+| F3-05 | ◐ | [Imágenes](../../evidence/F3-05-images.md) | Registrar teléfono y revisión de pies y procedencia. |
+| F3-06 | ◐ | [Panel «¿Por qué?»](../../evidence/F3-06-why-panel.md) | Registrar recorrido en Expo Go y efecto visible de «Menos». |
+| F3-07 | ◐ | [Lectura y procedencia](../../evidence/F3-07-reading-provenance.md) | Capturas de las cuatro certezas y etiquetas IA en teléfono. |
+| F3-08 | ◐ | [Intereses y señales](../../evidence/F3-08-interests.md) | Evidencia tras tres lecturas y comparación de dos cuentas sin personalización. |
+| F3-09 | ◐ | [Cambio de ubicación](../../evidence/F3-09-hot-location.md) | Medir toque → feed actualizado en <300 ms en teléfono real. |
+| F3-10 | ◐ | [Tiempo real](../../evidence/F3-10-live-alerts.md) | Medir publicación → indicador en <5 s en dos teléfonos; tarjeta de corrección `[PLUS]` pendiente. |
+| F3-11 | ◐ | [Comparador](../../evidence/F3-11-comparator.md) | Captura/revisión visual del portal con cuatro perfiles; CA1/CA2 automatizados. |
+| F3-12 | ◐ | [Registro de cierre](../../evidence/F3-12-manual-review.md) | Pulido y evidencia de accesibilidad, videos, recorrido de Joaquín siguiendo este handoff y tag autorizado. |
 
 ## 4. Desviaciones respecto a contratos o docs
-- Contratos nuevos de ranking, razones y configuración en `types.ts`/`schemas.ts`, documentados en
-  `RELEVANCIA.md`, `MODELO-DATOS.md` y referenciados desde `CONTRATOS-API.md`.
-- Modo sin personalización ignora también lecturas para cumplir igualdad de orden entre cuentas.
-- `mustKnow` conserva todas las esenciales; límite visual de cinco + «ver todas» corresponde a F3-04.
-- Diversidad conserva cuotas y separadores futuros; si no hay temas suficientes, conserva todas las noticias.
-- F3-03 amplía `Reason.code` con cuatro explicaciones del aporte dominante y `available` para score cero.
-  Se requiere al menos una razón en la salida pública (zod). Contribución = peso efectivo × componente ×
-  penalización; esenciales/cuotas reservan un espacio con contribución 0 porque no añaden puntos.
-  Tipos, esquemas y documentos de contratos actualizados en la misma tarea.
-- F3-08 añade el campo opcional `UserProfile.interestsDecayedAt`: nuevos perfiles lo inicializan; antiguos
-  usan `updatedAt` una vez. Cada 24 h completas reduce los intereses por 0.9 y conserva la fracción restante.
-  Las actualizaciones de ubicación o lecturas no deben mover ese reloj. Se valida
-  `interestsDecayedAt <= updatedAt <= now`. Clientes lectores deben usar el esquema actualizado.
-- `updateInterests({ profile, signal?, now })` aplica decaimiento antes del delta; omitir señal sirve al
-  abrir la app. `more_like_this` reactiva un tema, señales pasivas conservan silencios; `unmute` no suma
-  puntos y `reset` vacía intereses/silencios. No cambia `UserEvent`, historial ni preferencia de personalización.
-- F3-01 usa las consultas indexadas `workflow + publishedAt` y `workflow + importance + publishedAt`.
-  `config/public` puede faltar; se usan defaults. La ventana normal es configurable y esenciales conservan
-  72 h fijas; se eliminan retractadas y futuras y se deduplican versiones por ID. El servicio se renueva
-  cada hora y reevalúa caducidad cada minuto. El perfil cambia de lectura única a `onSnapshot`.
-- F3-04 no cambia contratos persistidos. `feed.tsx` usa `rankFeed` directamente con
-  `config.rankingWeights` y ubicación del perfil. Los cuatro tiers determinan tarjetas distintas; esenciales
-  quedan arriba, cinco visibles y opción de desplegar todas. Toda imagen visible tiene pie. La imagen de
-  portada usa `buildCoverSpec`; el detalle de procedencia de la imagen se completa en F3-05.
-- F3-05 no cambia contratos persistidos. `NewsImage` usa `imageCaption` para los cuatro tipos y la portada
-  usa `buildCoverSpec`/`wrapCoverTitle`, con la leyenda también dentro de la imagen. La hoja utiliza
-  `Modal` y `Linking` de React Native, compatibles con Expo Go; URLs de origen solo se abren si son http(s).
-- Corrección F2-07 en esta rama: `NewsImage.licenseUrl` se guarda para imágenes nuevas con licencia libre y se
-  muestra en la ficha de procedencia. Es opcional al leer noticias antiguas. La búsqueda solo devuelve licencias
-  CC BY, CC BY-SA, CC0 o Public Domain Mark reconocidas con enlace canónico.
-- F3-06 no cambia esquemas persistidos. `normalizeWeights` se exporta para que las barras coincidan con
-  `rankFeed`. `why_opened` se añade sin tocar el perfil; «Más/Menos» lee el perfil vigente en una transacción,
-  actualiza solo intereses/silencios/reloj y añade el evento de forma atómica. El listener de F3-01 refresca
-  el ranking. La integración con señales de lectura y debounce sigue siendo F3-08.
+
+- `rankFeed`, razones y pesos/defaults de `config/public` viven en `@repo/shared`; tipos, zod y [RELEVANCIA](../domain/RELEVANCIA.md) están actualizados. Sin personalización se ignoran intereses e historial para igualar el orden entre cuentas de la misma ciudad. Esenciales usan hasta 72 h aunque la ventana normal sea configurable.
+- `UserProfile.interestsDecayedAt` es opcional para perfiles antiguos. `updateInterests` aplica decaimiento diario antes de cada señal; las transacciones de lectura y Perfil preservan cambios concurrentes. Ver [MODELO-DATOS](../architecture/MODELO-DATOS.md).
+- F3-07 lee directamente una retractada aunque ya no aparezca en el feed. Consulta versiones solo tras confirmar que la noticia es pública. El resumen IA solo se muestra si fue aprobado y se etiqueta con el editor.
+- F3-09 no usa GPS. F3-10 detecta IDs prominentes en la suscripción existente. F3-11 usa el mismo motor y pesos que la app; su consulta del portal exige `workflow == 'publicada'` y no invoca al Worker.
+- Los contratos cambiados durante la fase se documentaron en `docs/architecture/`, `docs/domain/`, tipos y esquemas. Esta actualización del handoff no cambia contratos.
 
 ## 5. Deuda y problemas conocidos
-- Alta: CA2 de F3-02 sin medir en Expo Go sobre teléfono de gama media; no marcar Done todavía.
-- Media: revisar F3-06 en Expo Go: botón «?» en los cinco tipos de tarjeta, hoja, barras, guardado de
-  «Más/Menos» y cambio visible del orden. Las garantías tienen contribución 0 porque son reglas de inclusión.
-- Media: validar F3-01 en Expo Go en un teléfono real al conectar el hook a F3-04. El emulador ya verificó
-  la publicación del portal y las reglas; falta comprobar el proveedor React y navegación real en dispositivo.
-- Alta: revisar F3-04 en Expo Go en iPhone pequeño y Android grande. Los tests de corpus prueban orden,
-  tiers y etiquetas; no prueban tamaño, recortes ni accesibilidad visual en ambos dispositivos.
-- Media: revisar F3-05 en Expo Go: portada, pie, sello IA cuando haya ejemplo, hoja de procedencia y tooltip
-  compacto; registrar teléfono y evidencia. El corpus semilla solo incluye portada y licencia libre.
-- Media: datos editoriales pueden quedar fuera de ventana. Nelson reportó una noticia publicada y pausó
-  las restantes; no se modificó ningún checklist ni noticia desde el agente.
-- Media: completar F3-08 después de lectura: mapear `open`/`dwell` a señales, mantener `readNewsIds`,
-  deduplicar y persistir el perfil con debounce (un write por sesión) sin sobrescribir cambios concurrentes.
-  Añadir controles de Perfil y validar CA2/CA3 en Expo Go. Las cuatro pruebas de integración pura con
-  `rankFeed` no sustituyen esa evidencia visible.
+
+| Severidad | Pendiente | Acción |
+|---|---|---|
+| Alta | Evidencia de Expo Go incompleta aunque Nelson reportó que la app funciona | Anotar modelo, sistema, versión de Expo Go, flujo, resultado y capturas/videos por criterio; no inventar tiempos. |
+| Alta | Ventana de feed de 72 h por defecto: las fechas relativas de semilla caducan | Para demo, acordar `config/public.feedWindowHours` o preparar/publicar noticias recientes; usar seed solo en emulador para pruebas locales. |
+| Media | F3-12 aún no tiene evidencia de modo oscuro, texto dinámico, contraste AA ni videos requeridos | Revisar en dispositivos, guardar evidencia y corregir UI si alguna prueba falla. |
+| Media | No consta recorrido de Joaquín siguiendo exclusivamente este handoff | Hacerlo y corregir pasos que no pueda reproducir antes del tag. |
+| Media | F3-02, F3-09 y F3-10 exigen umbrales medidos en teléfono(s) | Registrar datos reales; escritorio y emulador no sustituyen esas mediciones. |
+| Baja | F3-10 marca la tarjeta de noticias corregidas como `[PLUS]` | Implementar solo si se decide incluirla. |
 
 ## 6. Gasto de IA de la fase
-F3-01, F3-02, F3-03, F3-04, F3-05, F3-06 y función pura de F3-08: USD 0 en llamadas a modelos desde este trabajo; no se invocaron proveedores reales ni el gateway desplegado.
-Ledger/panel del proveedor: no consultados para esta tarea. Total de fase se verificará al cierre.
+
+Feed, lectura, ranking y comparador no llaman a modelos; el Worker se probó en mock. **Gasto observado en este trabajo: USD 0 en llamadas de IA**. Aquí no se consultaron el ledger ni el panel del proveedor, así que el total externo de la fase, la diferencia entre fuentes y el costo medio por tarea no están reconciliados. Registrar esos valores si se requiere un cierre financiero formal; no estimarlos desde los tests.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar
-1. App y comparador deben importar el mismo `rankFeed` con las mismas entradas y `now` para obtener el mismo orden.
-2. Esenciales no dependen del perfil; retractadas nunca aparecen en los bloques, pero F3-07 debe admitir enlace directo.
-3. Pruebas automáticas y benchmark de escritorio no reemplazan evidencia de Expo Go en teléfono real.
+
+1. El chat de Fase 4 debe heredar noticias, certeza y fuentes publicadas; no debe calcular por IA la certeza ni alterar `rankFeed`. Una retractada no está en el feed, pero existe por enlace directo y conserva historial.
+2. Para reproducir app y comparador juntos, ambos deben leer el mismo Firestore y usar perfil neutro, ciudad, `config/public` y momento de cálculo equivalentes. `/compare` ofrece las ocho ciudades y un perfil sin historial por defecto.
+3. F3-01 a F3-11 están en `main`; los ◐ indican evidencia específica pendiente, no tareas por reimplementar. No hay tag `fase-3-done` ni aceptación del handoff por Joaquín todavía.
 
 ## 8. Loops registrados en esta fase
-- [LOOP-009](../../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md): conservar cuotas y separadores al diversificar.
-- [LOOP-010](../../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md): explicar noticias que no cumplen ningún umbral del catálogo original sin atribuirles condiciones falsas.
-- [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md): separar el reloj de decaimiento de otras actualizaciones del perfil; regresión comprobada sustituyendo temporalmente el reloj.
-- [LOOP-012](../../evidence/loops/LOOP-012-ubicacion-prueba-aislada.md): aislar la escritura de ubicación del inicio de Firebase móvil para probar el cambio con emulador Node.
+
+- [LOOP-009](../../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md): cuotas y diversidad.
+- [LOOP-010](../../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md): razones fieles a las contribuciones.
+- [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md): reloj independiente para intereses.
+- [LOOP-012](../../evidence/loops/LOOP-012-ubicacion-prueba-aislada.md): cambio de ubicación y prueba aislada.
