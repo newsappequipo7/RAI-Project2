@@ -15,6 +15,8 @@ Responsable: Nelson · Estado: **en curso** · Fecha de cierre y tag: pendientes
 - F3-05: portada móvil desde el mismo `buildCoverSpec` del portal; cada imagen lleva pie y una hoja táctil
   de procedencia. Ilustraciones IA tienen sello y advertencia; compactas usan ícono con tooltip. Pendiente
   revisión en Expo Go con teléfono real.
+- F3-06: botón «?» en todos los tiers y esenciales, hoja con razones y aportes reales, evento `why_opened`
+  y botones «Más/Menos» que guardan preferencias y evento en una transacción. Pendiente revisión en Expo Go.
 
 ## 2. Cómo correrlo desde cero
 Con Node 24 y pnpm 11.6.0:
@@ -35,12 +37,13 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
 | ID | Estado | Evidencia | Nota |
 |----|--------|-----------|------|
 | F3-02 | ◐ | [Evidencia](../../evidence/F3-02-ranking.md), [LOOP-009](../../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md) | CA1 automatizado; CA2 pendiente en teléfono real |
-| F3-03 | ☑ | [Evidencia](../../evidence/F3-03-explanations.md), [LOOP-010](../../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md) | CA1 verificado para feed y esenciales de las cuatro personas; panel visual en F3-06 |
-| F3-08 | ◐ | [Evidencia](../../evidence/F3-08-interests.md), [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md) | Paso 1 y CA1 verificados; persistencia, controles y CA2/CA3 en la app pendientes |
+| F3-03 | ☑ | [Evidencia](../../evidence/F3-03-explanations.md), [LOOP-010](../../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md) | CA1 verificado para feed y esenciales de las cuatro personas; panel implementado en F3-06 |
+| F3-08 | ◐ | [Evidencia](../../evidence/F3-08-interests.md), [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md) | Paso 1 y feedback de F3-06 verificados; lectura, debounce, Perfil y CA2/CA3 en la app pendientes |
 | F3-01 | ◐ | [Evidencia](../../evidence/F3-01-feed-data.md) | CA1 en emulador (<5 s), falta recorrido del proveedor React en Expo Go |
 | F3-04 | ◐ | [Evidencia](../../evidence/F3-04-feed-ui.md) | UI implementada; CA1/CA2/CA3 pendientes de revisión visual en dispositivos reales |
 | F3-05 | ◐ | [Evidencia](../../evidence/F3-05-images.md) | Componentes y pruebas completados; falta inspección táctil y visual en teléfono real |
-| F3-06 … F3-07, F3-09 … F3-12 | ☐ | | No implementadas todavía |
+| F3-06 | ◐ | [Evidencia](../../evidence/F3-06-why-panel.md) | CA1 automatizado; falta recorrido táctil/visual en teléfono real |
+| F3-07, F3-09 … F3-12 | ☐ | | No implementadas todavía |
 
 ## 4. Desviaciones respecto a contratos o docs
 - Contratos nuevos de ranking, razones y configuración en `types.ts`/`schemas.ts`, documentados en
@@ -70,11 +73,15 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
 - F3-05 no cambia contratos persistidos. `NewsImage` usa `imageCaption` para los cuatro tipos y la portada
   usa `buildCoverSpec`/`wrapCoverTitle`, con la leyenda también dentro de la imagen. La hoja utiliza
   `Modal` y `Linking` de React Native, compatibles con Expo Go; URLs de origen solo se abren si son http(s).
+- F3-06 no cambia esquemas persistidos. `normalizeWeights` se exporta para que las barras coincidan con
+  `rankFeed`. `why_opened` se añade sin tocar el perfil; «Más/Menos» lee el perfil vigente en una transacción,
+  actualiza solo intereses/silencios/reloj y añade el evento de forma atómica. El listener de F3-01 refresca
+  el ranking. La integración con señales de lectura y debounce sigue siendo F3-08.
 
 ## 5. Deuda y problemas conocidos
 - Alta: CA2 de F3-02 sin medir en Expo Go sobre teléfono de gama media; no marcar Done todavía.
-- Media: razones disponibles; falta implementar el panel «¿Por qué veo esto?» en F3-06. Mostrar siempre las
-  razones de garantía aunque su contribución sea 0; ese valor indica regla de inclusión, no aporte al score.
+- Media: revisar F3-06 en Expo Go: botón «?» en los cinco tipos de tarjeta, hoja, barras, guardado de
+  «Más/Menos» y cambio visible del orden. Las garantías tienen contribución 0 porque son reglas de inclusión.
 - Media: validar F3-01 en Expo Go en un teléfono real al conectar el hook a F3-04. El emulador ya verificó
   la publicación del portal y las reglas; falta comprobar el proveedor React y navegación real en dispositivo.
 - Alta: revisar F3-04 en Expo Go en iPhone pequeño y Android grande. Los tests de corpus prueban orden,
@@ -83,13 +90,13 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
   compacto; registrar teléfono y evidencia. El corpus semilla solo incluye portada y licencia libre.
 - Media: datos editoriales pueden quedar fuera de ventana. Nelson reportó una noticia publicada y pausó
   las restantes; no se modificó ningún checklist ni noticia desde el agente.
-- Media: completar F3-08 después de lectura/F3-06: mapear eventos a señales, mantener `readNewsIds`,
+- Media: completar F3-08 después de lectura: mapear `open`/`dwell` a señales, mantener `readNewsIds`,
   deduplicar y persistir el perfil con debounce (un write por sesión) sin sobrescribir cambios concurrentes.
   Añadir controles de Perfil y validar CA2/CA3 en Expo Go. Las cuatro pruebas de integración pura con
   `rankFeed` no sustituyen esa evidencia visible.
 
 ## 6. Gasto de IA de la fase
-F3-01, F3-02, F3-03, F3-04, F3-05 y función pura de F3-08: USD 0 en llamadas a modelos desde este trabajo; no se invocaron proveedores reales ni el gateway desplegado.
+F3-01, F3-02, F3-03, F3-04, F3-05, F3-06 y función pura de F3-08: USD 0 en llamadas a modelos desde este trabajo; no se invocaron proveedores reales ni el gateway desplegado.
 Ledger/panel del proveedor: no consultados para esta tarea. Total de fase se verificará al cierre.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar

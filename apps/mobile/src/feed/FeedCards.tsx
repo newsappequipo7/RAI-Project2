@@ -11,6 +11,7 @@ interface CardProps {
   item: RankedItem;
   now: Date;
   palette: FeedPalette;
+  onExplain: (item: RankedItem) => void;
 }
 
 function openNews(id: string, router: ReturnType<typeof useRouter>) {
@@ -52,6 +53,30 @@ function TimeLabel({ news, now, palette }: { news: News; now: Date; palette: Fee
   );
 }
 
+function WhyButton({
+  item,
+  palette,
+  onExplain,
+  compact = false,
+}: Pick<CardProps, 'item' | 'palette' | 'onExplain'> & { compact?: boolean }) {
+  return (
+    <Pressable
+      onPress={(event) => {
+        event.stopPropagation();
+        onExplain(item);
+      }}
+      accessibilityRole="button"
+      accessibilityLabel={`¿Por qué veo esta noticia? ${item.news.title}`}
+      style={[styles.whyButton, { borderColor: palette.line, backgroundColor: palette.chip }]}
+    >
+      <Text style={[styles.whyMark, { color: palette.accent }]}>?</Text>
+      {!compact ? (
+        <Text style={[styles.whyText, { color: palette.ink }]}>¿Por qué veo esto?</Text>
+      ) : null}
+    </Pressable>
+  );
+}
+
 function ArticleLink({
   children,
   news,
@@ -74,7 +99,7 @@ function ArticleLink({
   );
 }
 
-export function HeroCard({ item, now, palette }: CardProps) {
+export function HeroCard({ item, now, palette, onExplain }: CardProps) {
   const { news } = item;
   return (
     <ArticleLink
@@ -90,12 +115,13 @@ export function HeroCard({ item, now, palette }: CardProps) {
         </Text>
         <NewsChips news={news} palette={palette} />
         <TimeLabel news={news} now={now} palette={palette} />
+        <WhyButton item={item} palette={palette} onExplain={onExplain} />
       </View>
     </ArticleLink>
   );
 }
 
-export function LargeCard({ item, now, palette }: CardProps) {
+export function LargeCard({ item, now, palette, onExplain }: CardProps) {
   const { news } = item;
   return (
     <ArticleLink
@@ -107,12 +133,13 @@ export function LargeCard({ item, now, palette }: CardProps) {
         <Text style={[styles.largeTitle, { color: palette.ink }]}>{news.title}</Text>
         <NewsChips news={news} palette={palette} />
         <TimeLabel news={news} now={now} palette={palette} />
+        <WhyButton item={item} palette={palette} onExplain={onExplain} />
       </View>
     </ArticleLink>
   );
 }
 
-export function MediumRow({ item, now, palette }: CardProps) {
+export function MediumRow({ item, now, palette, onExplain }: CardProps) {
   const { news } = item;
   return (
     <ArticleLink
@@ -126,12 +153,13 @@ export function MediumRow({ item, now, palette }: CardProps) {
         </Text>
         <NewsChips news={news} palette={palette} />
         <TimeLabel news={news} now={now} palette={palette} />
+        <WhyButton item={item} palette={palette} onExplain={onExplain} compact />
       </View>
     </ArticleLink>
   );
 }
 
-export function CompactRow({ item, now, palette }: CardProps) {
+export function CompactRow({ item, now, palette, onExplain }: CardProps) {
   const { news } = item;
   return (
     <ArticleLink news={news} style={[styles.compact, { borderColor: palette.line }]}>
@@ -140,11 +168,12 @@ export function CompactRow({ item, now, palette }: CardProps) {
       <NewsImage news={news} palette={palette} variant="compact" />
       <NewsChips news={news} palette={palette} />
       <TimeLabel news={news} now={now} palette={palette} />
+      <WhyButton item={item} palette={palette} onExplain={onExplain} compact />
     </ArticleLink>
   );
 }
 
-function EssentialCard({ item, now, palette }: CardProps) {
+function EssentialCard({ item, now, palette, onExplain }: CardProps) {
   const { news } = item;
   return (
     <ArticleLink news={news} style={[styles.essentialCard, { backgroundColor: palette.essential }]}>
@@ -161,6 +190,7 @@ function EssentialCard({ item, now, palette }: CardProps) {
         </Text>
       </View>
       <NewsChips news={news} palette={palette} />
+      <WhyButton item={item} palette={palette} onExplain={onExplain} compact />
     </ArticleLink>
   );
 }
@@ -171,12 +201,14 @@ export function MustKnowBlock({
   palette,
   expanded,
   onToggle,
+  onExplain,
 }: {
   items: RankedItem[];
   now: Date;
   palette: FeedPalette;
   expanded: boolean;
   onToggle: () => void;
+  onExplain: (item: RankedItem) => void;
 }) {
   if (!items.length) return null;
   const visible = expanded ? items : items.slice(0, 5);
@@ -192,7 +224,13 @@ export function MustKnowBlock({
       {expanded ? (
         <View style={styles.essentialExpanded}>
           {visible.map((item) => (
-            <EssentialCard key={item.news.id} item={item} now={now} palette={palette} />
+            <EssentialCard
+              key={item.news.id}
+              item={item}
+              now={now}
+              palette={palette}
+              onExplain={onExplain}
+            />
           ))}
         </View>
       ) : (
@@ -202,7 +240,13 @@ export function MustKnowBlock({
           contentContainerStyle={styles.essentialScroll}
         >
           {visible.map((item) => (
-            <EssentialCard key={item.news.id} item={item} now={now} palette={palette} />
+            <EssentialCard
+              key={item.news.id}
+              item={item}
+              now={now}
+              palette={palette}
+              onExplain={onExplain}
+            />
           ))}
         </ScrollView>
       )}
@@ -223,6 +267,19 @@ const styles = StyleSheet.create({
   chip: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 4 },
   chipText: { fontSize: feedType.label, fontWeight: '700' },
   time: { fontSize: feedType.label, fontWeight: '600', marginTop: space.sm },
+  whyButton: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xs,
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: space.sm,
+    paddingVertical: space.xs,
+    marginTop: space.sm,
+  },
+  whyMark: { fontSize: 14, fontWeight: '900' },
+  whyText: { fontSize: 11, fontWeight: '700' },
   hero: { borderWidth: 1, borderRadius: 13, overflow: 'hidden', marginBottom: space.xl },
   heroBody: { padding: space.lg, paddingTop: space.md },
   heroTitle: { fontSize: feedType.hero, lineHeight: 32, fontWeight: '900' },
