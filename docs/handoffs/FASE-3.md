@@ -111,3 +111,4 @@ Ledger/panel del proveedor: no consultados para esta tarea. Total de fase se ver
 - [LOOP-009](../../evidence/loops/LOOP-009-ranking-cuotas-y-diversidad.md): conservar cuotas y separadores al diversificar.
 - [LOOP-010](../../evidence/loops/LOOP-010-catalogo-incompleto-de-razones.md): explicar noticias que no cumplen ningún umbral del catálogo original sin atribuirles condiciones falsas.
 - [LOOP-011](../../evidence/loops/LOOP-011-reloj-de-decaimiento.md): separar el reloj de decaimiento de otras actualizaciones del perfil; regresión comprobada sustituyendo temporalmente el reloj.
+- [LOOP-012](../../evidence/loops/LOOP-012-ubicacion-prueba-aislada.md): aislar la escritura de ubicación del inicio de Firebase móvil para probar el cambio con emulador Node.

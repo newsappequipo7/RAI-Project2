@@ -15,7 +15,8 @@ function groupByCountry(): Section[] {
   const sections = new Map<string, Location[]>();
 
   LOCATIONS.forEach((location) => {
-    const country = COUNTRIES_ES.find((item) => item.iso === location.countryIso)?.name ?? location.countryIso;
+    const country =
+      COUNTRIES_ES.find((item) => item.iso === location.countryIso)?.name ?? location.countryIso;
     sections.set(country, [...(sections.get(country) ?? []), location]);
   });
 
@@ -35,12 +36,15 @@ export default function LocationScreen() {
     setErrorMessage('');
 
     try {
-      await saveLocation(locationId);
-      if (mode === 'change') router.back();
-      else router.replace('/(tabs)/chat');
+      const saved = saveLocation(locationId);
+      if (mode === 'change' && profile) router.back();
+      await saved;
+      if (mode !== 'change' || !profile) router.replace('/(tabs)/chat');
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'No se pudo guardar la ubicación');
-      setSavingId(null);
+      if (mode !== 'change' || !profile) {
+        setErrorMessage(error instanceof Error ? error.message : 'No se pudo guardar la ubicación');
+        setSavingId(null);
+      }
     }
   }
 
@@ -59,7 +63,8 @@ export default function LocationScreen() {
           <Pressable
             style={styles.row}
             disabled={savingId !== null}
-            onPress={() => select(item.id)}>
+            onPress={() => select(item.id)}
+          >
             <Text style={styles.city}>{item.city}</Text>
             <Text>{item.id === profile?.locationId ? '✓' : savingId === item.id ? '…' : ''}</Text>
           </Pressable>
@@ -74,7 +79,13 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: 'bold', paddingHorizontal: 16 },
   description: { paddingHorizontal: 16, paddingVertical: 8, opacity: 0.7 },
   error: { color: '#c0392b', paddingHorizontal: 16 },
-  section: { fontWeight: '700', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 4, opacity: 0.7 },
+  section: {
+    fontWeight: '700',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 4,
+    opacity: 0.7,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',

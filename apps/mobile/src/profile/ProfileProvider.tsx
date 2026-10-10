@@ -1,4 +1,4 @@
-import type { UserProfile } from '@repo/shared';
+import { findLocation, type UserProfile } from '@repo/shared';
 import { useRouter, useSegments } from 'expo-router';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import {
@@ -8,6 +8,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { Button } from 'react-native';
@@ -28,6 +29,7 @@ type ProfileState =
 interface ProfileContextValue {
   profile: UserProfile | null;
   saveLocation: (locationId: string) => Promise<void>;
+  locationNotice: string | null;
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
@@ -42,6 +44,14 @@ export function useProfile(): ProfileContextValue {
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ProfileState>({ status: 'loading' });
+  const [pendingLocation, setPendingLocation] = useState<{
+    uid: string;
+    locationId: string;
+  } | null>(null);
+  const [locationNotice, setLocationNotice] = useState<string | null>(null);
+  const pendingLocationRef = useRef<number | null>(null);
+  const nextLocationRequest = useRef(0);
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [attempt, setAttempt] = useState(0);
   const router = useRouter();
   const segments = useSegments();
@@ -51,6 +61,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     const stopAuth = onAuthStateChanged(getFirebaseAuth(), (user) => {
       stopProfile?.();
       stopProfile = undefined;
+      pendingLocationRef.current = null;
+      setPendingLocation(null);
+      setLocationNotice(null);
       if (!user) {
         setState({ status: 'signed_out' });
         return;
@@ -86,34 +99,94 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     }
   }, [readyUid]);
 
+  useEffect(
+    () => () => {
+      if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    },
+    [],
+  );
+
+  const announceLocation = useCallback((message: string) => {
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    setLocationNotice(message);
+    noticeTimer.current = setTimeout(() => setLocationNotice(null), 5_000);
+  }, []);
+
   const saveLocation = useCallback(
     async (locationId: string) => {
       const user: User | null = getFirebaseAuth().currentUser;
       if (!user) throw new Error('No hay sesión activa');
+      if (state.status === 'ready' && state.profile.uid !== user.uid) {
+        throw new Error('El perfil no corresponde a la sesión.');
+      }
+      const location = findLocation(locationId);
+      if (!location) throw new Error('Selecciona una ubicación válida.');
+      if (pendingLocationRef.current) throw new Error('Ya se está guardando otra ubicación.');
+      if (state.status === 'ready' && state.profile.locationId === locationId) return;
 
-      const profile =
-        state.status === 'ready'
-          ? await updateProfileLocation(state.profile, locationId)
+      const previous = state.status === 'ready' ? state.profile : null;
+      const requestId = ++nextLocationRequest.current;
+      if (previous) {
+        pendingLocationRef.current = requestId;
+        setPendingLocation({ uid: user.uid, locationId });
+        announceLocation(`Estás viendo noticias como si estuvieras en ${location.city}`);
+      }
+
+      try {
+        const profile = previous
+          ? await updateProfileLocation(previous, locationId)
           : await createProfile(user.uid, user.displayName ?? FALLBACK_DISPLAY_NAME, locationId);
 
-      setState((current) => ({
-        status: 'ready',
-        profile:
-          current.status === 'ready' && current.profile.uid === profile.uid
-            ? {
+        setState((current) => {
+          if (current.status === 'ready' && current.profile.uid === profile.uid) {
+            return {
+              status: 'ready',
+              profile: {
                 ...current.profile,
-                locationId: profile.locationId,
-                updatedAt: profile.updatedAt,
-              }
-            : profile,
-      }));
+                locationId,
+                updatedAt:
+                  current.profile.updatedAt > profile.updatedAt
+                    ? current.profile.updatedAt
+                    : profile.updatedAt,
+              },
+            };
+          }
+          return !previous && current.status === 'needs_location'
+            ? { status: 'ready', profile }
+            : current;
+        });
+      } catch (error) {
+        if (previous && pendingLocationRef.current === requestId) {
+          setState((current) =>
+            current.status === 'ready' && current.profile.uid === previous.uid
+              ? {
+                  status: 'ready',
+                  profile: { ...current.profile, locationId: previous.locationId },
+                }
+              : current,
+          );
+          announceLocation('No se pudo guardar la ubicación. Se restauró la ciudad anterior.');
+        }
+        throw error;
+      } finally {
+        if (previous && pendingLocationRef.current === requestId) {
+          pendingLocationRef.current = null;
+          setPendingLocation(null);
+        }
+      }
     },
-    [state],
+    [state, announceLocation],
   );
 
+  const visibleProfile =
+    state.status === 'ready'
+      ? pendingLocation?.uid === state.profile.uid
+        ? { ...state.profile, locationId: pendingLocation.locationId }
+        : state.profile
+      : null;
   const value = useMemo<ProfileContextValue>(
-    () => ({ profile: state.status === 'ready' ? state.profile : null, saveLocation }),
-    [state, saveLocation],
+    () => ({ profile: visibleProfile, saveLocation, locationNotice }),
+    [visibleProfile, saveLocation, locationNotice],
   );
 
   if (state.status === 'loading') return null;

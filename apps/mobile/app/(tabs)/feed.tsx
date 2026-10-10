@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { LocationNotice } from '@/components/LocationNotice';
 import { CompactRow, HeroCard, LargeCard, MediumRow, MustKnowBlock } from '@/src/feed/FeedCards';
 import { WhyPanel } from '@/src/feed/WhyPanel';
 import { useNewsFeed } from '@/src/feed/useNewsFeed';
@@ -175,6 +176,7 @@ export default function FeedScreen() {
               </View>
               <Text style={[styles.change, { color: palette.accent }]}>Cambiar ›</Text>
             </Pressable>
+            <LocationNotice />
             {message ? (
               <View
                 style={[

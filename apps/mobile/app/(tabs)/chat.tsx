@@ -1,12 +1,14 @@
 import { StyleSheet } from 'react-native';
 
 import { LocationBadge } from '@/components/LocationBadge';
+import { LocationNotice } from '@/components/LocationNotice';
 import { Text, View } from '@/components/Themed';
 
 export default function ChatScreen() {
   return (
     <View style={styles.container}>
       <LocationBadge />
+      <LocationNotice />
       <View style={styles.body}>
         <Text style={styles.title}>Chat</Text>
       </View>

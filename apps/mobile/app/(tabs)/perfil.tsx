@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { LocationBadge } from '@/components/LocationBadge';
+import { LocationNotice } from '@/components/LocationNotice';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useProfile } from '@/src/profile/ProfileProvider';
 import { getFirebaseAuth, getFirebaseDb } from '@/src/services/firebase';
@@ -40,6 +41,7 @@ export default function PerfilScreen() {
     >
       <Text style={[styles.title, { color: palette.ink }]}>{profile?.displayName ?? 'Perfil'}</Text>
       <LocationBadge />
+      <LocationNotice />
 
       <View style={[styles.card, { backgroundColor: palette.surface, borderColor: palette.line }]}>
         <View style={styles.toggleRow}>
