@@ -73,6 +73,9 @@ escritorio, no sustituye CA2 en teléfono. Integración Expo Go: pendiente de la
 - F3-05 no cambia contratos persistidos. `NewsImage` usa `imageCaption` para los cuatro tipos y la portada
   usa `buildCoverSpec`/`wrapCoverTitle`, con la leyenda también dentro de la imagen. La hoja utiliza
   `Modal` y `Linking` de React Native, compatibles con Expo Go; URLs de origen solo se abren si son http(s).
+- Corrección F2-07 en esta rama: `NewsImage.licenseUrl` se guarda para imágenes nuevas con licencia libre y se
+  muestra en la ficha de procedencia. Es opcional al leer noticias antiguas. La búsqueda solo devuelve licencias
+  CC BY, CC BY-SA, CC0 o Public Domain Mark reconocidas con enlace canónico.
 - F3-06 no cambia esquemas persistidos. `normalizeWeights` se exporta para que las barras coincidan con
   `rankFeed`. `why_opened` se añade sin tocar el perfil; «Más/Menos» lee el perfil vigente en una transacción,
   actualiza solo intereses/silencios/reloj y añade el evento de forma atómica. El listener de F3-01 refresca

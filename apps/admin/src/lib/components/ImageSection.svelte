@@ -187,6 +187,12 @@
 			<div>
 				<p><strong>Pie:</strong> {imageCaption(image)}</p>
 				<p><strong>Texto alternativo:</strong> {image.altText}</p>
+				{#if image.licenseUrl && isValidSourceUrl(image.licenseUrl)}
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external license link -->
+					<a href={image.licenseUrl} target="_blank" rel="noopener noreferrer"
+						>Ver condiciones de la licencia</a
+					>
+				{/if}
 				{#if !readonly}
 					<button type="button" onclick={() => setImage(undefined)}>Quitar imagen</button>
 				{/if}

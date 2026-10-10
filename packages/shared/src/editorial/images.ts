@@ -107,6 +107,7 @@ export function buildFreeLicenseImage(result: ImageSearchResult, altText: string
     url: result.url,
     credit: result.creator.trim() || 'Autor no indicado',
     license: result.license,
+    licenseUrl: result.licenseUrl,
     sourceUrl: result.sourceUrl,
     altText: altText.trim(),
   };

@@ -29,6 +29,7 @@ export interface NewsImage {
   url: string;
   credit: string; // autor / "Generada por IA (modelo X)" / "Portada generada por la app"
   license?: string; // CC BY 4.0, etc.
+  licenseUrl?: string; // enlace a los términos; opcional para noticias publicadas antes de F2-07
   sourceUrl?: string;
   altText: string;
   aiDisclosure?: string; // obligatorio si kind = 'ilustracion_ia'

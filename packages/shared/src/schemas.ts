@@ -40,6 +40,7 @@ export const newsImageSchema = z
     url: z.string(),
     credit: z.string(),
     license: z.string().optional(),
+    licenseUrl: z.string().url().optional(),
     sourceUrl: z.string().optional(),
     altText: z.string(),
     aiDisclosure: z.string().optional(),
