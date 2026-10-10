@@ -72,10 +72,43 @@ const learned = updateInterests({
 });
 ```
 
-La app deberá mapear eventos y temas, deduplicar señales, mantener las últimas 200 lecturas y escribir
-el perfil con debounce una vez por sesión, preservando cambios concurrentes. `personalization` controla
+La integración móvil debía mapear eventos y temas, deduplicar señales, mantener las últimas 200 lecturas y escribir
+el perfil una vez por sesión, preservando cambios concurrentes. `personalization` controla
 el ranking, no bloquea esta transición pura. La función no persiste ni captura eventos por sí misma.
 
 Contrato documentado en [RELEVANCIA §7](../docs/domain/RELEVANCIA.md),
 [MODELO-DATOS](../docs/architecture/MODELO-DATOS.md), [CONTRATOS-API](../docs/architecture/CONTRATOS-API.md)
 y [handoff](../docs/handoffs/FASE-3.md), junto con tipos y esquemas.
+
+## Integración móvil (rama `fase-3/f3-08-reading-signals`, 2026-10-09)
+
+Los pasos 2–4 ya están implementados. La vista de lectura crea un evento `open` al entrar y
+registra `dwell` al salir únicamente si el tiempo activo llega a 20 segundos. Al terminar la
+sesión, una transacción lee el perfil más reciente, aplica `updateInterests` a ambas señales,
+actualiza `readNewsIds` (máximo 200) y escribe el perfil una sola vez. El evento de permanencia
+forma parte de esa transacción. Al pasar la app a segundo plano se cierra la sesión activa;
+al volver se inicia otra. Los botones de F3-06 siguen usando su transacción existente.
+
+Perfil muestra las barras de los 13 temas, permite reiniciar intereses, reactivar temas
+silenciados y activar/desactivar «Personalizar mi feed». Esos controles leen el documento
+actual en una transacción para conservar cambios concurrentes. Al abrir el perfil autenticado
+se aplica el decaimiento diario pendiente. El motor `rankFeed` ya ignoraba intereses, silencios
+e historial cuando `personalization=false`.
+
+Pruebas de integración nuevas en [`readingSignals.test.ts`](../firebase-tests/readingSignals.test.ts):
+apertura inmediata, lectura de 19 s sin `dwell`, umbral exacto de 20 s, cierre idempotente,
+preservación de un cambio concurrente de ubicación, límite de 200 lecturas y controles de Perfil.
+
+Validación ejecutada en esta rama con Node 24 y el emulador local de Firestore:
+
+```text
+pnpm lint          OK
+pnpm typecheck     OK
+pnpm test          OK: shared 259, Firestore 56, admin 71, Worker 145 (531 pruebas)
+```
+
+CA1 sigue verificado. CA2 y CA3 cuentan con pruebas de ranking puro y persistencia de señales,
+pero **faltan las comprobaciones visuales en Expo Go**: leer tres noticias deportivas y observar
+el cambio del orden medio del feed; después desactivar el interruptor en dos cuentas de la misma
+ubicación y comparar el orden. No se declara F3-08 Done hasta registrar teléfono y evidencia de
+ambos recorridos. Esta integración no invocó modelos ni gastó créditos de IA.

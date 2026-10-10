@@ -14,6 +14,7 @@ import { Button } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { getFirebaseAuth, getFirebaseDb } from '@/src/services/firebase';
+import { changeInterestProfile } from '@/src/services/interestsProfile';
 import { createProfile, updateProfileLocation } from '@/src/services/profile';
 import { watchProfile } from '@/src/services/profileWatch';
 
@@ -75,6 +76,15 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       router.replace(LOCATION_ROUTE);
     }
   }, [state.status, segments, router]);
+
+  const readyUid = state.status === 'ready' ? state.profile.uid : null;
+  useEffect(() => {
+    if (readyUid) {
+      void changeInterestProfile(getFirebaseDb(), readyUid, { type: 'decay' }).catch(() => {
+        // The profile remains readable offline; the next successful signal applies pending decay.
+      });
+    }
+  }, [readyUid]);
 
   const saveLocation = useCallback(
     async (locationId: string) => {
