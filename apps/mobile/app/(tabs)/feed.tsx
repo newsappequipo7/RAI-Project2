@@ -1,6 +1,6 @@
 import { findLocation, rankFeed, type RankedItem } from '@repo/shared';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -16,6 +16,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { LocationNotice } from '@/components/LocationNotice';
 import { CompactRow, HeroCard, LargeCard, MediumRow, MustKnowBlock } from '@/src/feed/FeedCards';
 import { WhyPanel } from '@/src/feed/WhyPanel';
+import { findNewProminentStory, isProminentStory } from '@/src/feed/newStoryAlert';
 import { useNewsFeed } from '@/src/feed/useNewsFeed';
 import { useProfile } from '@/src/profile/ProfileProvider';
 import { getFirebaseDb } from '@/src/services/firebase';
@@ -47,6 +48,10 @@ export default function FeedScreen() {
   const [selected, setSelected] = useState<RankedItem | null>(null);
   const [feedbackBusy, setFeedbackBusy] = useState(false);
   const [panelError, setPanelError] = useState<string | null>(null);
+  const [newStoryId, setNewStoryId] = useState<string | null>(null);
+  const previousNewsIds = useRef<Set<string> | null>(null);
+  const previousFeedWindow = useRef<number | null>(null);
+  const listRef = useRef<FlatList<RankedItem>>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60_000);
@@ -82,6 +87,37 @@ export default function FeedScreen() {
   const items = ranking?.value?.feed ?? [];
   const mustKnow = ranking?.value?.mustKnow ?? [];
   const message = error ?? ranking?.error;
+
+  useEffect(() => {
+    previousNewsIds.current = null;
+    previousFeedWindow.current = null;
+    setNewStoryId(null);
+  }, [profile?.uid]);
+
+  useEffect(() => {
+    const windowChanged =
+      previousFeedWindow.current !== null && previousFeedWindow.current !== config.feedWindowHours;
+    previousFeedWindow.current = config.feedWindowHours;
+    if (status === 'loading' || status === 'error') {
+      previousNewsIds.current = null;
+      setNewStoryId(null);
+      return;
+    }
+    if (!ranking?.value) return;
+    if (windowChanged) {
+      previousNewsIds.current = new Set(news.map((item) => item.id));
+      setNewStoryId(null);
+      return;
+    }
+    const nextStory = findNewProminentStory(previousNewsIds.current, ranking.value);
+    previousNewsIds.current = new Set(news.map((item) => item.id));
+    if (nextStory) setNewStoryId(nextStory.news.id);
+    else {
+      setNewStoryId((current) =>
+        current && isProminentStory(current, ranking.value!) ? current : null,
+      );
+    }
+  }, [news, ranking, status, config.feedWindowHours]);
 
   function refresh() {
     setRequestedRefresh(true);
@@ -137,7 +173,26 @@ export default function FeedScreen() {
       style={[styles.safeArea, { backgroundColor: palette.background }]}
       edges={['top']}
     >
+      {newStoryId ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLiveRegion="polite"
+          accessibilityLabel="Nueva noticia. Ir al inicio del feed"
+          onPress={() => {
+            if (mustKnow.some((item) => item.news.id === newStoryId)) {
+              setExpandedMustKnow(true);
+            }
+            listRef.current?.scrollToOffset({ offset: 0, animated: true });
+            setNewStoryId(null);
+          }}
+          style={[styles.newStory, { backgroundColor: palette.accent }]}
+        >
+          <Text style={[styles.newStoryText, { color: palette.accentInk }]}>Nueva noticia</Text>
+          <Text style={[styles.newStoryAction, { color: palette.accentInk }]}>Ver arriba ↑</Text>
+        </Pressable>
+      ) : null}
       <FlatList
+        ref={listRef}
         data={items}
         keyExtractor={(item) => item.news.id}
         renderItem={renderCard}
@@ -259,6 +314,15 @@ export default function FeedScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
+  newStory: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+  },
+  newStoryText: { fontSize: 14, fontWeight: '800' },
+  newStoryAction: { fontSize: 13, fontWeight: '700' },
   content: { paddingHorizontal: space.lg, paddingBottom: 40 },
   masthead: {
     paddingTop: space.md,
