@@ -18,16 +18,57 @@ function httpUrl(value: unknown): string | null {
   }
 }
 
-/** Non-commercial licenses are excluded: the app is public and may be shown beyond the classroom. */
-const isNonCommercial = (license: string) => /(^|[\s-])nc([\s-]|$)/i.test(license);
-
 const text = (value: unknown): string => (typeof value === 'string' ? value.trim() : '');
 
-function openverseLicense(license: string, version: string): string {
-  const name = license.toLowerCase();
-  if (name === 'cc0') return 'CC0 1.0';
-  if (name === 'pdm') return 'Public Domain Mark 1.0';
-  return `CC ${license.toUpperCase()}${version ? ` ${version}` : ''}`;
+interface AllowedLicense {
+  label: string;
+  url: string;
+}
+
+const CC_VERSIONS = new Set(['1.0', '2.0', '2.5', '3.0', '4.0']);
+
+/** Only licenses with clear reuse terms enter the editor's free-license search. */
+function allowedLicense(code: string, version: string): AllowedLicense | null {
+  const normalized = code.toLowerCase();
+  if (normalized === 'cc0' && (version === '' || version === '1.0')) {
+    return { label: 'CC0 1.0', url: 'https://creativecommons.org/publicdomain/zero/1.0/' };
+  }
+  if (normalized === 'pdm' && (version === '' || version === '1.0')) {
+    return {
+      label: 'Public Domain Mark 1.0',
+      url: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    };
+  }
+  if ((normalized === 'by' || normalized === 'by-sa') && CC_VERSIONS.has(version)) {
+    return {
+      label: `CC ${normalized.toUpperCase()} ${version}`,
+      url: `https://creativecommons.org/licenses/${normalized}/${version}/`,
+    };
+  }
+  return null;
+}
+
+function commonsLicense(label: string): AllowedLicense | null {
+  const normalized = label.trim().replace(/[-_]/g, ' ').replace(/\s+/g, ' ').toUpperCase();
+  if (normalized === 'CC0' || normalized === 'CC0 1.0') return allowedLicense('cc0', '1.0');
+  if (normalized === 'PUBLIC DOMAIN MARK' || normalized === 'PUBLIC DOMAIN MARK 1.0') {
+    return allowedLicense('pdm', '1.0');
+  }
+  const match = /^CC (BY(?: SA)?) (1\.0|2\.0|2\.5|3\.0|4\.0)$/.exec(normalized);
+  return match
+    ? allowedLicense((match[1] ?? '').toLowerCase().replace(' ', '-'), match[2] ?? '')
+    : null;
+}
+
+function matchesLicenseUrl(value: unknown, expected: string): boolean {
+  if (value == null || value === '') return true;
+  const actual = httpUrl(value);
+  if (!actual) return false;
+  const parsed = new URL(actual);
+  return (
+    parsed.hostname.replace(/^www\./, '') === 'creativecommons.org' &&
+    parsed.pathname.replace(/\/+$/, '') === new URL(expected).pathname.replace(/\/+$/, '')
+  );
 }
 
 async function getJson(fetchFn: FetchFn, url: URL): Promise<unknown> {
@@ -53,8 +94,10 @@ export async function searchOpenverse(
   return (body.results ?? []).flatMap((item) => {
     const imageUrl = httpUrl(item.url);
     const sourceUrl = httpUrl(item.foreign_landing_url);
-    const license = openverseLicense(text(item.license), text(item.license_version));
-    if (!imageUrl || !sourceUrl || text(item.license) === '' || isNonCommercial(license)) return [];
+    const license = allowedLicense(text(item.license), text(item.license_version));
+    if (!imageUrl || !sourceUrl || !license || !matchesLicenseUrl(item.license_url, license.url)) {
+      return [];
+    }
 
     return [
       {
@@ -62,8 +105,8 @@ export async function searchOpenverse(
         url: imageUrl,
         title: text(item.title) || 'Sin título',
         creator: text(item.creator),
-        license,
-        licenseUrl: httpUrl(item.license_url) ?? '',
+        license: license.label,
+        licenseUrl: license.url,
         sourceUrl,
       },
     ];
@@ -107,8 +150,15 @@ export async function searchCommons(
     const meta = (info.extmetadata ?? {}) as Record<string, { value?: unknown } | undefined>;
     const imageUrl = httpUrl(info.url);
     const sourceUrl = httpUrl(info.descriptionurl);
-    const license = text(meta.LicenseShortName?.value);
-    if (!imageUrl || !sourceUrl || license === '' || isNonCommercial(license)) return [];
+    const license = commonsLicense(text(meta.LicenseShortName?.value));
+    if (
+      !imageUrl ||
+      !sourceUrl ||
+      !license ||
+      !matchesLicenseUrl(meta.LicenseUrl?.value, license.url)
+    ) {
+      return [];
+    }
 
     return [
       {
@@ -116,8 +166,8 @@ export async function searchCommons(
         url: imageUrl,
         title: (page.title ?? '').replace(/^File:/, '').replace(/\.\w+$/, '') || 'Sin título',
         creator: stripHtml(text(meta.Artist?.value)),
-        license,
-        licenseUrl: httpUrl(meta.LicenseUrl?.value) ?? '',
+        license: license.label,
+        licenseUrl: license.url,
         sourceUrl,
       },
     ];

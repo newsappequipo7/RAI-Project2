@@ -58,4 +58,27 @@ describe('newsSchema', () => {
     const result = newsSchema.safeParse({ ...baseNews(), unexpectedField: 'nope' });
     expect(result.success).toBe(false);
   });
+
+  it('keeps a license URL while accepting older images without one', () => {
+    const image = {
+      kind: 'licencia_libre' as const,
+      url: 'https://example.com/image.jpg',
+      credit: 'Ana',
+      license: 'CC BY 4.0',
+      sourceUrl: 'https://example.com/source',
+      altText: 'Imagen de archivo',
+    };
+    expect(newsSchema.safeParse(baseNews({ image })).success).toBe(true);
+    expect(
+      newsSchema.safeParse(
+        baseNews({
+          image: { ...image, licenseUrl: 'https://creativecommons.org/licenses/by/4.0/' },
+        }),
+      ).success,
+    ).toBe(true);
+    expect(
+      newsSchema.safeParse(baseNews({ image: { ...image, licenseUrl: 'no-es-un-enlace' } }))
+        .success,
+    ).toBe(false);
+  });
 });

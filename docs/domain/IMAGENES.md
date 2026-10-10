@@ -21,8 +21,11 @@ portada. Si se renderiza en la app, `image.kind = 'portada_generada'` y `url = '
 ## 3. Búsqueda con licencia libre
 
 `POST /admin/image/search` consulta Openverse (API pública, imágenes CC) y Wikimedia Commons. Guardar siempre
-`creator`, `license`, `licenseUrl`, `sourceUrl`. Excluir licencias `NC` si hubiera cualquier duda de uso. El pie en la
-app siempre dice "Imagen de archivo" para que no se interprete como foto del hecho.
+`creator`, `license`, `licenseUrl`, `sourceUrl`. La búsqueda solo ofrece CC BY, CC BY-SA, CC0 y Public Domain Mark con
+versión reconocida y enlace canónico a los términos; excluye licencias ambiguas y restrictivas. El editor debe revisar
+la página de origen antes de publicar. `image.licenseUrl` queda opcional para noticias antiguas que no lo guardaron;
+las imágenes elegidas desde la búsqueda nueva sí lo conservan. El pie en la app siempre dice "Imagen de archivo" para
+que no se interprete como foto del hecho.
 
 Almacenamiento de imágenes subidas: Cloudinary plan gratuito con *upload preset sin firma* (ADR-010); también se
 puede enlazar la URL de origen con crédito. Firebase Storage exige plan Blaze en proyectos nuevos; no usarlo salvo ADR.

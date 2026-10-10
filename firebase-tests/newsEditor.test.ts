@@ -317,6 +317,7 @@ describe('F2-07 images', () => {
     const image = buildFreeLicenseImage(found, 'Volcán en erupción');
     await saveNewsFields(db, { ...draft, image });
     expect((await loadNews(db, 'img-1'))?.image).toEqual(image);
+    expect((await loadNews(db, 'img-1'))?.image?.licenseUrl).toBe(found.licenseUrl);
 
     await saveNewsFields(db, { ...draft, image: undefined });
     const cleared = await loadNews(db, 'img-1');

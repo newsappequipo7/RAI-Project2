@@ -36,6 +36,7 @@ export function NewsImage({
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const isCover = image.kind === 'portada_generada';
   const imageAvailable = isValidSourceUrl(image.url);
+  const licenseAvailable = image.licenseUrl ? isValidSourceUrl(image.licenseUrl) : false;
   const sourceAvailable = image.sourceUrl ? isValidSourceUrl(image.sourceUrl) : false;
   const origin = sourceAvailable
     ? image.sourceUrl!
@@ -84,6 +85,20 @@ export function NewsImage({
             value={image.license ?? 'No aplica'}
             palette={palette}
           />
+          {licenseAvailable ? (
+            <Pressable
+              onPress={() =>
+                void Linking.openURL(image.licenseUrl!).catch(() =>
+                  Alert.alert('No se pudo abrir el enlace'),
+                )
+              }
+              accessibilityRole="link"
+            >
+              <Text style={[styles.sourceLink, { color: palette.accent }]}>
+                Ver condiciones de la licencia ↗
+              </Text>
+            </Pressable>
+          ) : null}
           <Detail label="Origen" value={origin} palette={palette} />
           {sourceAvailable ? (
             <Pressable

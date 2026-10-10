@@ -158,7 +158,7 @@ describe('POST /admin/image/search', () => {
         title: 'Dominio público',
         creator: '',
         license: 'CC0 1.0',
-        licenseUrl: '',
+        licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
         sourceUrl: 'https://www.flickr.com/photos/4',
       },
       {
@@ -167,7 +167,7 @@ describe('POST /admin/image/search', () => {
         title: 'Antigua Guatemala',
         creator: 'Luis & Co',
         license: 'CC BY-SA 3.0',
-        licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
+        licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
         sourceUrl: 'https://commons.wikimedia.org/wiki/File:Antigua_Guatemala.jpg',
       },
     ]);
@@ -194,6 +194,46 @@ describe('POST /admin/image/search', () => {
     expect(urls).not.toContain('https://live.staticflickr.com/2/nc.jpg');
     expect(urls.some((url) => url.startsWith('javascript:'))).toBe(false);
     expect(body.results.every((item) => !/NC/.test(item.license))).toBe(true);
+  });
+
+  it('rejects ambiguous or conflicting Commons rights and keeps a canonical license link', async () => {
+    const page = (name: string, license: string, licenseUrl?: string) => ({
+      title: `File:${name}.jpg`,
+      imageinfo: [
+        {
+          url: `https://upload.wikimedia.org/${name}.jpg`,
+          descriptionurl: `https://commons.wikimedia.org/wiki/File:${name}.jpg`,
+          extmetadata: {
+            LicenseShortName: { value: license },
+            ...(licenseUrl ? { LicenseUrl: { value: licenseUrl } } : {}),
+          },
+        },
+      ],
+    });
+    stubFetch({
+      openverse: () => respond({ results: [] }),
+      commons: () =>
+        respond({
+          query: {
+            pages: [
+              page('rights-reserved', 'All rights reserved'),
+              page('noncommercial', 'CC BY-NC 4.0'),
+              page('mismatch', 'CC BY 4.0', 'https://creativecommons.org/licenses/by-nc/4.0/'),
+              page('allowed', 'CC BY 4.0'),
+            ],
+          },
+        }),
+    });
+
+    const body = (await (
+      await post('/admin/image/search', { query: 'licencias' })
+    ).json()) as ImageSearchResponse;
+    expect(body.results).toHaveLength(1);
+    expect(body.results[0]).toMatchObject({
+      url: 'https://upload.wikimedia.org/allowed.jpg',
+      license: 'CC BY 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    });
   });
 
   it('still answers when one source is down', async () => {

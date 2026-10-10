@@ -77,9 +77,11 @@ resultado simulado no se sirva nunca en `live`), 30 días. Un acierto de caché 
 
 ### `POST /admin/image/search` (admin)
 Request `{ query: string (2–200 caracteres) }` → `200 { results: { thumbUrl, url, title, creator, license, licenseUrl,
-sourceUrl }[] }`. Consulta Openverse (solo licencias que permiten uso comercial, sin `NC`) y Wikimedia Commons en
-paralelo, hasta 12 resultados de cada una, y descarta los que no traen URLs http(s). Si una fuente falla se devuelven los
-de la otra; si fallan las dos, `502 provider_error`. Sin IA, costo 0. Tipos: `ImageSearchResponse` en `packages/shared`.
+sourceUrl }[] }`. Consulta Openverse y Wikimedia Commons en paralelo, hasta 12 resultados de cada una. Solo devuelve
+CC BY, CC BY-SA, CC0 o Public Domain Mark con versión reconocida y enlace canónico a los términos; descarta licencias
+ambiguas, restricciones `NC`/`ND`, enlaces de licencia contradictorios y URLs de imagen u origen que no sean http(s).
+Si una fuente falla se devuelven los resultados de la otra; si fallan las dos, `502 provider_error`.
+Sin IA, costo 0. Tipos: `ImageSearchResponse` en `packages/shared`.
 
 ### `POST /admin/image/generate` (admin, deshabilitado por defecto)
 Request `{ newsId, prompt (10–500 caracteres) }` → `200 { url, model, costUsd, aiDisclosure }`. Rechaza con `forbidden` si

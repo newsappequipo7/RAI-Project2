@@ -85,6 +85,7 @@ describe('image builders', () => {
       url: result.url,
       credit: 'Autora X',
       license: 'CC BY 4.0',
+      licenseUrl: result.licenseUrl,
       sourceUrl: result.sourceUrl,
       altText: 'Fachada',
     });
