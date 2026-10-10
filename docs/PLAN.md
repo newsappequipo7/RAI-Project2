@@ -135,7 +135,7 @@ por tarea al iniciar su fase.
 | F3-08 | Señales e intereses | ◐ | [Evidencia F3-08](../evidence/F3-08-interests.md), [LOOP-011](../evidence/loops/LOOP-011-reloj-de-decaimiento.md). Pasos 1–4 implementados: apertura y permanencia, una actualización del perfil por lectura, barras y controles en Perfil. CA1 y persistencia verificadas con pruebas; CA2/CA3 pendientes de recorrido en Expo Go con teléfonos reales. |
 | F3-09 | Cambio de ubicación en caliente | ◐ | [Evidencia F3-09](../evidence/F3-09-hot-location.md), [LOOP-012](../evidence/loops/LOOP-012-ubicacion-prueba-aislada.md). Perfil visible optimista, ranking local sin nueva consulta, aviso en feed/chat/Perfil y reversión ante error; 532 pruebas verdes. CA1 pendiente de medición toque→pintado <300 ms en Expo Go real. |
 | F3-10 | Tiempo real y avisos | ◐ | [Evidencia F3-10](../evidence/F3-10-live-alerts.md). Aviso fijo para una noticia nueva en top 3 o esenciales, retorno arriba y apertura de esenciales; 2 lectores del emulador reciben la publicación del portal en <5 s. Falta CA1 en dos teléfonos reales con Expo Go; tarjeta de correcciones `[PLUS]` pendiente. |
-| F3-11 | Comparador de ubicaciones (portal) | ☐ | |
+| F3-11 | Comparador de ubicaciones (portal) | ◐ | [Evidencia F3-11](../evidence/F3-11-comparator.md). Ruta `/compare`, ocho ubicaciones, cuatro perfiles, posición y tier, panel de diversidad y suscripción Firestore. CA1 y CA2 verificados con publicación en emulador y comparación con el ranking móvil; falta revisión visual en el navegador del portal. |
 | F3-12 | Pulido, accesibilidad, evidencia y cierre | ☐ | |
 | F4-01 … F4-13 | Ver FASE-4 | ☐ | |
 
