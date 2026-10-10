@@ -8,7 +8,11 @@ service cloud.firestore {
     match /news/{id} {
       allow read: if isAdmin() || (signedIn() && resource.data.workflow == 'publicada');
       allow write: if isAdmin();
-      match /versions/{v} { allow read: if signedIn(); allow write: if isAdmin(); }
+      match /versions/{v} {
+        allow read: if isAdmin() || (signedIn() &&
+          get(/databases/$(db)/documents/news/$(id)).data.workflow == 'publicada');
+        allow write: if isAdmin();
+      }
     }
     match /users/{uid} {
       allow read, write: if signedIn() && request.auth.uid == uid;
