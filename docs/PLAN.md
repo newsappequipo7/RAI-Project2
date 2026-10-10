@@ -133,7 +133,7 @@ por tarea al iniciar su fase.
 | F3-06 | Panel "¿Por qué veo esto?" y control del usuario | ◐ | [Evidencia F3-06](../evidence/F3-06-why-panel.md). Botón «?» en todas las tarjetas, hoja con razones/barras y controles; `why_opened` y preferencias en Firestore probados con emulador. CA1 verificado por ranking; falta recorrido táctil/visual en Expo Go. |
 | F3-07 | Vista de lectura con procedencia | ☐ | |
 | F3-08 | Señales e intereses | ◐ | [Evidencia F3-08](../evidence/F3-08-interests.md), [LOOP-011](../evidence/loops/LOOP-011-reloj-de-decaimiento.md). Pasos 1–4 implementados: apertura y permanencia, una actualización del perfil por lectura, barras y controles en Perfil. CA1 y persistencia verificadas con pruebas; CA2/CA3 pendientes de recorrido en Expo Go con teléfonos reales. |
-| F3-09 | Cambio de ubicación en caliente | ☐ | |
+| F3-09 | Cambio de ubicación en caliente | ◐ | [Evidencia F3-09](../evidence/F3-09-hot-location.md), [LOOP-012](../evidence/loops/LOOP-012-ubicacion-prueba-aislada.md). Perfil visible optimista, ranking local sin nueva consulta, aviso en feed/chat/Perfil y reversión ante error; 532 pruebas verdes. CA1 pendiente de medición toque→pintado <300 ms en Expo Go real. |
 | F3-10 | Tiempo real y avisos | ☐ | |
 | F3-11 | Comparador de ubicaciones (portal) | ☐ | |
 | F3-12 | Pulido, accesibilidad, evidencia y cierre | ☐ | |

@@ -1,7 +1,8 @@
 import { createDefaultProfile, userProfileSchema, type UserProfile } from '@repo/shared';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import { getFirebaseDb } from '@/src/services/firebase';
+import { saveProfileLocation } from './profileLocation';
 
 const USERS_COLLECTION = 'users';
 
@@ -30,7 +31,5 @@ export async function updateProfileLocation(
   profile: UserProfile,
   locationId: string,
 ): Promise<UserProfile> {
-  const updatedAt = new Date().toISOString();
-  await updateDoc(profileRef(profile.uid), { locationId, updatedAt });
-  return { ...profile, locationId, updatedAt };
+  return saveProfileLocation(getFirebaseDb(), profile, locationId);
 }
