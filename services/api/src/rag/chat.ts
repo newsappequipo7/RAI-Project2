@@ -14,6 +14,7 @@ import { CHAT_RATE_LIMIT_PER_HOUR, consumeRateLimit } from '../ai/rateLimit';
 import type { GatewayContext } from '../ai/types';
 import type { Bindings } from '../env';
 import { ApiError } from '../errors';
+import { isAdminUid } from '../middleware/admin';
 import { CHAT_CACHE_PREFIX, readIndexVersion } from '../kv';
 import { askModel, CHAT_NOTICES, emptyResponse, retrievalOnlyResponse } from './answer';
 import { CHAT_CONFIG } from './chatConfig';
@@ -53,7 +54,7 @@ async function cacheKey(
   mode: ChatMode,
 ): Promise<string> {
   const material = JSON.stringify([
-    CHAT_CONFIG.cacheVersion,
+    CHAT_CONFIG,
     CHAT_PROMPT_VERSION,
     isLiveMode(env) ? 'live' : 'mock',
     normalizeText(request.message),
@@ -116,8 +117,11 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
   const withDebug = (response: ChatResponse, debug: ChatResponse['debug']): ChatResponse =>
     env.ENV === 'dev' ? { ...response, debug } : response;
 
-  // 1. Rate limit (auth already happened in the route).
-  await consumeRateLimit(env.DB, uid, CHAT_RATE_LIMIT_PER_HOUR, now);
+  // 1. Rate limit (auth already happened in the route). In dev only, project admins are exempt so
+  // the golden set (F4-05) can run more than 20 questions in an hour; demo limits everyone.
+  if (!(env.ENV === 'dev' && isAdminUid(env.ADMIN_UIDS, uid))) {
+    await consumeRateLimit(env.DB, uid, CHAT_RATE_LIMIT_PER_HOUR, now);
+  }
 
   // 2. Flags and budget.
   const policy = await gateway.chatPolicy({ env, uid, now: () => now });

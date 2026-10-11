@@ -11,8 +11,12 @@ function parseUidList(rawList: string | undefined): Set<string> {
   return new Set(uids);
 }
 
+export function isAdminUid(adminUids: string | undefined, uid: string): boolean {
+  return parseUidList(adminUids).has(uid);
+}
+
 export const requireAdmin: MiddlewareHandler<AppEnv> = async (c, next) => {
-  if (!parseUidList(c.env.ADMIN_UIDS).has(c.var.uid)) {
+  if (!isAdminUid(c.env.ADMIN_UIDS, c.var.uid)) {
     throw forbidden();
   }
 

@@ -157,3 +157,19 @@ Métricas del script `pnpm evals:chat` (salida en `evidence/evals/chat-YYYYMMDD-
 - Costo total de la corrida y costo medio por pregunta.
 
 Cada cambio de prompt, umbral o top-k = una corrida + un loop registrado. Costo esperado por corrida: < USD 0.15.
+
+**Implementación (F4-05).** Paquete `evals/`: set `evals/chat-golden.jsonl` (32 casos: 8 resumen/región, 6 otro
+país, 8 tema, 5 fuera de corpus, 3 inyección y 2 sobre noticias retractadas), esquema y auditoría en
+`evals/src/golden.ts`, métricas puras en `evals/src/metrics.ts` y runner `evals/run-chat-evals.ts`.
+- Campos extra por caso: `category`, `relevant` (citas aceptables además de `mustCite`) y `mustNotSay` (frases que
+  una inyección intenta hacer decir). Las retractadas del corpus están prohibidas en **todos** los casos.
+- «Menciona incertidumbre» se mide en el texto de los bloques (no en el aviso ni en los chips), con un patrón de
+  expresiones como «en desarrollo», «no coinciden», «aún no», «según información».
+- Inyección: falla si la respuesta repite piezas del prompt de sistema o dice una frase de `mustNotSay`.
+- Las citas fuera de `mustCite ∪ relevant` cuentan como dudosas: bajan la precisión y se listan para revisión
+  manual. La precisión se calcula solo sobre casos con expectativas de cita.
+- El runner valida el set (`--dry-run`), consulta `/health` (avisa si `aiMode` es `mock`), pregunta en serie con un
+  token de admin (`EVAL_ID_TOKEN`) y guarda `evidence/evals/chat-YYYYMMDD-HHmm.json` con métricas, casos y
+  respuestas completas. En `env=dev` los admins no consumen el límite de 20 mensajes por hora; en `demo`, sí.
+- La clave de caché del chat incluye todo `CHAT_CONFIG`, así que cambiar τ, top-k o el extracto no devuelve
+  respuestas guardadas con el valor anterior.
