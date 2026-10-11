@@ -2,6 +2,7 @@
  * Golden-set runner for the chat (F4-05, CHAT-RAG.md §6).
  *
  *   pnpm evals:chat --dry-run                       validates the set, no requests
+ *   pnpm evals:chat --set injection …               F4-07 set, after `pnpm seed:injection`
  *   EVAL_ID_TOKEN=<admin Firebase ID token> pnpm evals:chat --api <worker url> --label v1
  *
  * Against a Worker with AI_MODE=live this SPENDS CREDITS (< USD 0.15 per run expected); check the
@@ -27,7 +28,15 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_API = 'http://127.0.0.1:8787';
 const REQUEST_TIMEOUT_MS = 60_000;
 
+const SETS = {
+  golden: { file: 'evals/chat-golden.jsonl', checkDistribution: true },
+  // F4-07: needs the malicious test news in the index (`pnpm seed:injection`); remove it afterwards.
+  injection: { file: 'evals/chat-injection.jsonl', checkDistribution: false },
+} as const;
+type SetName = keyof typeof SETS;
+
 interface Options {
+  set: SetName;
   api: string;
   label: string;
   only: Set<string> | null;
@@ -41,7 +50,11 @@ function parseArgs(argv: string[]): Options {
     return index === -1 ? undefined : argv[index + 1];
   };
   const only = value('--only');
+  const set = value('--set') ?? 'golden';
+  if (!(set in SETS))
+    throw new Error(`Unknown --set ${set}; use ${Object.keys(SETS).join(' or ')}`);
   return {
+    set: set as SetName,
     api: (value('--api') ?? process.env.EVAL_API_URL ?? DEFAULT_API).replace(/\/$/, ''),
     label: value('--label') ?? 'sin-etiqueta',
     only: only ? new Set(only.split(',')) : null,
@@ -51,9 +64,12 @@ function parseArgs(argv: string[]): Options {
 }
 
 async function loadCorpus(): Promise<{ ids: Set<string>; retracted: Set<string> }> {
-  const corpus = JSON.parse(
-    await readFile(join(ROOT, 'packages/shared/fixtures/news.json'), 'utf8'),
-  ) as { id: string; certainty: string }[];
+  const read = async (file: string) =>
+    JSON.parse(await readFile(join(ROOT, 'packages/shared/fixtures', file), 'utf8')) as {
+      id: string;
+      certainty: string;
+    }[];
+  const corpus = [...(await read('news.json')), ...(await read('injection-news.json'))];
   return {
     ids: new Set(corpus.map(({ id }) => id)),
     retracted: new Set(
@@ -168,12 +184,15 @@ function stamp(date: Date): string {
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   const corpus = await loadCorpus();
-  const golden = parseGolden(await readFile(join(ROOT, 'evals/chat-golden.jsonl'), 'utf8'));
-  const problems = auditGolden(golden, corpus.ids);
+  const { file, checkDistribution } = SETS[options.set];
+  const golden = parseGolden(await readFile(join(ROOT, file), 'utf8'));
+  const problems = auditGolden(golden, corpus.ids, { checkDistribution });
   if (problems.length > 0) throw new Error(`Golden set problems:\n- ${problems.join('\n- ')}`);
 
   const selected = options.only ? golden.filter(({ id }) => options.only!.has(id)) : golden;
-  console.log(`Set dorado válido: ${golden.length} casos (${selected.length} seleccionados).`);
+  console.log(
+    `Set ${options.set} válido: ${golden.length} casos (${selected.length} seleccionados).`,
+  );
   if (options.dryRun) return;
 
   const token = process.env.EVAL_ID_TOKEN;
@@ -204,11 +223,15 @@ async function main(): Promise<void> {
   printReview(scores);
 
   await mkdir(options.outDir, { recursive: true });
-  const file = join(options.outDir, `chat-${stamp(startedAt)}.json`);
+  const output = join(
+    options.outDir,
+    `chat-${options.set === 'golden' ? '' : `${options.set}-`}${stamp(startedAt)}.json`,
+  );
   await writeFile(
-    file,
+    output,
     `${JSON.stringify(
       {
+        set: options.set,
         label: options.label,
         startedAt: startedAt.toISOString(),
         api: options.api,
@@ -223,7 +246,7 @@ async function main(): Promise<void> {
       2,
     )}\n`,
   );
-  console.log(`\nResultado guardado en ${relative(ROOT, file)}`);
+  console.log(`\nResultado guardado en ${relative(ROOT, output)}`);
 }
 
 main().catch((error: unknown) => {

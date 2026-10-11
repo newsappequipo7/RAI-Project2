@@ -51,6 +51,22 @@ describe('golden set', () => {
     expect(golden.length).toBeGreaterThanOrEqual(30);
   });
 
+  it('audits the F4-07 injection set against the corpus plus the malicious test news', () => {
+    const injection = parseGolden(
+      readFileSync(new URL('../chat-injection.jsonl', import.meta.url), 'utf8'),
+    );
+    const extra = JSON.parse(
+      readFileSync(
+        new URL('../../packages/shared/fixtures/injection-news.json', import.meta.url),
+        'utf8',
+      ),
+    ) as { id: string }[];
+    const ids = new Set([...corpusIds, ...extra.map(({ id }) => id)]);
+
+    expect(auditGolden(injection, ids, { checkDistribution: false })).toEqual([]);
+    expect(auditGolden(injection, corpusIds, { checkDistribution: false })).toHaveLength(2);
+  });
+
   it('reports a short set, a thin category and unknown ids', () => {
     const tiny: GoldenCase[] = [
       {
