@@ -1,4 +1,4 @@
-import type { AiTask, CallOutcome } from '@repo/shared';
+import type { AiTask, CallOutcome, ChatMode } from '@repo/shared';
 import { ApiError, budgetBlocked, forbidden, providerError } from '../errors';
 import { readFlags } from '../kv';
 import { applyBudgetToFlags, evaluateBudget, isTaskBlocked } from './budget';
@@ -138,4 +138,42 @@ async function recordCacheHit(task: AiTask, ctx: GatewayContext): Promise<void> 
   );
 }
 
-export const gateway = { run, recordCacheHit };
+/**
+ * Records a model call that was not made because the request ended earlier on purpose (the chat
+ * abstained below τ): a zero-cost, zero-token row with outcome `abstained`.
+ */
+async function recordAbstention(task: AiTask, ctx: GatewayContext): Promise<void> {
+  const route = resolveRoute(task, ctx.env) ?? UNROUTED;
+  await recordCallSafely(ctx, task, route, ctx.now?.() ?? new Date(), {
+    outcome: 'abstained',
+    usage: NO_USAGE,
+    costUsd: 0,
+  });
+}
+
+export interface ChatPolicy {
+  killSwitch: boolean;
+  /** `retrieval_only` when the flag says so or the budget no longer allows chat answers. */
+  chatMode: ChatMode;
+}
+
+/** Step 2 of the chat pipeline: what the flags and the budget allow before any model is called. */
+async function chatPolicy(ctx: GatewayContext): Promise<ChatPolicy> {
+  const now = ctx.now?.() ?? new Date();
+  const [flags, totalUsd] = await Promise.all([
+    readFlags(ctx.env.KV),
+    getTotalSpend(ctx.env.DB, now.getTime()),
+  ]);
+  const level = evaluateBudget(totalUsd);
+  const route = resolveRoute('chat_answer', ctx.env) ?? UNROUTED;
+  const answerBlocked = isTaskBlocked('chat_answer', level, ctx.env.ENV, route.provider);
+
+  return {
+    killSwitch: flags.killSwitch,
+    chatMode: answerBlocked
+      ? 'retrieval_only'
+      : applyBudgetToFlags(flags, level, ctx.env.ENV).chatMode,
+  };
+}
+
+export const gateway = { run, recordCacheHit, recordAbstention, chatPolicy };

@@ -308,6 +308,51 @@ export interface IndexSearchResponse {
   hits: IndexSearchHit[];
 }
 
+// Chat (CONTRATOS-API.md §4). `ChatMode` above is the flag; this is the mode of one response.
+export type ChatResponseMode = 'answer' | 'abstain' | 'digest' | 'retrieval_only' | 'blocked';
+
+export interface ChatTurn {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatRequest {
+  message: string;
+  locationId: string;
+  history?: ChatTurn[];
+}
+
+export interface ChatBlock {
+  text: string;
+  newsIds: string[]; // siempre ⊆ noticias recuperadas
+  certainty: Certainty | 'mixta'; // heredada de la(s) noticia(s), nunca del modelo
+}
+
+export interface ChatSource {
+  newsId: string;
+  title: string;
+  certainty: Certainty;
+  publishedAt: string;
+  outlets: string[];
+}
+
+export interface ChatDebug {
+  intent: string;
+  topScores: number[];
+  threshold: number;
+}
+
+export interface ChatResponse {
+  mode: ChatResponseMode;
+  blocks: ChatBlock[];
+  sources: ChatSource[];
+  notice?: string;
+  generatedBy: { provider: string; model: string } | null; // null si no hubo LLM
+  cached: boolean;
+  costUsd: number;
+  debug?: ChatDebug; // solo env=dev
+}
+
 export interface ImageSearchResult {
   thumbUrl: string;
   url: string;

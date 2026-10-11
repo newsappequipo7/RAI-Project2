@@ -10,3 +10,4 @@ export * from './cover/spec';
 export { rankFeed } from './ranking/rankFeed';
 export { normalizeWeights } from './ranking/score';
 export { updateInterests } from './interests/update';
+export * from './chat/intent';

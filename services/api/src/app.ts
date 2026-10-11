@@ -5,6 +5,7 @@ import { requireAdmin } from './middleware/admin';
 import { getFirebaseKeyResolver, requireAuth, type KeyResolver } from './middleware/auth';
 import { corsMiddleware } from './middleware/cors';
 import { adminRoutes } from './routes/admin';
+import { chatRoutes } from './routes/chat';
 import { healthRoutes } from './routes/health';
 
 export function createApp(resolveKeys: () => KeyResolver = getFirebaseKeyResolver) {
@@ -15,6 +16,9 @@ export function createApp(resolveKeys: () => KeyResolver = getFirebaseKeyResolve
   app.notFound(handleNotFound);
 
   app.route('/', healthRoutes);
+
+  app.use('/chat', requireAuth(resolveKeys));
+  app.route('/', chatRoutes);
 
   app.use('/admin/*', requireAuth(resolveKeys), requireAdmin);
   app.route('/admin', adminRoutes);

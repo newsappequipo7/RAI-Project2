@@ -34,3 +34,5 @@ export function indexEntriesKey(version: number): string {
 export async function writeIndexVersion(kv: KVNamespace, version: number): Promise<void> {
   await kv.put(INDEX_VERSION_KEY, String(version));
 }
+
+export const CHAT_CACHE_PREFIX = 'chat:cache:';

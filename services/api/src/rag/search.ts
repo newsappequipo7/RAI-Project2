@@ -7,6 +7,9 @@ export const DEFAULT_TOP_K = 6;
 export interface SearchOptions {
   topK?: number;
   countries?: string[];
+  /** News of these countries are ordered as if their score were `boost` higher. */
+  boostCountries?: string[];
+  boost?: number;
 }
 
 export interface ScoredEntry {
@@ -41,12 +44,16 @@ function matchesCountries(entry: IndexEntry, countries: string[] | undefined): b
 export function rankEntries(
   entries: IndexEntry[],
   queryEmbedding: number[],
-  { topK = DEFAULT_TOP_K, countries }: SearchOptions = {},
+  { topK = DEFAULT_TOP_K, countries, boostCountries, boost = 0 }: SearchOptions = {},
 ): ScoredEntry[] {
+  // The boost only reorders: `score` stays the raw similarity so thresholds keep their meaning.
+  const sortKey = ({ entry, score }: ScoredEntry) =>
+    score + (boostCountries?.length && matchesCountries(entry, boostCountries) ? boost : 0);
+
   return entries
     .filter((entry) => entry.certainty !== 'retractada' && matchesCountries(entry, countries))
     .map((entry) => ({ entry, score: cosineSimilarity(entry.embedding, queryEmbedding) }))
-    .sort((left, right) => right.score - left.score)
+    .sort((left, right) => sortKey(right) - sortKey(left))
     .slice(0, topK);
 }
 

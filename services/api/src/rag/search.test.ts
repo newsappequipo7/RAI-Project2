@@ -60,6 +60,17 @@ describe('rankEntries', () => {
     expect(ids).toEqual(['mx']);
   });
 
+  it('reorders boosted countries without changing their raw score', () => {
+    const ranked = rankEntries(entries, [1, 0], { boostCountries: ['MX'], boost: 0.2 });
+    expect(ranked.map(({ entry: found }) => found.id)).toEqual(['mx', 'a', 'b', 'c']);
+    expect(ranked[0]?.score).toBeCloseTo(cosineSimilarity([0.9, 0.1], [1, 0]));
+  });
+
+  it('ignores an empty boost list', () => {
+    const ranked = rankEntries(entries, [1, 0], { boostCountries: [], boost: 5 });
+    expect(ranked.map(({ entry: found }) => found.id)).toEqual(['a', 'mx', 'b', 'c']);
+  });
+
   it('keeps a retracted entry out even when it is the best match', () => {
     const only = [entry('retracted', [1, 0], { certainty: 'retractada' })];
     expect(rankEntries(only, [1, 0])).toEqual([]);
