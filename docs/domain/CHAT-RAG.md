@@ -99,6 +99,20 @@ Requisitos del prompt (el texto exacto lo escribe la persona 4 y lo itera con el
 - Botón "¿Cómo se generó?" que muestra: intención detectada, noticias usadas, si fue caché/digest, costo aproximado.
 - El historial vive en estado de React; al cerrar la app desaparece (el enunciado lo permite y reduce riesgos de privacidad).
 
+**Implementación (F4-04).** Pantalla `apps/mobile/app/(tabs)/chat.tsx` (ruta inicial tras el login), lógica en
+`apps/mobile/src/chat/` y cliente `src/services/chatApi.ts`.
+- Sugerencias: el país y el tema salen de las noticias publicadas que la app ya escucha (el país extranjero más
+  frecuente y el tema principal más frecuente), con «España» y «economía» si no hay datos.
+- El pie distingue `answer` y `digest` («…generad[a/o] con IA a partir de N noticias publicadas · modelo») de
+  `retrieval_only`, `abstain` y `blocked` («Sin IA: …»). El chip de certeza de un bloque `mixta` nombra la certeza
+  más baja de sus noticias.
+- «¿Cómo se generó?»: la intención viene de `debug` en dev y, fuera de dev, de `classifyIntent` de `@repo/shared`
+  (las mismas reglas que el Worker), así que no hace falta cambiar el contrato.
+- Historial solo en estado de React; se envían como mucho 6 turnos de texto. «Nueva conversación» lo borra.
+- `chat_topic`: tema principal más citado entre las noticias de una respuesta `answer` o `digest`, tomado de las
+  noticias que la app ya tiene en memoria; se registra como evento y señal de interés (+0.5) en una transacción.
+- URL del Worker: `EXPO_PUBLIC_API_URL` o `DEFAULT_API_BASE_URL` de `@repo/shared` (pública, sin secretos).
+
 ## 5. Digest por ubicación
 
 Generado al publicar (`/admin/index/upsert` invalida digests de los países/regiones afectados; se regeneran de forma
