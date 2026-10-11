@@ -58,8 +58,26 @@ Casos que debe resolver (del enunciado):
   flag no permiten LLM, el modo efectivo es `retrieval_only` (`gateway.chatPolicy`).
 - Cada abstención deja en el ledger una fila `chat_answer` con `outcome = 'abstained'`, costo y tokens 0: es la
   llamada evitada que cuenta el dashboard, no una llamada a un LLM.
-- Pendiente: atajo de digest (paso 4) en F4-03; generación y validación (pasos 8–10) en F4-02. Hasta entonces
-  `full` responde en `retrieval_only`.
+- Pendiente: atajo de digest (paso 4) en F4-03.
+
+**Implementación (F4-02).** Prompt en `services/api/src/ai/prompts/chat.v1.ts`, validación en
+`services/api/src/rag/validate.ts`, generación en `rag/chat.ts`.
+- Contexto: solo las noticias con puntaje ≥ τ (máx. top-k), cada una en `<noticia id="…">` con título, fecha,
+  certeza, nota de certeza, medios, entradilla y los primeros `contextExcerptLength` (600) caracteres del extracto.
+  Los `<` y `>` del contenido, de la historia y de la pregunta se neutralizan para que no cierren etiquetas.
+- Un bloque se descarta entero si cita **algún** id fuera del contexto (no solo se quita el id): una cita inventada
+  indica que el texto no está respaldado. Se descartan también bloques sin ids o sin texto; máximo 4 bloques.
+- `sources` lista solo las noticias citadas por algún bloque válido. Las claves extra del modelo (p. ej. un
+  `certainty` propio) se ignoran.
+- `insufficient: true` con bloques válidos → respuesta con aviso de respuesta parcial; sin bloques → abstención.
+- JSON roto dos veces o error del proveedor/presupuesto en la generación → `retrieval_only`, **sin caché** para que
+  la siguiente pregunta lo vuelva a intentar. Las filas del ledger las escribe el gateway (una por intento).
+- El rate limit se consume una sola vez por mensaje: la ruta lo aplica en el paso 1 y la generación llama al
+  gateway con `rateLimitApplied`.
+- La clave de caché suma la versión del prompt y el modo de IA (`mock`/`live`), así una respuesta simulada nunca se
+  sirve en vivo. Una respuesta `answer` servida desde caché registra una fila `cached` (llamada evitada).
+- Con `AI_MODE=mock`, el modelo simulado cita las dos primeras noticias del contexto (lee los `<noticia id>` del
+  prompt), para poder probar el flujo completo sin créditos.
 
 ## 3. Prompt de sistema (versión inicial; versionar en `src/ai/prompts/chat.v1.ts`)
 

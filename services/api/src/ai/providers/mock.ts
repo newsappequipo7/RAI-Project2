@@ -1,5 +1,5 @@
 import { providerError } from '../../errors';
-import { MOCK_EMBEDDING_DIMENSION, MOCK_TEXT_BY_TASK } from '../mocks/fixtures';
+import { MOCK_EMBEDDING_DIMENSION, MOCK_TEXT_BY_TASK, mockChatAnswer } from '../mocks/fixtures';
 import type { Provider } from '../types';
 
 const FNV_OFFSET_BASIS = 2166136261;
@@ -46,5 +46,6 @@ export const callMock: Provider = async ({ task, input }) => {
     throw providerError(`Mock provider has no fixture for task ${task}`);
   }
 
-  return { output: { kind: 'text', text: MOCK_TEXT_BY_TASK[task] }, usage };
+  const text = task === 'chat_answer' ? mockChatAnswer(input.prompt) : MOCK_TEXT_BY_TASK[task];
+  return { output: { kind: 'text', text }, usage };
 };

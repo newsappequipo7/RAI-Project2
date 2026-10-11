@@ -12,9 +12,7 @@ export type AiInput =
   | { kind: 'text'; system?: string; prompt: string; maxTokens: number }
   | { kind: 'embed'; texts: string[] };
 
-export type AiOutput =
-  | { kind: 'text'; text: string }
-  | { kind: 'embed'; embeddings: number[][] };
+export type AiOutput = { kind: 'text'; text: string } | { kind: 'embed'; embeddings: number[][] };
 
 export interface AiUsage {
   inputTokens: number;
@@ -38,6 +36,8 @@ export type Provider = (call: ProviderCall) => Promise<ProviderResult>;
 export interface GatewayContext {
   env: Bindings;
   uid?: string;
+  /** The caller already consumed the chat rate limit for this request (CHAT-RAG §2 step 1). */
+  rateLimitApplied?: boolean;
   now?: () => Date;
   providers?: Partial<Record<ProviderName, Provider>>;
 }
