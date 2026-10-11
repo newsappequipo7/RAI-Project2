@@ -265,6 +265,6 @@ CREATE TABLE budget_snapshots (ts TEXT PRIMARY KEY, provider_balance_usd REAL, n
 |-------|-------|
 | `rag:index:v{n}` | arreglo de `IndexEntry` (ver CONTRATOS-API.md §3) |
 | `rag:index:current` | número de versión vigente |
-| `digest:{locationId}` | `{ text, newsIds, generatedAt, indexVersion }` |
+| `digest:{locationId}` | `{ version, locationId, indexVersion, generatedAt, newsIds, blocks, sources, notice?, generatedBy }` (bloques y fuentes ya validados, como en `ChatResponse`); TTL 6 h |
 | `chat:cache:{hash}` | `ChatResponse` completa, TTL 15 min; hash SHA-256 de versión del pipeline + pregunta normalizada + locationId + indexVersion + chatMode efectivo + historia normalizada |
 | `flags` | `{ killSwitch: boolean, imageGenEnabled: boolean, chatMode: 'full' | 'retrieval_only' }` |

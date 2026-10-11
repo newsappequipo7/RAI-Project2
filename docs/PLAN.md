@@ -141,7 +141,7 @@ por tarea al iniciar su fase.
 | F3-12 | Pulido, accesibilidad, evidencia y cierre | ☐ | |
 | F4-01 | Pipeline del chat sin generación (pasos 1–7) | ☑ | [Evidencia F4-01](../evidence/F4-01-chat-pipeline.md). CA1: 30/30 frases de intención. CA2: fuera de corpus → `abstain` sin fila de LLM (solo `abstained` a costo 0). CA3: pregunta repetida → `cached = true` sin filas nuevas. 567 pruebas verdes; en mock, USD 0. Atajo de digest en F4-03 y generación en F4-02 |
 | F4-02 | Generación y validación | ☑ | [Evidencia F4-02](../evidence/F4-02-generation.md). Prompt `chat.v1`, `validate.ts` y generación con reintento único. CA1: 12 pruebas de validación y prompt + 11 del pipeline con modelo simulado (ids inventados, JSON roto, bloque sin ids, certezas mezcladas, «confirmado» sobre una noticia en desarrollo). CA2: ningún id fuera del top-k llega al cliente (prueba específica y mutación). 594 pruebas verdes; en mock, USD 0 |
-| F4-03 | Digest por ubicación | ☐ | |
+| F4-03 | Digest por ubicación | ☑ | [Evidencia F4-03](../evidence/F4-03-digest.md). `GET /digest/:locationId` con generación perezosa, selección con `rankFeed` y perfil neutro, atajo en el chat para preguntas genéricas. CA1: segunda consulta misma ubicación e índice → `cached`, costo 0. CA2: publicar una noticia de GT invalida solo el digest de Guatemala (Madrid se re-sella y sigue en caché); invalidación selectiva verificada con mutaciones. 622 pruebas verdes; en mock, USD 0 |
 | F4-04 | UI del chat (pantalla inicial de la app) | ☐ | |
 | F4-05 | Set dorado y runner de evaluación | ☐ | |
 | F4-06 | Calibración (mínimo 2 iteraciones) | ☐ | |

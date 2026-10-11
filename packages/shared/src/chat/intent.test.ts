@@ -3,6 +3,7 @@ import {
   classifyIntent,
   demonymForms,
   detectCountries,
+  isGenericRequest,
   normalizeText,
   type ChatIntent,
 } from './intent';
@@ -105,7 +106,7 @@ describe('classifyIntent', () => {
   });
 
   it('gives other countries priority over summary words', () => {
-    expect(classifyIntent('Resume lo más importante de Madrid', GT)).toEqual({
+    expect(classifyIntent('Resume lo más importante de Madrid', GT)).toMatchObject({
       intent: 'otro_pais',
       countries: ['ES'],
     });
@@ -118,6 +119,34 @@ describe('classifyIntent', () => {
 
   it('falls back to tema for an unknown location', () => {
     expect(classifyIntent('¿Qué hay de nuevo sobre economía?', 'xx-nowhere').intent).toBe('tema');
+  });
+});
+
+describe('isGenericRequest (digest shortcut)', () => {
+  it.each([
+    ['Resume lo más importante de hoy', GT],
+    ['¿Qué pasa en mi zona?', GT],
+    ['¿Qué pasó hoy?', MX],
+    ['Ponme al día, por favor', ES],
+    ['¿Cuáles son las principales noticias?', GT],
+    ['¿Qué pasa en Guatemala?', GT],
+    ['Noticias de Ciudad de Guatemala', GT],
+  ])('treats "%s" as generic', (message, locationId) => {
+    expect(classifyIntent(message, locationId).generic).toBe(true);
+  });
+
+  it.each([
+    ['¿Qué pasa en mi zona con el dengue?', GT],
+    ['Resume lo último sobre la reforma de pensiones', GT],
+    ['¿Qué hay de nuevo sobre economía?', GT],
+    ['Explícame lo más importante de Argentina', GT],
+  ])('treats "%s" as specific', (message, locationId) => {
+    expect(classifyIntent(message, locationId).generic).toBe(false);
+  });
+
+  it('does not count another country as filler', () => {
+    expect(isGenericRequest('Noticias de España', 'GT')).toBe(false);
+    expect(isGenericRequest('Noticias de España', 'ES')).toBe(true);
   });
 });
 
