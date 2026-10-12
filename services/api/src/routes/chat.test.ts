@@ -9,6 +9,7 @@ import { buildEmbeddingText, upsert } from '../rag/index';
 import { createTestD1, type TestD1 } from '../test-support/d1';
 import { fakeKv } from '../test-support/kv';
 import {
+  ADMIN_UID,
   buildEnv,
   createTestKeys,
   signToken,
@@ -48,9 +49,9 @@ function news(id: string, overrides: Partial<IndexInput> = {}): IndexInput {
 
 const exactQuestion = (input: IndexInput) => buildEmbeddingText(input);
 
-async function chat(body: unknown, token?: string | null) {
+async function chat(body: unknown, token?: string | null, uid: string = USER_UID) {
   const app = createApp(() => async () => keys.verificationKey);
-  const bearer = token === undefined ? await signToken(keys, { uid: USER_UID }) : token;
+  const bearer = token === undefined ? await signToken(keys, { uid }) : token;
   return app.request(
     '/chat',
     {
@@ -123,6 +124,17 @@ describe('POST /chat — validation', () => {
   it('returns 429 after 20 messages in the hour', async () => {
     for (let count = 0; count < 20; count += 1) await ask(OFF_CORPUS);
     expect((await chat({ message: OFF_CORPUS, locationId: GT })).status).toBe(429);
+  });
+
+  it('lets project admins run more than 20 questions in dev only (golden set)', async () => {
+    const body = { message: OFF_CORPUS, locationId: GT };
+    for (let count = 0; count < 21; count += 1) {
+      expect((await chat(body, undefined, ADMIN_UID)).status).toBe(200);
+    }
+
+    env = { ...env, ENV: 'demo' };
+    for (let count = 0; count < 20; count += 1) await chat(body, undefined, ADMIN_UID);
+    expect((await chat(body, undefined, ADMIN_UID)).status).toBe(429);
   });
 });
 

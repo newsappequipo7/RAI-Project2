@@ -166,6 +166,16 @@ export const flagsSchema = z
 
 export const flagsPatchSchema = flagsSchema.partial();
 
+export const healthResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    indexVersion: z.number().int().min(0),
+    flags: flagsSchema,
+    env: apiEnvSchema,
+    aiMode: z.enum(['mock', 'live']),
+  })
+  .strict();
+
 export const budgetSnapshotRequestSchema = z
   .object({
     providerBalanceUsd: z.number().finite().nonnegative(),

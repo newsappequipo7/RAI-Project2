@@ -13,6 +13,9 @@ export const CHAT_CONFIG = {
   /** Characters of the excerpt shown when a news item has no lead. */
   fallbackLeadLength: 280,
   cacheTtlSeconds: 15 * 60,
-  /** Bump when the pipeline or prompt changes so stale cached answers are not served. */
+  /**
+   * Bump when the pipeline changes so stale cached answers are not served. The whole config is part
+   * of the cache key, so calibrating a knob (F4-06) already skips answers cached with the old value.
+   */
   cacheVersion: 'v2',
 } as const;
