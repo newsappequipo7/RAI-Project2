@@ -10,7 +10,8 @@
     "test": "vitest run",
     "seed": "tsx scripts/seed.ts",
     "seed:editorial": "tsx scripts/seed-editorial.ts",
-    "seed:injection": "tsx scripts/seed-injection.ts"
+    "seed:injection": "tsx scripts/seed-injection.ts",
+    "report:ai-suggestions": "tsx scripts/report-ai-suggestions.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

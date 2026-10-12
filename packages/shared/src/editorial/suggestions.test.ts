@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EnrichSuggestion, News } from '../types';
 import { createEmptyDraft } from './draft';
-import { compareSuggestions } from './suggestions';
+import { auditSuggestions, compareSuggestions } from './suggestions';
 
 const suggestion: EnrichSuggestion = {
   topics: [
@@ -77,5 +77,38 @@ describe('compareSuggestions', () => {
   it('matches topics regardless of order', () => {
     const news = { ...base, topics: ['economia', 'politica'] };
     expect(by(news).topics?.matches).toBe(true);
+  });
+});
+
+describe('auditSuggestions (F4-11)', () => {
+  const published = (id: string, overrides: Partial<News> = {}): News => ({
+    ...base,
+    id,
+    title: `Titular ${id}`,
+    workflow: 'publicada',
+    topics: ['economia', 'politica'],
+    geo: { scope: 'nacional', countries: ['GT'], cityIds: [], regions: ['centroamerica'] },
+    importance: 2,
+    ...overrides,
+  });
+
+  it('counts, per field, how often the editor changed the AI suggestion', () => {
+    const audit = auditSuggestions([
+      published('kept'),
+      published('changed', { importance: 3, topics: ['politica'] }),
+      published('manual', { aiSuggestions: undefined }),
+      { ...published('draft', { importance: 0 }), workflow: 'borrador' },
+    ]);
+
+    expect(audit).toMatchObject({ audited: 2, withoutSuggestions: 1 });
+    const fields = Object.fromEntries(audit.fields.map((field) => [field.field, field]));
+    expect(fields.importance).toMatchObject({ compared: 2, changed: 1, changedRate: 0.5 });
+    expect(fields.topics).toMatchObject({ compared: 2, changed: 1, changedRate: 0.5 });
+    expect(fields.geo).toMatchObject({ compared: 2, changed: 0, changedRate: 0 });
+    expect(audit.rows.map(({ id }) => id)).toEqual(['kept', 'changed']);
+  });
+
+  it('has no rates without audited news', () => {
+    expect(auditSuggestions([]).fields.every(({ changedRate }) => changedRate === null)).toBe(true);
   });
 });

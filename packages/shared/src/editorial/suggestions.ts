@@ -76,3 +76,53 @@ export function compareSuggestions(news: News): SuggestionComparison[] {
     },
   ];
 }
+
+export interface SuggestionFieldStats {
+  field: SuggestionField;
+  label: string;
+  compared: number;
+  changed: number;
+  /** Share of published news where the editor did not keep the AI suggestion; null without data. */
+  changedRate: number | null;
+}
+
+export interface SuggestionAudit {
+  /** Published news that kept their AI suggestions for audit. */
+  audited: number;
+  /** Published news without saved suggestions (written by hand or before F2-04). */
+  withoutSuggestions: number;
+  fields: SuggestionFieldStats[];
+  rows: { id: string; title: string; comparisons: SuggestionComparison[] }[];
+}
+
+/**
+ * F4-11, presentation section 7: across published news, how often the editor changed what the
+ * AI suggested. This is the measurable side of «la IA sugiere, el humano decide».
+ */
+export function auditSuggestions(news: News[]): SuggestionAudit {
+  const published = news.filter(({ workflow }) => workflow === 'publicada');
+  const rows = published
+    .filter(({ aiSuggestions }) => aiSuggestions !== undefined)
+    .map((item) => ({ id: item.id, title: item.title, comparisons: compareSuggestions(item) }));
+  const fields = (['topics', 'geo', 'importance', 'claims', 'summary'] as const).map((field) => {
+    const comparisons = rows.flatMap(({ comparisons: list }) =>
+      list.filter((comparison) => comparison.field === field),
+    );
+    const changed = comparisons.filter(({ matches }) => !matches).length;
+    return {
+      field,
+      label: comparisons[0]?.label ?? field,
+      compared: comparisons.length,
+      changed,
+      changedRate:
+        comparisons.length === 0 ? null : Number((changed / comparisons.length).toFixed(4)),
+    };
+  });
+
+  return {
+    audited: rows.length,
+    withoutSuggestions: published.length - rows.length,
+    fields,
+    rows,
+  };
+}
