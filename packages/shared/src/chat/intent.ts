@@ -9,6 +9,11 @@ export interface IntentResult {
   intent: ChatIntent;
   /** ISO codes named in the message other than the reader's country (only for `otro_pais`). */
   countries: string[];
+  /**
+   * The message asks for news in general, with no topic or other detail ("Resume lo más importante
+   * de hoy"). Only a generic `resumen` or `mi_region` may be answered with the location digest.
+   */
+  generic: boolean;
 }
 
 /** Lowercase, without accents or punctuation, single-spaced: the form every rule matches against. */
@@ -101,6 +106,32 @@ function buildCountryTerms(): CountryTerm[] {
 
 const COUNTRY_TERMS = buildCountryTerms();
 
+/**
+ * Words that carry no topic: greetings, request verbs, time words and the intent phrases
+ * themselves. A message made only of these (plus the reader's own place) is generic.
+ */
+const FILLER_WORDS = new Set(
+  (
+    'a al algo ahora aca aqui area cerca ciudad con cual cuales cuenta cuentame da dame de del ' +
+    'dia dias dime donde el en es esta estan este esto favor ha hay hoy importante importantes ' +
+    'la las lo local locales localidad los mas me mi mis momento muestrame nuevo nuevas nuevos ' +
+    'noticia noticias novedades pais paso pasado pasando pasa por principales pon ponerme ponme ' +
+    'que quiero region resume resumeme resumen resumes resumir saber se semana son su sucede ' +
+    'sucedido tengo titulares todo ultima ultimas ultimo ultimos un una ver vivo y zona horas'
+  ).split(' '),
+);
+
+/** True when, besides filler words and the reader's own place, the message names nothing. */
+export function isGenericRequest(message: string, ownCountry?: string): boolean {
+  const ownTerms = COUNTRY_TERMS.filter(({ iso }) => iso === ownCountry).flatMap(({ term }) =>
+    term.split(' '),
+  );
+  return normalizeText(message)
+    .split(' ')
+    .filter(Boolean)
+    .every((word) => FILLER_WORDS.has(word) || ownTerms.includes(word));
+}
+
 function containsPhrase(normalized: string, phrase: string): boolean {
   return ` ${normalized} `.includes(` ${phrase} `);
 }
@@ -141,16 +172,17 @@ export function classifyIntent(message: string, locationId: string): IntentResul
   const named = detectCountries(message);
   const others = named.filter((iso) => iso !== ownCountry);
 
-  if (others.length > 0) return { intent: 'otro_pais', countries: others };
+  if (others.length > 0) return { intent: 'otro_pais', countries: others, generic: false };
+  const generic = isGenericRequest(message, ownCountry);
 
   const mentionsOwnCountry = ownCountry !== undefined && named.includes(ownCountry);
   if (mentionsOwnCountry || REGION_PHRASES.some((phrase) => containsPhrase(normalized, phrase))) {
-    return { intent: 'mi_region', countries: [] };
+    return { intent: 'mi_region', countries: [], generic };
   }
 
   if (SUMMARY_PHRASES.some((phrase) => containsPhrase(normalized, phrase))) {
-    return { intent: 'resumen', countries: [] };
+    return { intent: 'resumen', countries: [], generic };
   }
 
-  return { intent: 'tema', countries: [] };
+  return { intent: 'tema', countries: [], generic: false };
 }

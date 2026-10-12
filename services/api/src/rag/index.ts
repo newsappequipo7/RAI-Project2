@@ -1,7 +1,8 @@
 import type { IndexEntry, IndexInput } from '@repo/shared';
 import { gateway } from '../ai/gateway';
 import type { Bindings } from '../env';
-import { DIGEST_PREFIX, indexEntriesKey, readIndexVersion, writeIndexVersion } from '../kv';
+import { indexEntriesKey, readIndexVersion, writeIndexVersion } from '../kv';
+import { refreshDigests } from './digest';
 
 const EXCERPT_LENGTH = 1200;
 const EMBED_BATCH_SIZE = 25;
@@ -65,13 +66,16 @@ async function buildEntries(env: Bindings, inputs: IndexInput[]): Promise<IndexE
   }));
 }
 
-async function invalidateDigests(kv: KVNamespace): Promise<string[]> {
-  const { keys } = await kv.list({ prefix: DIGEST_PREFIX });
-  await Promise.all(keys.map(({ name }) => kv.delete(name)));
-  return keys.map(({ name }) => name.slice(DIGEST_PREFIX.length));
-}
-
-async function publishIndex(kv: KVNamespace, entries: IndexEntry[]): Promise<IndexMutation> {
+/**
+ * Writes a new index version and keeps only the digests the change does not affect: those whose
+ * location would select different news or that cite a changed news are invalidated (CHAT-RAG §5).
+ */
+async function publishIndex(
+  kv: KVNamespace,
+  entries: IndexEntry[],
+  mutatedIds: Set<string> | 'all',
+  now: Date,
+): Promise<IndexMutation> {
   const previousVersion = await readIndexVersion(kv);
   const indexVersion = previousVersion + 1;
 
@@ -79,28 +83,43 @@ async function publishIndex(kv: KVNamespace, entries: IndexEntry[]): Promise<Ind
   await writeIndexVersion(kv, indexVersion);
   if (previousVersion > 0) await kv.delete(indexEntriesKey(previousVersion));
 
-  return { indexVersion, invalidatedDigests: await invalidateDigests(kv) };
+  return {
+    indexVersion,
+    invalidatedDigests: await refreshDigests(kv, entries, mutatedIds, indexVersion, now),
+  };
 }
 
-export async function upsert(env: Bindings, inputs: IndexInput[]): Promise<IndexMutation> {
+export async function upsert(
+  env: Bindings,
+  inputs: IndexInput[],
+  now: Date = new Date(),
+): Promise<IndexMutation> {
   const [current, fresh] = await Promise.all([readIndex(env.KV), buildEntries(env, inputs)]);
   const freshIds = new Set(fresh.map((entry) => entry.id));
   const kept = current.filter((entry) => !freshIds.has(entry.id));
 
-  return publishIndex(env.KV, [...kept, ...fresh]);
+  return publishIndex(env.KV, [...kept, ...fresh], freshIds, now);
 }
 
 export async function remove(
   env: Bindings,
   ids: string[],
+  now: Date = new Date(),
 ): Promise<IndexMutation & { removed: number }> {
   const current = await readIndex(env.KV);
   const idsToRemove = new Set(ids);
   const kept = current.filter((entry) => !idsToRemove.has(entry.id));
 
-  return { ...(await publishIndex(env.KV, kept)), removed: current.length - kept.length };
+  return {
+    ...(await publishIndex(env.KV, kept, idsToRemove, now)),
+    removed: current.length - kept.length,
+  };
 }
 
-export async function rebuild(env: Bindings, inputs: IndexInput[]): Promise<IndexMutation> {
-  return publishIndex(env.KV, await buildEntries(env, inputs));
+export async function rebuild(
+  env: Bindings,
+  inputs: IndexInput[],
+  now: Date = new Date(),
+): Promise<IndexMutation> {
+  return publishIndex(env.KV, await buildEntries(env, inputs), 'all', now);
 }

@@ -46,6 +46,9 @@ export const callMock: Provider = async ({ task, input }) => {
     throw providerError(`Mock provider has no fixture for task ${task}`);
   }
 
-  const text = task === 'chat_answer' ? mockChatAnswer(input.prompt) : MOCK_TEXT_BY_TASK[task];
+  const text =
+    task === 'chat_answer' || task === 'digest'
+      ? mockChatAnswer(input.prompt)
+      : MOCK_TEXT_BY_TASK[task];
   return { output: { kind: 'text', text }, usage };
 };

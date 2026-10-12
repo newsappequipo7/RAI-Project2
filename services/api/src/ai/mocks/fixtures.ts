@@ -14,14 +14,14 @@ const ENRICH_FIXTURE = {
 export const MOCK_TEXT_BY_TASK: Record<Exclude<AiTask, 'embed' | 'image_generate'>, string> = {
   enrich: JSON.stringify(ENRICH_FIXTURE),
   chat_answer: JSON.stringify({ blocks: [], insufficient: true }),
-  digest: 'Resumen del día simulado (AI_MODE=mock). No proviene de un modelo real.',
+  digest: JSON.stringify({ blocks: [], insufficient: true }),
 };
 
 const MOCK_CHAT_TEXT =
   'Respuesta simulada (AI_MODE=mock), no proviene de un modelo real. Resume la noticia citada';
 
 /**
- * Mock chat answer that cites the news actually sent as context (the `<noticia id="…">` tags of
+ * Mock chat or digest answer that cites the news actually sent as context (the `<noticia id="…">` tags of
  * chat.v1), so the app can exercise the whole answer flow without spending credits.
  */
 export function mockChatAnswer(prompt: string): string {

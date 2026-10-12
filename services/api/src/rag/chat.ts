@@ -3,36 +3,28 @@ import {
   classifyIntent,
   findLocation,
   normalizeText,
-  UNCERTAIN_CERTAINTIES,
   type ChatMode,
   type ChatRequest,
   type ChatResponse,
-  type IndexEntry,
 } from '@repo/shared';
 import { isLiveMode } from '../ai/config';
 import { gateway } from '../ai/gateway';
-import { buildChatPrompt, CHAT_MAX_TOKENS, CHAT_PROMPT_VERSION } from '../ai/prompts/chat.v1';
+import { CHAT_PROMPT_VERSION } from '../ai/prompts/chat.v1';
 import { CHAT_RATE_LIMIT_PER_HOUR, consumeRateLimit } from '../ai/rateLimit';
-import type { GatewayContext, GatewayResult } from '../ai/types';
+import type { GatewayContext } from '../ai/types';
 import type { Bindings } from '../env';
 import { ApiError } from '../errors';
 import { CHAT_CACHE_PREFIX, readIndexVersion } from '../kv';
+import { askModel, CHAT_NOTICES, emptyResponse, retrievalOnlyResponse } from './answer';
 import { CHAT_CONFIG } from './chatConfig';
+import { getDigest } from './digest';
 import { readIndex } from './index';
 import { rankEntries, type ScoredEntry } from './search';
-import { parseChatOutput, validateAnswer, type ChatModelOutput } from './validate';
 
-export const CHAT_NOTICES = {
-  blocked:
-    'El chat está pausado por ahora. Puedes seguir leyendo las noticias publicadas en el feed.',
-  abstain: 'No encontré noticias publicadas sobre eso. Puedo contarte lo más reciente de tu zona.',
-  retrievalOnly:
-    'Respuesta sin IA: estas son las noticias publicadas que encontré sobre tu pregunta.',
-  uncertain: 'Hay información en desarrollo o disputada: revisa la certeza de cada noticia.',
-  partial: 'Las noticias publicadas responden solo una parte de tu pregunta.',
-} as const;
+export { CHAT_NOTICES } from './answer';
 
 const SCORE_DECIMALS = 3;
+const DIGEST_INTENTS = ['resumen', 'mi_region'];
 
 export interface ChatContext {
   env: Bindings;
@@ -54,16 +46,12 @@ interface Outcome {
   cacheable: boolean;
 }
 
-function emptyResponse(mode: ChatResponse['mode'], notice: string): ChatResponse {
-  return { mode, blocks: [], sources: [], notice, generatedBy: null, cached: false, costUsd: 0 };
-}
-
-function joinNotices(...notices: (string | false | undefined)[]): string | undefined {
-  const present = notices.filter((notice): notice is string => Boolean(notice));
-  return present.length > 0 ? present.join(' ') : undefined;
-}
-
-async function cacheKey(env: Bindings, request: ChatRequest, indexVersion: number, mode: ChatMode) {
+async function cacheKey(
+  env: Bindings,
+  request: ChatRequest,
+  indexVersion: number,
+  mode: ChatMode,
+): Promise<string> {
   const material = JSON.stringify([
     CHAT_CONFIG.cacheVersion,
     CHAT_PROMPT_VERSION,
@@ -117,120 +105,14 @@ async function retrieve(
   };
 }
 
-function leadOf(entry: IndexEntry): string {
-  return entry.lead.trim() || entry.excerpt.slice(0, CHAT_CONFIG.fallbackLeadLength).trim();
-}
-
-/** Without a model: one block per news found, with its own certainty. */
-function retrievalOnlyResponse(entries: IndexEntry[], costUsd: number): ChatResponse {
-  const uncertain = entries.some(({ certainty }) => UNCERTAIN_CERTAINTIES.includes(certainty));
-
-  return {
-    mode: 'retrieval_only',
-    blocks: entries.map((entry) => ({
-      text: leadOf(entry),
-      newsIds: [entry.id],
-      certainty: entry.certainty,
-    })),
-    sources: entries.map((entry) => ({
-      newsId: entry.id,
-      title: entry.title,
-      certainty: entry.certainty,
-      publishedAt: entry.publishedAt,
-      outlets: [...new Set(entry.sources.map(({ name }) => name))],
-    })),
-    notice: joinNotices(CHAT_NOTICES.retrievalOnly, uncertain && CHAT_NOTICES.uncertain),
-    generatedBy: null,
-    cached: false,
-    costUsd,
-  };
-}
-
-function isApiError(error: unknown): error is ApiError {
-  return error instanceof ApiError;
-}
-
 /**
- * Steps 8–10: one model call (plus a single retry when the output is not the requested JSON),
- * then validation in code. A provider or budget failure degrades to `retrieval_only`; the ledger
- * rows are written by the gateway.
- */
-async function generate(
-  request: ChatRequest,
-  ctx: ChatContext,
-  context: IndexEntry[],
-  costSoFar: number,
-): Promise<Outcome> {
-  const gatewayCtx: GatewayContext = {
-    env: ctx.env,
-    uid: ctx.uid,
-    now: ctx.now,
-    providers: ctx.providers,
-    rateLimitApplied: true,
-  };
-  let costUsd = costSoFar;
-  let last: GatewayResult | undefined;
-  let output: ChatModelOutput | null = null;
-
-  try {
-    for (const formatReminder of [false, true]) {
-      const { system, prompt } = buildChatPrompt({
-        question: request.message,
-        history: request.history ?? [],
-        news: context,
-        excerptLength: CHAT_CONFIG.contextExcerptLength,
-        formatReminder,
-      });
-      last = await gateway.run(
-        'chat_answer',
-        { kind: 'text', system, prompt, maxTokens: CHAT_MAX_TOKENS },
-        gatewayCtx,
-      );
-      costUsd += last.costUsd;
-      output = last.output.kind === 'text' ? parseChatOutput(last.output.text) : null;
-      if (output) break;
-    }
-  } catch (error) {
-    if (!isApiError(error)) throw error;
-    return { response: retrievalOnlyResponse(context, costUsd), cacheable: false };
-  }
-
-  if (!output || !last) {
-    return { response: retrievalOnlyResponse(context, costUsd), cacheable: false };
-  }
-
-  const answer = validateAnswer(output, context);
-  if (answer.blocks.length === 0) {
-    return {
-      response: { ...emptyResponse('abstain', CHAT_NOTICES.abstain), costUsd },
-      cacheable: true,
-    };
-  }
-
-  return {
-    response: {
-      mode: 'answer',
-      blocks: answer.blocks,
-      sources: answer.sources,
-      notice: joinNotices(
-        answer.uncertain && CHAT_NOTICES.uncertain,
-        answer.partial && CHAT_NOTICES.partial,
-      ),
-      generatedBy: { provider: last.provider, model: last.model },
-      cached: false,
-      costUsd,
-    },
-    cacheable: true,
-  };
-}
-
-/**
- * Chat pipeline, CHAT-RAG.md §2. Each step can end the response. The digest shortcut (step 4)
- * arrives with F4-03.
+ * Chat pipeline, CHAT-RAG.md §2. Each step can end the response; steps run in the order of the
+ * doc except the cache, which is read before retrieval (see the F4-01 notes there).
  */
 export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<ChatResponse> {
   const { env, uid } = ctx;
   const now = ctx.now?.() ?? new Date();
+  const threshold = CHAT_CONFIG.abstainThreshold;
   const withDebug = (response: ChatResponse, debug: ChatResponse['debug']): ChatResponse =>
     env.ENV === 'dev' ? { ...response, debug } : response;
 
@@ -242,15 +124,28 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
   if (policy.killSwitch) return emptyResponse('blocked', CHAT_NOTICES.blocked);
 
   // 3. Intent, by rules.
-  const { intent, countries } = classifyIntent(request.message, request.locationId);
+  const { intent, countries, generic } = classifyIntent(request.message, request.locationId);
+
+  // 4. Digest shortcut: a generic summary or "my area" question gets the location digest. If there
+  // is no digest to give (no recent news, no model allowed), the normal pipeline answers instead.
+  if (DIGEST_INTENTS.includes(intent) && generic) {
+    const digest = await getDigest(request.locationId, {
+      env,
+      uid,
+      now: () => now,
+      providers: ctx.providers,
+    });
+    if (digest.mode === 'digest') return withDebug(digest, { intent, topScores: [], threshold });
+  }
 
   // 7. Cache, checked before retrieval so a repeated question does not even pay the embedding.
   const indexVersion = await readIndexVersion(env.KV);
   const key = await cacheKey(env, request, indexVersion, policy.chatMode);
   const cached = await readCached(env.KV, key);
   if (cached) {
-    if (cached.mode === 'answer')
+    if (cached.mode === 'answer') {
       await gateway.recordCacheHit('chat_answer', { env, uid, now: () => now });
+    }
     const { debug: cachedDebug, ...rest } = cached;
     return withDebug({ ...rest, cached: true, costUsd: 0 }, cachedDebug);
   }
@@ -260,13 +155,12 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
   try {
     retrieval = await retrieve(request, ctx, countries, intent);
   } catch (error) {
-    if (isApiError(error) && error.code === 'budget_blocked') {
+    if (error instanceof ApiError && error.code === 'budget_blocked') {
       return emptyResponse('blocked', CHAT_NOTICES.blocked);
     }
     throw error;
   }
 
-  const threshold = CHAT_CONFIG.abstainThreshold;
   const debug = { intent, topScores: retrieval.topScores, threshold };
   const relevant = retrieval.hits
     .filter(({ score }) => score >= threshold)
@@ -283,8 +177,33 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
   } else if (policy.chatMode === 'retrieval_only') {
     outcome = { response: retrievalOnlyResponse(relevant, retrieval.costUsd), cacheable: true };
   } else {
-    // 8–10. Generation and validation.
-    outcome = await generate(request, ctx, relevant, retrieval.costUsd);
+    // 8–10. Generation and validation; the rate limit was already applied in step 1.
+    const answer = await askModel(
+      'chat_answer',
+      { question: request.message, history: request.history ?? [], context: relevant },
+      { env, uid, now: () => now, providers: ctx.providers, rateLimitApplied: true },
+    );
+    const costUsd = retrieval.costUsd + answer.costUsd;
+
+    if (!answer.ok) {
+      outcome = { response: retrievalOnlyResponse(relevant, costUsd), cacheable: false };
+    } else if (answer.response.blocks.length === 0) {
+      outcome = {
+        response: { ...emptyResponse('abstain', CHAT_NOTICES.abstain), costUsd },
+        cacheable: true,
+      };
+    } else {
+      outcome = {
+        response: {
+          mode: 'answer',
+          ...answer.response,
+          generatedBy: answer.generatedBy,
+          cached: false,
+          costUsd,
+        },
+        cacheable: true,
+      };
+    }
   }
 
   const response = withDebug(outcome.response, debug);

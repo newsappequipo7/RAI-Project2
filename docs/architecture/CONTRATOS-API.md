@@ -163,6 +163,9 @@ interface ChatResponse {
 
 ### `GET /digest/:locationId`
 Response `ChatResponse` con `mode = 'digest'`. Precalculado; si no existe o es de un índice viejo, se regenera una vez.
+Requiere token (`401` sin él); `locationId` fuera del catálogo → `422 invalid_input`. Con kill switch responde
+`mode = 'blocked'`; sin noticias recientes, `mode = 'abstain'`; si no se permite el LLM o falla, `mode =
+'retrieval_only'` con las noticias seleccionadas (no se guarda). Desde caché: `cached = true`, `costUsd = 0`.
 
 ## 5. Mocks
 

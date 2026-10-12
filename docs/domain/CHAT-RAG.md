@@ -58,7 +58,6 @@ Casos que debe resolver (del enunciado):
   flag no permiten LLM, el modo efectivo es `retrieval_only` (`gateway.chatPolicy`).
 - Cada abstención deja en el ledger una fila `chat_answer` con `outcome = 'abstained'`, costo y tokens 0: es la
   llamada evitada que cuenta el dashboard, no una llamada a un LLM.
-- Pendiente: atajo de digest (paso 4) en F4-03.
 
 **Implementación (F4-02).** Prompt en `services/api/src/ai/prompts/chat.v1.ts`, validación en
 `services/api/src/rag/validate.ts`, generación en `rag/chat.ts`.
@@ -105,6 +104,24 @@ Requisitos del prompt (el texto exacto lo escribe la persona 4 y lo itera con el
 Generado al publicar (`/admin/index/upsert` invalida digests de los países/regiones afectados; se regeneran de forma
 perezosa en la primera consulta). Usa las 8 noticias con mayor `rankFeed` para esa ubicación con un perfil neutro (sin
 personalización), así que el resumen es el mismo para todos en esa ubicación y es auditable.
+
+**Implementación (F4-03).** `services/api/src/rag/digest.ts`, ruta `GET /digest/:locationId`.
+- Selección (`selectDigestNews`): ventana del feed por defecto (72 h; esenciales 72 h; el Worker no lee
+  `config/public`) y `rankFeed` de `@repo/shared` con perfil neutro; primero «Lo que debes saber» y luego el feed,
+  hasta 8 noticias. Mismo resultado para todos los lectores de la ubicación.
+- Generación perezosa: la primera consulta llama al modelo (tarea `digest`, mismo prompt `chat.v1` con una pregunta
+  fija de resumen para la ciudad, misma validación que el chat) y guarda en KV; las siguientes con el mismo
+  `indexVersion` cuestan 0 y dejan una fila `cached` en el ledger. TTL de 6 h para que la ventana avance aunque
+  no se publique nada.
+- Invalidación selectiva al cambiar el índice: un digest se borra si cita una noticia publicada, corregida o
+  retirada en ese cambio, o si su ubicación ahora seleccionaría otras noticias; si no, se re-sella con el nuevo
+  `indexVersion` (sin alargar su TTL). `rebuild` invalida todos. Así «afectada» se calcula con el mismo código que
+  elige el digest, no con una regla geográfica aparte.
+- Sin noticias recientes → `abstain` («No hay noticias recientes publicadas para tu zona.»); kill switch →
+  `blocked`; sin LLM permitido o fallo del modelo → lista `retrieval_only` sin guardar.
+- Atajo del chat (paso 4): `resumen` y `mi_region` con pregunta **genérica** (`classifyIntent(...).generic`: solo
+  palabras de relleno y el lugar propio) devuelven el digest; con un tema («mi zona con el dengue») sigue el pipeline
+  normal. Si no hay digest que dar, el chat continúa con la recuperación.
 
 ## 6. Evaluación (set dorado)
 
