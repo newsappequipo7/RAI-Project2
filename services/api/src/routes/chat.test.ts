@@ -181,6 +181,13 @@ describe('POST /chat — abstention and cache', () => {
 });
 
 describe('POST /chat — retrieval only', () => {
+  beforeEach(async () => {
+    await kv.put(
+      'flags',
+      JSON.stringify({ killSwitch: false, imageGenEnabled: false, chatMode: 'retrieval_only' }),
+    );
+  });
+
   it('returns the leads of the news found, with inherited certainty and no model', async () => {
     const body = await ask(exactQuestion(news('a')));
 

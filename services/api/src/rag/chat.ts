@@ -3,20 +3,24 @@ import {
   classifyIntent,
   findLocation,
   normalizeText,
-  type Certainty,
+  UNCERTAIN_CERTAINTIES,
   type ChatMode,
   type ChatRequest,
   type ChatResponse,
   type IndexEntry,
 } from '@repo/shared';
+import { isLiveMode } from '../ai/config';
 import { gateway } from '../ai/gateway';
+import { buildChatPrompt, CHAT_MAX_TOKENS, CHAT_PROMPT_VERSION } from '../ai/prompts/chat.v1';
 import { CHAT_RATE_LIMIT_PER_HOUR, consumeRateLimit } from '../ai/rateLimit';
+import type { GatewayContext, GatewayResult } from '../ai/types';
 import type { Bindings } from '../env';
 import { ApiError } from '../errors';
 import { CHAT_CACHE_PREFIX, readIndexVersion } from '../kv';
 import { CHAT_CONFIG } from './chatConfig';
 import { readIndex } from './index';
 import { rankEntries, type ScoredEntry } from './search';
+import { parseChatOutput, validateAnswer, type ChatModelOutput } from './validate';
 
 export const CHAT_NOTICES = {
   blocked:
@@ -25,15 +29,17 @@ export const CHAT_NOTICES = {
   retrievalOnly:
     'Respuesta sin IA: estas son las noticias publicadas que encontré sobre tu pregunta.',
   uncertain: 'Hay información en desarrollo o disputada: revisa la certeza de cada noticia.',
+  partial: 'Las noticias publicadas responden solo una parte de tu pregunta.',
 } as const;
 
-const UNCERTAIN: readonly Certainty[] = ['en_desarrollo', 'disputada'];
 const SCORE_DECIMALS = 3;
 
 export interface ChatContext {
   env: Bindings;
   uid: string;
   now?: () => Date;
+  /** Test seam: replaces the model providers used for generation. */
+  providers?: GatewayContext['providers'];
 }
 
 interface Retrieval {
@@ -42,17 +48,30 @@ interface Retrieval {
   costUsd: number;
 }
 
+/** A response plus whether it may be cached (degraded fallbacks are retried next time). */
+interface Outcome {
+  response: ChatResponse;
+  cacheable: boolean;
+}
+
 function emptyResponse(mode: ChatResponse['mode'], notice: string): ChatResponse {
   return { mode, blocks: [], sources: [], notice, generatedBy: null, cached: false, costUsd: 0 };
 }
 
-async function cacheKey(request: ChatRequest, indexVersion: number, chatMode: ChatMode) {
+function joinNotices(...notices: (string | false | undefined)[]): string | undefined {
+  const present = notices.filter((notice): notice is string => Boolean(notice));
+  return present.length > 0 ? present.join(' ') : undefined;
+}
+
+async function cacheKey(env: Bindings, request: ChatRequest, indexVersion: number, mode: ChatMode) {
   const material = JSON.stringify([
     CHAT_CONFIG.cacheVersion,
+    CHAT_PROMPT_VERSION,
+    isLiveMode(env) ? 'live' : 'mock',
     normalizeText(request.message),
     request.locationId,
     indexVersion,
-    chatMode,
+    mode,
     (request.history ?? []).map(({ role, content }) => [role, normalizeText(content)]),
   ]);
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material));
@@ -102,10 +121,9 @@ function leadOf(entry: IndexEntry): string {
   return entry.lead.trim() || entry.excerpt.slice(0, CHAT_CONFIG.fallbackLeadLength).trim();
 }
 
-/** Step 6 of the pipeline without a model: one block per news found, with its own certainty. */
-function retrievalOnlyResponse(hits: ScoredEntry[], costUsd: number): ChatResponse {
-  const entries = hits.map(({ entry }) => entry);
-  const uncertain = entries.some(({ certainty }) => UNCERTAIN.includes(certainty));
+/** Without a model: one block per news found, with its own certainty. */
+function retrievalOnlyResponse(entries: IndexEntry[], costUsd: number): ChatResponse {
+  const uncertain = entries.some(({ certainty }) => UNCERTAIN_CERTAINTIES.includes(certainty));
 
   return {
     mode: 'retrieval_only',
@@ -121,23 +139,94 @@ function retrievalOnlyResponse(hits: ScoredEntry[], costUsd: number): ChatRespon
       publishedAt: entry.publishedAt,
       outlets: [...new Set(entry.sources.map(({ name }) => name))],
     })),
-    notice: uncertain
-      ? `${CHAT_NOTICES.retrievalOnly} ${CHAT_NOTICES.uncertain}`
-      : CHAT_NOTICES.retrievalOnly,
+    notice: joinNotices(CHAT_NOTICES.retrievalOnly, uncertain && CHAT_NOTICES.uncertain),
     generatedBy: null,
     cached: false,
     costUsd,
   };
 }
 
-function isBudgetBlock(error: unknown): boolean {
-  return error instanceof ApiError && error.code === 'budget_blocked';
+function isApiError(error: unknown): error is ApiError {
+  return error instanceof ApiError;
 }
 
 /**
- * Chat pipeline, CHAT-RAG.md §2 steps 1–7. Each step can end the response; no step here calls an
- * LLM. The digest shortcut (step 4) arrives with F4-03 and generation (steps 8–10) with F4-02;
- * until then `full` answers in `retrieval_only`.
+ * Steps 8–10: one model call (plus a single retry when the output is not the requested JSON),
+ * then validation in code. A provider or budget failure degrades to `retrieval_only`; the ledger
+ * rows are written by the gateway.
+ */
+async function generate(
+  request: ChatRequest,
+  ctx: ChatContext,
+  context: IndexEntry[],
+  costSoFar: number,
+): Promise<Outcome> {
+  const gatewayCtx: GatewayContext = {
+    env: ctx.env,
+    uid: ctx.uid,
+    now: ctx.now,
+    providers: ctx.providers,
+    rateLimitApplied: true,
+  };
+  let costUsd = costSoFar;
+  let last: GatewayResult | undefined;
+  let output: ChatModelOutput | null = null;
+
+  try {
+    for (const formatReminder of [false, true]) {
+      const { system, prompt } = buildChatPrompt({
+        question: request.message,
+        history: request.history ?? [],
+        news: context,
+        excerptLength: CHAT_CONFIG.contextExcerptLength,
+        formatReminder,
+      });
+      last = await gateway.run(
+        'chat_answer',
+        { kind: 'text', system, prompt, maxTokens: CHAT_MAX_TOKENS },
+        gatewayCtx,
+      );
+      costUsd += last.costUsd;
+      output = last.output.kind === 'text' ? parseChatOutput(last.output.text) : null;
+      if (output) break;
+    }
+  } catch (error) {
+    if (!isApiError(error)) throw error;
+    return { response: retrievalOnlyResponse(context, costUsd), cacheable: false };
+  }
+
+  if (!output || !last) {
+    return { response: retrievalOnlyResponse(context, costUsd), cacheable: false };
+  }
+
+  const answer = validateAnswer(output, context);
+  if (answer.blocks.length === 0) {
+    return {
+      response: { ...emptyResponse('abstain', CHAT_NOTICES.abstain), costUsd },
+      cacheable: true,
+    };
+  }
+
+  return {
+    response: {
+      mode: 'answer',
+      blocks: answer.blocks,
+      sources: answer.sources,
+      notice: joinNotices(
+        answer.uncertain && CHAT_NOTICES.uncertain,
+        answer.partial && CHAT_NOTICES.partial,
+      ),
+      generatedBy: { provider: last.provider, model: last.model },
+      cached: false,
+      costUsd,
+    },
+    cacheable: true,
+  };
+}
+
+/**
+ * Chat pipeline, CHAT-RAG.md §2. Each step can end the response. The digest shortcut (step 4)
+ * arrives with F4-03.
  */
 export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<ChatResponse> {
   const { env, uid } = ctx;
@@ -157,9 +246,11 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
 
   // 7. Cache, checked before retrieval so a repeated question does not even pay the embedding.
   const indexVersion = await readIndexVersion(env.KV);
-  const key = await cacheKey(request, indexVersion, policy.chatMode);
+  const key = await cacheKey(env, request, indexVersion, policy.chatMode);
   const cached = await readCached(env.KV, key);
   if (cached) {
+    if (cached.mode === 'answer')
+      await gateway.recordCacheHit('chat_answer', { env, uid, now: () => now });
     const { debug: cachedDebug, ...rest } = cached;
     return withDebug({ ...rest, cached: true, costUsd: 0 }, cachedDebug);
   }
@@ -169,24 +260,38 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
   try {
     retrieval = await retrieve(request, ctx, countries, intent);
   } catch (error) {
-    if (isBudgetBlock(error)) return emptyResponse('blocked', CHAT_NOTICES.blocked);
+    if (isApiError(error) && error.code === 'budget_blocked') {
+      return emptyResponse('blocked', CHAT_NOTICES.blocked);
+    }
     throw error;
   }
 
   const threshold = CHAT_CONFIG.abstainThreshold;
   const debug = { intent, topScores: retrieval.topScores, threshold };
-  const relevant = retrieval.hits.filter(({ score }) => score >= threshold);
+  const relevant = retrieval.hits
+    .filter(({ score }) => score >= threshold)
+    .map(({ entry }) => entry);
 
-  // 6. Abstention below τ: no model, a zero-cost `abstained` row in the ledger.
-  let response: ChatResponse;
+  let outcome: Outcome;
   if (relevant.length === 0) {
+    // 6. Abstention below τ: no model, a zero-cost `abstained` row in the ledger.
     await gateway.recordAbstention('chat_answer', { env, uid, now: () => now });
-    response = { ...emptyResponse('abstain', CHAT_NOTICES.abstain), costUsd: retrieval.costUsd };
+    outcome = {
+      response: { ...emptyResponse('abstain', CHAT_NOTICES.abstain), costUsd: retrieval.costUsd },
+      cacheable: true,
+    };
+  } else if (policy.chatMode === 'retrieval_only') {
+    outcome = { response: retrievalOnlyResponse(relevant, retrieval.costUsd), cacheable: true };
   } else {
-    response = retrievalOnlyResponse(relevant, retrieval.costUsd);
+    // 8–10. Generation and validation.
+    outcome = await generate(request, ctx, relevant, retrieval.costUsd);
   }
 
-  response = withDebug(response, debug);
-  await env.KV.put(key, JSON.stringify(response), { expirationTtl: CHAT_CONFIG.cacheTtlSeconds });
+  const response = withDebug(outcome.response, debug);
+  if (outcome.cacheable) {
+    await env.KV.put(key, JSON.stringify(response), {
+      expirationTtl: CHAT_CONFIG.cacheTtlSeconds,
+    });
+  }
   return response;
 }

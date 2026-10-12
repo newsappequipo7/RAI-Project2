@@ -70,7 +70,7 @@ async function run(task: AiTask, input: AiInput, ctx: GatewayContext): Promise<G
     throw providerError(`No pricing configured for model ${route.model}`);
   }
 
-  if (task === 'chat_answer' && ctx.uid) {
+  if (task === 'chat_answer' && ctx.uid && !ctx.rateLimitApplied) {
     await consumeRateLimit(ctx.env.DB, ctx.uid, CHAT_RATE_LIMIT_PER_HOUR, now);
   }
 
