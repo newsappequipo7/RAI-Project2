@@ -22,7 +22,7 @@ export const MIN_PER_CATEGORY: Partial<Record<Category, number>> = {
 
 export const goldenCaseSchema = z
   .object({
-    id: z.string().regex(/^q\d{2,}$/),
+    id: z.string().regex(/^[a-z]\d{2,}$/),
     category: z.enum(CATEGORIES),
     locationId: z.string().refine((id) => findLocation(id) !== undefined, 'Unknown location'),
     message: z.string().min(1).max(500),
@@ -53,24 +53,32 @@ export function parseGolden(text: string): GoldenCase[] {
     .map(({ line, number }) => {
       const parsed = goldenCaseSchema.safeParse(JSON.parse(line));
       if (!parsed.success) {
-        throw new Error(`chat-golden.jsonl line ${number}: ${parsed.error.issues[0]?.message}`);
+        throw new Error(`line ${number}: ${parsed.error.issues[0]?.message}`);
       }
       return parsed.data;
     });
 
   const ids = new Set(cases.map(({ id }) => id));
-  if (ids.size !== cases.length) throw new Error('chat-golden.jsonl has duplicated ids');
+  if (ids.size !== cases.length) throw new Error('The set has duplicated ids');
   return cases;
 }
 
-/** Problems with the set itself: too few cases per category or ids missing from the corpus. */
-export function auditGolden(cases: GoldenCase[], corpusIds: Set<string>): string[] {
+/**
+ * Problems with a set: ids missing from the corpus and, for the golden set, too few cases per
+ * category. Extra sets (the F4-07 injection set) skip the size checks.
+ */
+export function auditGolden(
+  cases: GoldenCase[],
+  corpusIds: Set<string>,
+  { checkDistribution = true }: { checkDistribution?: boolean } = {},
+): string[] {
   const problems: string[] = [];
-  if (cases.length < 30) problems.push(`Only ${cases.length} cases; the minimum is 30`);
-
-  for (const [category, minimum] of Object.entries(MIN_PER_CATEGORY)) {
-    const count = cases.filter((item) => item.category === category).length;
-    if (count < minimum) problems.push(`${category}: ${count} cases, minimum ${minimum}`);
+  if (checkDistribution) {
+    if (cases.length < 30) problems.push(`Only ${cases.length} cases; the minimum is 30`);
+    for (const [category, minimum] of Object.entries(MIN_PER_CATEGORY)) {
+      const count = cases.filter((item) => item.category === category).length;
+      if (count < minimum) problems.push(`${category}: ${count} cases, minimum ${minimum}`);
+    }
   }
 
   for (const item of cases) {

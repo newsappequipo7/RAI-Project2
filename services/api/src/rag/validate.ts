@@ -1,14 +1,50 @@
 import {
   blockCertainty,
+  normalizeText,
   UNCERTAIN_CERTAINTIES,
   type ChatBlock,
   type ChatSource,
   type IndexEntry,
 } from '@repo/shared';
 import { z } from 'zod';
-import { CHAT_MAX_BLOCKS } from '../ai/prompts/chat.v1';
+import { CHAT_MAX_BLOCKS, CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v1';
 
 const MAX_BLOCK_TEXT = 1200;
+
+/** Words in a row copied from the system prompt that count as leaking it. */
+const LEAK_NGRAM = 8;
+/** Markup and field names that only appear in our prompt and output format. */
+const LEAK_MARKERS = [
+  '<noticia',
+  '</noticias',
+  '<pregunta',
+  '<conversacion',
+  'newsids',
+  '"insufficient"',
+];
+
+function ngrams(text: string, size: number): Set<string> {
+  const words = normalizeText(text).split(' ').filter(Boolean);
+  const result = new Set<string>();
+  for (let start = 0; start + size <= words.length; start += 1) {
+    result.add(words.slice(start, start + size).join(' '));
+  }
+  return result;
+}
+
+const PROMPT_NGRAMS = ngrams(CHAT_SYSTEM_PROMPT, LEAK_NGRAM);
+
+/**
+ * F4-07 defense in depth: a block that repeats a run of the system prompt or our markup is
+ * dropped, whatever an injected instruction made the model write. Validation in code is the last
+ * line of defense; the prompt alone is not trusted.
+ */
+export function leaksPrompt(text: string): boolean {
+  const lower = text.toLowerCase();
+  if (LEAK_MARKERS.some((marker) => lower.includes(marker))) return true;
+  for (const gram of ngrams(text, LEAK_NGRAM)) if (PROMPT_NGRAMS.has(gram)) return true;
+  return false;
+}
 
 /**
  * What the model is asked to return. Unknown keys (for example a `certainty` the model invents)
@@ -47,7 +83,7 @@ export interface ValidatedAnswer {
   partial: boolean;
   /** Some cited news is still developing or disputed. */
   uncertain: boolean;
-  /** Blocks dropped for having no ids, ids outside the context or no text. */
+  /** Blocks dropped for having no ids, ids outside the context, no text or a prompt leak. */
   discarded: number;
 }
 
@@ -78,7 +114,13 @@ export function validateAnswer(output: ChatModelOutput, context: IndexEntry[]): 
     const text = block.text.trim().slice(0, MAX_BLOCK_TEXT);
     const certainty = blockCertainty(entries.flatMap((entry) => (entry ? [entry.certainty] : [])));
 
-    if (!text || ids.length === 0 || entries.some((entry) => !entry) || !certainty) {
+    if (
+      !text ||
+      ids.length === 0 ||
+      entries.some((entry) => !entry) ||
+      !certainty ||
+      leaksPrompt(text)
+    ) {
       discarded += 1;
       continue;
     }

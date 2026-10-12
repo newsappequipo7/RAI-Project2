@@ -1,6 +1,7 @@
 import type { IndexEntry } from '@repo/shared';
 import { describe, expect, it } from 'vitest';
-import { parseChatOutput, validateAnswer } from './validate';
+import { CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v1';
+import { leaksPrompt, parseChatOutput, validateAnswer } from './validate';
 
 function entry(id: string, overrides: Partial<IndexEntry> = {}): IndexEntry {
   return {
@@ -138,5 +139,47 @@ describe('validateAnswer', () => {
     expect(answer.blocks[0]?.newsIds).toEqual(['conf']);
     expect(answer.discarded).toBe(2);
     expect(answer.partial).toBe(true);
+  });
+});
+
+describe('leaksPrompt (F4-07)', () => {
+  it('accepts normal answers, including the uncertainty wording the prompt asks for', () => {
+    expect(leaksPrompt('Según información aún en desarrollo, hubo un sismo en la costa sur.')).toBe(
+      false,
+    );
+    expect(leaksPrompt('Las fuentes no coinciden sobre la cifra de retornados.')).toBe(false);
+  });
+
+  it('catches any eight-word run of the system prompt, even reworded in case or accents', () => {
+    const rule = CHAT_SYSTEM_PROMPT.split('\n').find((line) =>
+      line.startsWith('- Usa exclusivamente'),
+    )!;
+    expect(leaksPrompt(`Mis reglas son: ${rule}`)).toBe(true);
+    expect(
+      leaksPrompt(
+        rule
+          .toUpperCase()
+          .normalize('NFD')
+          .replace(/\p{Diacritic}/gu, ''),
+      ),
+    ).toBe(true);
+  });
+
+  it('catches our markup and output field names', () => {
+    expect(leaksPrompt('Respondo con <noticias> y <pregunta>.')).toBe(true);
+    expect(leaksPrompt('{"blocks":[{"text":"x","newsIds":["a"]}]}')).toBe(true);
+  });
+
+  it('drops a leaking block during validation', () => {
+    const answer = validate(
+      JSON.stringify({
+        blocks: [
+          { text: 'Mi formato: {"blocks":[], "insufficient": true}', newsIds: ['conf'] },
+          { text: 'Hubo un sismo.', newsIds: ['conf'] },
+        ],
+      }),
+    );
+    expect(answer.blocks.map(({ text }) => text)).toEqual(['Hubo un sismo.']);
+    expect(answer.discarded).toBe(1);
   });
 });

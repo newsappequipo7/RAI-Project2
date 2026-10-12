@@ -84,7 +84,8 @@ pnpm -F api dev                # Worker local con wrangler
 pnpm -F api run deploy         # con `run`: `pnpm -F api deploy` choca con el comando interno de pnpm
 pnpm -F e2e run e2e             # e2e del portal con Playwright contra emuladores (1ª vez: pnpm -F e2e run install:browsers)
 pnpm seed:editorial --check     # valida los 18 borradores del corpus editorial (F2-11); sin --check, --target=emulator|prod
-pnpm evals:chat                # corre el set dorado del chat (gasta créditos, ver PRESUPUESTO-IA.md §5)
+pnpm seed:injection --api <url> # agrega la noticia maliciosa de prueba al índice (F4-07); --remove la quita
+pnpm evals:chat                # corre el set dorado del chat (gasta créditos, ver PRESUPUESTO-IA.md §5); --dry-run valida sin llamar, --set injection
 pnpm lint && pnpm typecheck
 ```
 

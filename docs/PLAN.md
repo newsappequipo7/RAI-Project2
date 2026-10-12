@@ -145,7 +145,7 @@ por tarea al iniciar su fase.
 | F4-04 | UI del chat (pantalla inicial de la app) | ◐ | [Evidencia F4-04](../evidence/F4-04-chat-ui.md). Pantalla de chat con saludo, 4 sugerencias, bloques con chip de certeza y fuentes tocables, aviso, pie de procedencia, «¿Cómo se generó?», estados de error, historial en memoria y señal `chat_topic`. CA2 cubierto con 20 pruebas (componentes, presentación, cliente HTTP y emulador); bundles iOS y Android compilan. **Falta CA1:** los 4 casos en iPhone y Android con el Worker desplegado |
 | F4-05 | Set dorado y runner de evaluación | ◐ | [Evidencia F4-05](../evidence/F4-05-golden-set.md). `evals/chat-golden.jsonl` (32 casos con ids del corpus semilla), runner `pnpm evals:chat` y métricas puras. CA1: métricas reproducibles verificadas con 10 pruebas (incluida la auditoría del set real). **Falta** la corrida base v1 con `AI_MODE=live`, su LOOP y CA2 (costo < USD 0.15) |
 | F4-06 | Calibración (mínimo 2 iteraciones) | ☐ | |
-| F4-07 | Endurecimiento contra inyección | ☐ | |
+| F4-07 | Endurecimiento contra inyección | ◐ | [Evidencia F4-07](../evidence/F4-07-injection.md). Guardia en código contra filtración del prompt (además de ids fuera del top-k), noticia maliciosa de prueba con `pnpm seed:injection`, 5 casos de inyección en el set dorado y set `chat-injection.jsonl`. CA1 en código: un modelo simulado que obedece la inyección no logra filtrar el prompt ni citar fuera del top-k (mutación verificada). **Falta** la corrida en vivo de ambos sets |
 | F4-08 | Latencia y costo reales (Nelson) | ☐ | |
 | F4-09 | Preparación de la demo (`demo:prepare` y videos: Diego) | ☐ | |
 | F4-10 | Ensayos generales (3) | ☐ | |
