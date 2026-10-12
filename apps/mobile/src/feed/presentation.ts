@@ -8,7 +8,7 @@ const scopeLabels: Record<GeoScope, string> = {
   global: 'Global',
 };
 
-const certaintyLabels: Record<Certainty, string> = {
+export const certaintyLabels: Record<Certainty, string> = {
   confirmada: 'Confirmada',
   en_desarrollo: 'En desarrollo',
   disputada: 'En disputa',
