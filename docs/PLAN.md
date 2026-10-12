@@ -147,7 +147,7 @@ por tarea al iniciar su fase.
 | F4-06 | Calibración (mínimo 2 iteraciones) | ☐ | |
 | F4-07 | Endurecimiento contra inyección | ◐ | [Evidencia F4-07](../evidence/F4-07-injection.md). Guardia en código contra filtración del prompt (además de ids fuera del top-k), noticia maliciosa de prueba con `pnpm seed:injection`, 5 casos de inyección en el set dorado y set `chat-injection.jsonl`. CA1 en código: un modelo simulado que obedece la inyección no logra filtrar el prompt ni citar fuera del top-k (mutación verificada). **Falta** la corrida en vivo de ambos sets |
 | F4-08 | Latencia y costo reales (Nelson) | ☐ | |
-| F4-09 | Preparación de la demo (`demo:prepare` y videos: Diego) | ☐ | |
+| F4-09 | Preparación de la demo (`demo:prepare` y videos: Diego) | ◐ | [Registro de preparación](../evidence/F4-09-demo-readiness.md) (parte de Joaquín): guion de la sección 5 en DEMO-RUNBOOK, 4 pruebas del flujo de demo (pregunta sobre D1 y retractación en vivo). Hallazgos: sin EAS Update (túnel o Plan B); D1, D2 y los 16 borradores editoriales **no** están en Firestore de producción; la semilla caduca por la ventana de 72 h antes de la presentación. Pendiente: `demo:prepare` y videos (Diego), cargar borradores y elegir la noticia a retractar |
 | F4-10 | Ensayos generales (3) | ☐ | |
 | F4-11 | Paquete de evidencia para la presentación | ☐ | |
 | F4-12 | Cierre | ☐ | |
