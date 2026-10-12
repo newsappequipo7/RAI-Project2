@@ -37,9 +37,14 @@ deja un índice inservible para búsqueda real**. El portal lo muestra en la pá
     "limitUsd": 20, "reserveUsd": 7, "warnUsd": 8, "softUsd": 11, "hardUsd": 13,
     "level": "normal", "lastProviderBalance": 16.2
   },
-  "avgCostPerCall": { "enrich": 0.004, "chat_answer": 0.003 }
+  "avgCostPerCall": { "enrich": 0.004, "chat_answer": 0.003 },
+  "taskStats": {
+    "chat_answer": { "paidCalls": 120, "avgInputTokens": 2100, "avgOutputTokens": 280, "avgCostUsd": 0.0035 }
+  }
 }
 ```
+`taskStats` (F4-08) cuenta solo llamadas reales: `outcome = 'ok'`, sin caché y con `provider` distinto de `mock`. A
+diferencia de `avgCostPerCall`, que incluye las filas `mock` a costo 0, sirve para medir el costo real por función.
 `byTask` siempre trae las cinco tareas (0 si no hubo gasto). `budget.level` es `normal | warn | soft | hard | exhausted`
 según el total del ledger (umbrales en PRESUPUESTO-IA.md §2; `exhausted` = ≥ `limitUsd`, bloquea también `env=demo`).
 `lastProviderBalance` es `null` si nunca se registró un saldo. `avgCostPerCall` solo incluye tareas con llamadas pagadas

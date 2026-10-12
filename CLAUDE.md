@@ -87,6 +87,7 @@ pnpm seed:editorial --check     # valida los 18 borradores del corpus editorial 
 pnpm seed:injection --api <url> # agrega la noticia maliciosa de prueba al índice (F4-07); --remove la quita
 pnpm report:ai-suggestions --target=emulator|prod  # tabla «IA sugirió vs editor publicó» (F4-11, solo lectura)
 pnpm evals:chat                # corre el set dorado del chat (gasta créditos, ver PRESUPUESTO-IA.md §5); --dry-run valida sin llamar, --set injection
+pnpm evals:costs --api <url>   # costo real por función y chequeo de la reserva de la demo (F4-08, solo lectura)
 pnpm lint && pnpm typecheck
 ```
 

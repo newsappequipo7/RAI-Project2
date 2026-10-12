@@ -68,7 +68,7 @@ Para `--target=prod`, los scripts usan `gcloud auth print-access-token`.
 | 6 | Set de inyección (F4-07) | Joaquín | `pnpm seed:injection --api <worker>` → `pnpm evals:chat --set injection --api <worker>` → `pnpm seed:injection --api <worker> --remove` | 0 fallos de inyección; la noticia queda **fuera** del índice | ≈ 0.01 |
 | 7 | Calibración (F4-06): mínimo 2 iteraciones, una variable a la vez | Joaquín | Cambiar una perilla en `services/api/src/rag/chatConfig.ts` (τ, top-k, extracto) o el prompt → desplegar → nueva corrida | 2 LOOPs con antes/después; objetivos: abstención correcta ≥ 90 %, falsas ≤ 15 %, incertidumbre ≥ 90 %, citas prohibidas 0 | ≈ 0.09 por corrida |
 | 8 | Prueba en teléfonos (F4-04 CA1) | Joaquín | Expo Go en un iPhone y un Android: las 4 sugerencias, un chip de fuente, «¿Cómo se generó?» y una abstención | Capturas y modelo/sistema/versión de Expo Go en `evidence/F4-04-chat-ui.md` | ≈ 0.03 |
-| 9 | Latencia y costo reales (F4-08) | Nelson | p50/p95 por modo (de las corridas del paso 4/7) y promedios del ledger por tarea | Tabla de PRESUPUESTO-IA §4 completa; reserva ≥ 3× la estimación de la demo (§5) | 0 |
+| 9 | Latencia y costo reales (F4-08) | Nelson | p50/p95 por modo: tabla «Latencia por modo» de `pnpm evals:chat` (pasos 4/7). Costos: `EVAL_ID_TOKEN=… pnpm evals:costs --api <worker> --out evidence/F4-08-costs.md` | Tabla de PRESUPUESTO-IA §4 completa; reserva ≥ 3× la estimación de la demo (§5) | 0 |
 | 10 | Cargar borradores D1, D2 y los 16 editoriales | Daniel / Diego | `pnpm seed:editorial --target=prod` | Aparecen como **borrador** en `/news` (hoy no están) | 0 |
 | 11 | Elegir la noticia a retractar en la demo | Daniel | Propuesta: D1 (encaja con el guion del chat) | Anotada en DEMO-RUNBOOK §2 | 0 |
 | 12 | Tabla «IA sugirió vs editor publicó» | Joaquín / quien tenga gcloud | `pnpm report:ai-suggestions --target=prod --out evidence/F4-11-ai-suggestions.md` | Tabla con datos reales (requiere publicar con el asistente de IA) | 0 |
@@ -120,6 +120,7 @@ Todas están documentadas en [CHAT-RAG](../domain/CHAT-RAG.md) (notas «Implemen
 | Media | No hay EAS Update: la app depende del túnel o del Plan B nativo | DEMO-RUNBOOK §3 |
 | Media | El Worker no lee `config/public`: el digest siempre usa 72 h | Si se cambia `feedWindowHours` para la demo, el feed y el digest difieren |
 | Media | La key de Anthropic vence el 2026-10-29 ([LOOP-003](../../evidence/loops/LOOP-003-costo-real-gateway.md)) | Renovarla antes de la presentación si es después de esa fecha |
+| Media | El «costo medio por llamada» del dashboard `/costs` (F2-09) incluye las filas `mock` a costo 0, así que sale más bajo que el real | Para F4-08 usar `taskStats` (`pnpm evals:costs`); decidir con Daniel si el dashboard pasa a usarlo |
 | Baja | Expo sugiere `expo` 57.0.25 → 57.0.27 | No actualizar antes de la demo sin probar en Expo Go |
 
 ## 7. Gasto de IA de la fase

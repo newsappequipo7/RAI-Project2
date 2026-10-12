@@ -54,6 +54,11 @@ supuesto. Las demás filas siguen siendo estimaciones con Claude Haiku 4.5 a USD
 página oficial. Total estimado ≈ USD 5.7, holgado frente al tope de USD 13 de desarrollo. Reemplazar por datos reales
 del ledger en la primera semana.
 
+**Cómo llenar esta tabla (F4-08):** con el Worker en `live` y después de las corridas del set dorado,
+`EVAL_ID_TOKEN=… pnpm evals:costs --api <worker> --out evidence/F4-08-costs.md` lee `GET /admin/costs` (`taskStats`:
+solo llamadas reales pagadas, sin `mock` ni caché) y genera las filas de esta tabla y el chequeo de §5. Las latencias
+p50/p95 por modo las imprime y guarda `pnpm evals:chat` (`metrics.latencyByMode`).
+
 Fórmula: `costo = (in/1e6)·precioIn + (out/1e6)·precioOut`. Llenar la columna "Costo por llamada" en la primera semana
 con el promedio real de D1 y proyectar. Si la proyección total supera USD 13, cambiar de modelo o recortar contexto
 antes de seguir (y registrarlo como loop: es exactamente el tipo de evidencia que pide la sección 8).

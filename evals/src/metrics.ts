@@ -60,6 +60,13 @@ export interface Metrics {
   meanCostUsd: number;
   p50LatencyMs: number;
   p95LatencyMs: number;
+  /** F4-08: latency per way of answering; a cached answer counts as `cached`, whatever its mode. */
+  latencyByMode: Record<string, { count: number; p50Ms: number; p95Ms: number }>;
+}
+
+/** The way a response was produced, for latency: cache first, then its mode. */
+export function latencyKey(score: Pick<CaseScore, 'mode' | 'cached'>): string {
+  return score.cached ? 'cached' : score.mode;
 }
 
 const ratio = (hits: number, total: number): Ratio => ({
@@ -198,6 +205,17 @@ export function aggregate(cases: GoldenCase[], scores: CaseScore[]): Metrics {
     meanCostUsd: scores.length === 0 ? 0 : Number((costs / scores.length).toFixed(6)),
     p50LatencyMs: percentile(latencies, 50),
     p95LatencyMs: percentile(latencies, 95),
+    latencyByMode: Object.fromEntries(
+      [...new Set(answered.map(latencyKey))].sort().map((key) => {
+        const values = answered
+          .filter((score) => latencyKey(score) === key)
+          .map(({ latencyMs }) => latencyMs);
+        return [
+          key,
+          { count: values.length, p50Ms: percentile(values, 50), p95Ms: percentile(values, 95) },
+        ];
+      }),
+    ),
   };
 }
 
