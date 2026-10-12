@@ -138,12 +138,16 @@ en esta fase. El gasto estimado de lo pendiente (§3) es ≈ USD 0.35, más las 
 ## 9. Lista para el cierre final (F4-12)
 
 - [ ] §3 pasos 1–14 hechos y su evidencia enlazada en PLAN §6.
-- [ ] LOOPs de la fase registrados: corrida base, 2 calibraciones, y las dos observaciones que cambiaron el plan sin
-      LOOP todavía (invalidación selectiva de digests en F4-03, doble conteo del rate limit en F4-02).
+- [x] LOOPs de las observaciones que cambiaron el plan: LOOP-013 y LOOP-014.
+- [ ] LOOPs de la corrida base y de las 2 calibraciones (F4-05, F4-06).
 - [ ] Este documento reescrito como estado final.
 - [ ] Saldo real ≥ USD 5 antes del último ensayo, con el snapshot registrado en `/costs`.
 - [ ] `git tag demo-final` sobre `main` congelado.
 
 ## 10. Loops registrados en esta fase
 
-Ninguno todavía. Ver §9.
+- [LOOP-013](../../evidence/loops/LOOP-013-invalidacion-selectiva-de-digests.md): invalidar solo los digests que cambian,
+  con el mismo código que los elige (F4-03).
+- [LOOP-014](../../evidence/loops/LOOP-014-doble-conteo-del-rate-limit.md): el rate limit del chat se contaba dos veces
+  (F4-01 → F4-02).
+- Pendientes: corrida base del set dorado y 2 calibraciones (F4-05, F4-06), en producción.
