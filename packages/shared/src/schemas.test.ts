@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { newsSchema } from './schemas';
+import { chatRequestSchema, chatResponseSchema, newsSchema } from './schemas';
 import type { News } from './types';
 
 function baseNews(overrides: Partial<News> = {}): News {
@@ -79,6 +79,56 @@ describe('newsSchema', () => {
     expect(
       newsSchema.safeParse(baseNews({ image: { ...image, licenseUrl: 'no-es-un-enlace' } }))
         .success,
+    ).toBe(false);
+  });
+});
+
+describe('chatRequestSchema', () => {
+  const turn = { role: 'user', content: 'Hola' } as const;
+  const valid = { message: '¿Qué pasa en mi zona?', locationId: 'gt-guatemala' };
+
+  it('accepts a message with up to 6 history turns', () => {
+    expect(chatRequestSchema.safeParse(valid).success).toBe(true);
+    expect(chatRequestSchema.safeParse({ ...valid, history: Array(6).fill(turn) }).success).toBe(
+      true,
+    );
+  });
+
+  it('rejects long or empty messages, long histories and unknown locations', () => {
+    expect(chatRequestSchema.safeParse({ ...valid, message: 'a'.repeat(501) }).success).toBe(false);
+    expect(chatRequestSchema.safeParse({ ...valid, message: '   ' }).success).toBe(false);
+    expect(chatRequestSchema.safeParse({ ...valid, history: Array(7).fill(turn) }).success).toBe(
+      false,
+    );
+    expect(chatRequestSchema.safeParse({ ...valid, locationId: 'xx-nowhere' }).success).toBe(false);
+    expect(chatRequestSchema.safeParse({ ...valid, extra: true }).success).toBe(false);
+  });
+});
+
+describe('chatResponseSchema', () => {
+  it('accepts a retrieval-only response and rejects a model-made certainty', () => {
+    const response = {
+      mode: 'retrieval_only',
+      blocks: [{ text: 'Entradilla', newsIds: ['n-1'], certainty: 'mixta' }],
+      sources: [
+        {
+          newsId: 'n-1',
+          title: 'Título',
+          certainty: 'confirmada',
+          publishedAt: '2026-10-01T00:00:00.000Z',
+          outlets: ['Medio'],
+        },
+      ],
+      generatedBy: null,
+      cached: false,
+      costUsd: 0,
+    };
+    expect(chatResponseSchema.safeParse(response).success).toBe(true);
+    expect(
+      chatResponseSchema.safeParse({
+        ...response,
+        blocks: [{ text: 'x', newsIds: ['n-1'], certainty: 'segura' }],
+      }).success,
     ).toBe(false);
   });
 });

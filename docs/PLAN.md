@@ -139,7 +139,18 @@ por tarea al iniciar su fase.
 | F3-10 | Tiempo real y avisos | ◐ | [Evidencia F3-10](../evidence/F3-10-live-alerts.md). Aviso fijo para una noticia nueva en top 3 o esenciales, retorno arriba y apertura de esenciales; 2 lectores del emulador reciben la publicación del portal en <5 s. Falta CA1 en dos teléfonos reales con Expo Go; tarjeta de correcciones `[PLUS]` pendiente. |
 | F3-11 | Comparador de ubicaciones (portal) | ◐ | [Evidencia F3-11](../evidence/F3-11-comparator.md). Ruta `/compare`, ocho ubicaciones, cuatro perfiles, posición y tier, panel de diversidad y suscripción Firestore. CA1 y CA2 verificados con publicación en emulador y comparación con el ranking móvil; falta revisión visual en el navegador del portal. |
 | F3-12 | Pulido, accesibilidad, evidencia y cierre | ☐ | |
-| F4-01 … F4-13 | Ver FASE-4 | ☐ | |
+| F4-01 | Pipeline del chat sin generación (pasos 1–7) | ☑ | [Evidencia F4-01](../evidence/F4-01-chat-pipeline.md). CA1: 30/30 frases de intención. CA2: fuera de corpus → `abstain` sin fila de LLM (solo `abstained` a costo 0). CA3: pregunta repetida → `cached = true` sin filas nuevas. 567 pruebas verdes; en mock, USD 0. Atajo de digest en F4-03 y generación en F4-02 |
+| F4-02 | Generación y validación | ☐ | |
+| F4-03 | Digest por ubicación | ☐ | |
+| F4-04 | UI del chat (pantalla inicial de la app) | ☐ | |
+| F4-05 | Set dorado y runner de evaluación | ☐ | |
+| F4-06 | Calibración (mínimo 2 iteraciones) | ☐ | |
+| F4-07 | Endurecimiento contra inyección | ☐ | |
+| F4-08 | Latencia y costo reales (Nelson) | ☐ | |
+| F4-09 | Preparación de la demo (`demo:prepare` y videos: Diego) | ☐ | |
+| F4-10 | Ensayos generales (3) | ☐ | |
+| F4-11 | Paquete de evidencia para la presentación | ☐ | |
+| F4-12 | Cierre | ☐ | |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
 

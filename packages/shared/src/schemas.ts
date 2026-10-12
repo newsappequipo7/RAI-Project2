@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { findTopic } from './catalogs/topics';
+import { findLocation } from './catalogs/locations';
 
 export const geoScopeSchema = z.enum(['local', 'nacional', 'regional', 'internacional', 'global']);
 export const workflowSchema = z.enum(['borrador', 'en_revision', 'publicada', 'rechazada']);
@@ -356,6 +357,59 @@ export const indexSearchRequestSchema = z
     query: z.string().trim().min(1).max(500),
     countries: z.array(z.string()).optional(),
     topK: z.number().int().min(1).max(MAX_SEARCH_TOP_K).optional(),
+  })
+  .strict();
+
+export const CHAT_MAX_MESSAGE = 500;
+export const CHAT_MAX_HISTORY = 6;
+export const CHAT_MAX_TURN = 2000;
+
+export const chatTurnSchema = z
+  .object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string().max(CHAT_MAX_TURN),
+  })
+  .strict();
+
+export const chatRequestSchema = z
+  .object({
+    message: z.string().trim().min(1).max(CHAT_MAX_MESSAGE),
+    locationId: z.string().refine((id) => findLocation(id) !== undefined, 'Unknown location'),
+    history: z.array(chatTurnSchema).max(CHAT_MAX_HISTORY).optional(),
+  })
+  .strict();
+
+export const chatBlockSchema = z
+  .object({
+    text: z.string(),
+    newsIds: z.array(z.string()),
+    certainty: z.union([certaintySchema, z.literal('mixta')]),
+  })
+  .strict();
+
+export const chatSourceSchema = z
+  .object({
+    newsId: z.string(),
+    title: z.string(),
+    certainty: certaintySchema,
+    publishedAt: z.string(),
+    outlets: z.array(z.string()),
+  })
+  .strict();
+
+export const chatResponseSchema = z
+  .object({
+    mode: z.enum(['answer', 'abstain', 'digest', 'retrieval_only', 'blocked']),
+    blocks: z.array(chatBlockSchema),
+    sources: z.array(chatSourceSchema),
+    notice: z.string().optional(),
+    generatedBy: z.object({ provider: z.string(), model: z.string() }).strict().nullable(),
+    cached: z.boolean(),
+    costUsd: z.number().min(0),
+    debug: z
+      .object({ intent: z.string(), topScores: z.array(z.number()), threshold: z.number() })
+      .strict()
+      .optional(),
   })
   .strict();
 

@@ -44,6 +44,23 @@ Casos que debe resolver (del enunciado):
    - `notice` automático si algún bloque es `en_desarrollo` o `disputada`.
 10. **Ledger** en D1 con tokens, costo, outcome.
 
+**Implementación (F4-01).** Pasos 1–3 y 5–7 en `services/api/src/rag/chat.ts`; perillas en
+`services/api/src/rag/chatConfig.ts` (`abstainThreshold`, `topK`, `regionBoost`, TTL y versión de caché).
+- La caché (paso 7) se consulta **antes** de la recuperación, para que una pregunta repetida no pague ni el
+  embedding. La clave agrega a lo anterior `chatMode`, la historia normalizada y una versión del pipeline
+  (`cacheVersion`), para no servir una respuesta de otro modo, de otra conversación o de un prompt anterior.
+- Intención: otro país gana sobre las demás reglas ("Explícame lo más importante de Argentina" → `otro_pais`);
+  nombrar el país propio cuenta como `mi_region`. Se detectan nombres, gentilicios (género y número), ciudades del
+  catálogo y alias (`EE. UU.`, `CDMX`, `Xela`); "en español" no cuenta como España.
+- `mi_region` suma `regionBoost` solo para **ordenar** las noticias del país del lector; τ se compara con el
+  puntaje crudo. Solo las noticias con puntaje ≥ τ pasan al bloque de respuesta.
+- `blocked` cuando hay kill switch o cuando el presupuesto ya no permite ni el embedding. Si el presupuesto o el
+  flag no permiten LLM, el modo efectivo es `retrieval_only` (`gateway.chatPolicy`).
+- Cada abstención deja en el ledger una fila `chat_answer` con `outcome = 'abstained'`, costo y tokens 0: es la
+  llamada evitada que cuenta el dashboard, no una llamada a un LLM.
+- Pendiente: atajo de digest (paso 4) en F4-03; generación y validación (pasos 8–10) en F4-02. Hasta entonces
+  `full` responde en `retrieval_only`.
+
 ## 3. Prompt de sistema (versión inicial; versionar en `src/ai/prompts/chat.v1.ts`)
 
 Requisitos del prompt (el texto exacto lo escribe la persona 4 y lo itera con el set dorado):

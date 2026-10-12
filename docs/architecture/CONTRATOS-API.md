@@ -138,6 +138,10 @@ Request:
 }
 ```
 `history` máximo 6 turnos, solo texto; el cliente la mantiene en memoria y se pierde al cerrar la app.
+Validación (`chatRequestSchema`): `message` 1–500 caracteres tras recortar espacios, `locationId` del catálogo,
+cada turno de `history` hasta 2000 caracteres, campos desconocidos → `422 invalid_input`. Sin token → `401`. Más de
+20 mensajes por hora y `uid` → `429 rate_limited`. Kill switch o presupuesto agotado no es un error: `200` con
+`mode = 'blocked'`.
 
 Response:
 ```ts
