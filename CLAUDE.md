@@ -85,6 +85,7 @@ pnpm -F api run deploy         # con `run`: `pnpm -F api deploy` choca con el co
 pnpm -F e2e run e2e             # e2e del portal con Playwright contra emuladores (1ª vez: pnpm -F e2e run install:browsers)
 pnpm seed:editorial --check     # valida los 18 borradores del corpus editorial (F2-11); sin --check, --target=emulator|prod
 pnpm seed:injection --api <url> # agrega la noticia maliciosa de prueba al índice (F4-07); --remove la quita
+pnpm report:ai-suggestions --target=emulator|prod  # tabla «IA sugirió vs editor publicó» (F4-11, solo lectura)
 pnpm evals:chat                # corre el set dorado del chat (gasta créditos, ver PRESUPUESTO-IA.md §5); --dry-run valida sin llamar, --set injection
 pnpm lint && pnpm typecheck
 ```

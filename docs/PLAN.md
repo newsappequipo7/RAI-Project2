@@ -149,7 +149,7 @@ por tarea al iniciar su fase.
 | F4-08 | Latencia y costo reales (Nelson) | ☐ | |
 | F4-09 | Preparación de la demo (`demo:prepare` y videos: Diego) | ◐ | [Registro de preparación](../evidence/F4-09-demo-readiness.md) (parte de Joaquín): guion de la sección 5 en DEMO-RUNBOOK, 4 pruebas del flujo de demo (pregunta sobre D1 y retractación en vivo). Hallazgos: sin EAS Update (túnel o Plan B); D1, D2 y los 16 borradores editoriales **no** están en Firestore de producción; la semilla caduca por la ventana de 72 h antes de la presentación. Pendiente: `demo:prepare` y videos (Diego), cargar borradores y elegir la noticia a retractar |
 | F4-10 | Ensayos generales (3) | ☐ | |
-| F4-11 | Paquete de evidencia para la presentación | ☐ | |
+| F4-11 | Paquete de evidencia para la presentación | ◐ | [Evidencia F4-11](../evidence/F4-11-evidence-pack.md). RAI-MATRIZ con enlaces y estado por fila; [PRESENTACION-EVIDENCIA](ops/PRESENTACION-EVIDENCIA.md) con afirmaciones de las secciones 6–10 y los 3 LOOPs de la sección 8; `pnpm report:ai-suggestions` (verificado en emulador); [borrador de lecciones](ops/LECCIONES-APRENDIDAS.md). Pendiente: tabla con datos de producción, afirmaciones ☐ que dependen de F4-05/F4-08 y aportes del equipo |
 | F4-12 | Cierre | ☐ | |
 
 Leyenda: ☑ hecha y verificada · ◐ implementada, falta evidencia o una verificación · ☐ pendiente.
