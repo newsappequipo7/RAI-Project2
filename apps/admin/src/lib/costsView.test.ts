@@ -26,6 +26,7 @@ function costs(patch: Partial<CostsResponse> = {}): CostsResponse {
 			lastProviderBalance: null
 		},
 		avgCostPerCall: { enrich: 0.004, chat_answer: 0.003 },
+		taskStats: {},
 		...patch
 	};
 }

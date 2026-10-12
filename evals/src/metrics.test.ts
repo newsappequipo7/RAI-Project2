@@ -169,6 +169,14 @@ describe('aggregate (F4-05 CA1)', () => {
     expect(metrics.p95LatencyMs).toBe(900);
   });
 
+  it('splits latency by way of answering, with the cache apart (F4-08)', () => {
+    expect(aggregate(cases, scores).latencyByMode).toEqual({
+      abstain: { count: 2, p50Ms: 40, p95Ms: 50 },
+      answer: { count: 2, p50Ms: 300, p95Ms: 900 },
+      cached: { count: 1, p50Ms: 10, p95Ms: 10 },
+    });
+  });
+
   it('is reproducible: the same responses always give the same metrics', () => {
     const again = cases.map((item, index) => scoreCase(item, results[index]!, retracted));
     expect(aggregate(cases, again)).toEqual(aggregate(cases, scores));

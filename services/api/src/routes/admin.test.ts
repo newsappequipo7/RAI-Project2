@@ -96,6 +96,36 @@ describe('GET /admin/costs', () => {
     expect(body.avgCostPerCall.chat_answer).toBeUndefined();
   });
 
+  it('reports real paid calls per task with mean tokens, leaving out mock and cached rows (F4-08)', async () => {
+    const row = testDb.sqlite.prepare(
+      `INSERT INTO ai_calls (id, ts, task, provider, model, input_tokens, output_tokens, cost_usd, cached, outcome, env)
+       VALUES (?, '2026-10-12T00:00:00.000Z', ?, ?, 'm', ?, ?, ?, ?, ?, 'dev')`,
+    );
+    row.run('a', 'chat_answer', 'anthropic', 2000, 300, 0.0035, 0, 'ok');
+    row.run('b', 'chat_answer', 'anthropic', 1000, 100, 0.0015, 0, 'ok');
+    row.run('c', 'chat_answer', 'mock', 0, 0, 0, 0, 'ok');
+    row.run('d', 'chat_answer', 'anthropic', 0, 0, 0, 1, 'ok');
+    row.run('e', 'chat_answer', 'mock', 0, 0, 0, 0, 'abstained');
+    row.run('f', 'embed', 'workers-ai', 12, 0, 0.000001, 0, 'ok');
+    invalidateSpendCache();
+
+    const body = (await (await adminRequest('/admin/costs')).json()) as {
+      taskStats: Record<string, Record<string, number>>;
+      avgCostPerCall: Record<string, number>;
+    };
+
+    expect(body.taskStats.chat_answer).toMatchObject({
+      paidCalls: 2,
+      avgInputTokens: 1500,
+      avgOutputTokens: 200,
+    });
+    expect(body.taskStats.chat_answer?.avgCostUsd).toBeCloseTo(0.0025, 10);
+    expect(body.taskStats.embed?.paidCalls).toBe(1);
+    expect(body.taskStats.digest).toBeUndefined();
+    // The F2-09 average still counts the mock row, which is why F4-08 reads taskStats instead.
+    expect(body.avgCostPerCall.chat_answer).toBeCloseTo(0.005 / 3, 10);
+  });
+
   it('matches an independent read of the ledger rows (F2-09 CA1)', async () => {
     const tasks = ['embed', 'enrich', 'chat_answer', 'digest'];
     const outcomes = ['ok', 'ok', 'ok', 'error', 'abstained', 'blocked_budget'];

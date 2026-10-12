@@ -139,6 +139,15 @@ function printSummary(metrics: Metrics, failures: string[]): void {
     'Costo medio por pregunta (USD)': metrics.meanCostUsd.toFixed(5),
     'Latencia p50 / p95 (ms)': `${metrics.p50LatencyMs} / ${metrics.p95LatencyMs}`,
   });
+  console.log('Latencia por modo (F4-08):');
+  console.table(
+    Object.fromEntries(
+      Object.entries(metrics.latencyByMode).map(([mode, { count, p50Ms, p95Ms }]) => [
+        mode,
+        { casos: count, 'p50 (ms)': p50Ms, 'p95 (ms)': p95Ms },
+      ]),
+    ),
+  );
   console.log(
     failures.length
       ? `Objetivos F4-06 no cumplidos:\n- ${failures.join('\n- ')}`

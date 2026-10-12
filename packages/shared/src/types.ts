@@ -242,6 +242,18 @@ export interface CostsResponse {
     lastProviderBalance: number | null;
   };
   avgCostPerCall: Partial<Record<AiTask, number>>;
+  /**
+   * Real provider calls per task (paid, not cached, not mock): count, mean tokens and mean cost.
+   * F4-08 fills PRESUPUESTO-IA §4 with it; mock rows (cost 0) are left out so they do not lower the mean.
+   */
+  taskStats: Partial<Record<AiTask, TaskCallStats>>;
+}
+
+export interface TaskCallStats {
+  paidCalls: number;
+  avgInputTokens: number;
+  avgOutputTokens: number;
+  avgCostUsd: number;
 }
 
 export interface BudgetSnapshot {

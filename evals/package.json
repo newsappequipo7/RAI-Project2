@@ -6,7 +6,8 @@
   "scripts": {
     "chat": "tsx run-chat-evals.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "costs": "tsx report-costs.ts"
   },
   "dependencies": {
     "@repo/shared": "workspace:*",
