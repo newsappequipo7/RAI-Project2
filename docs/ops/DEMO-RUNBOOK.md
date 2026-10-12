@@ -21,7 +21,9 @@ El orden de la presentación es obligatorio. La demo funcional es el componente 
 
 Preparación (30 min antes):
 - Corpus semilla cargado, índice reconstruido (`/admin/index/rebuild`), digests calientes para las 8 ubicaciones.
-- Flags: `env=demo`, `chatMode=full`, `imageGenEnabled=false` (la portada tipográfica es suficiente y cuesta 0).
+- Flags: `chatMode=full`, `imageGenEnabled=false` (la portada tipográfica es suficiente y cuesta 0). `env=demo` no es un
+  flag: es la variable `ENV` de `services/api/wrangler.toml` y se cambia con un despliegue (`AI_MODE=live` también).
+- Noticia maliciosa de F4-07 **fuera** del índice (`pnpm seed:injection --api <worker> --remove`).
 - Dos noticias preparadas como **borrador** con fuentes ya cargadas (para no teclear en vivo):
   - D1: "Alerta por lluvias intensas en Quetzaltenango", local, esencial, `en_desarrollo`, con nota.
   - D2: "Banco central europeo mantiene tasas", internacional, rutina, `confirmada`, sin imagen.
@@ -35,6 +37,23 @@ Secuencia:
 4. Joaquín pregunta en el chat desde `mx-cdmx`: "¿Qué se sabe de las lluvias en Guatemala?" → respuesta con chip
    "En desarrollo" heredado. Luego una pregunta fuera de corpus → abstención sin costo.
 5. (Sección 7) Daniel retracta una noticia; Joaquín muestra que el chat deja de citarla.
+
+### Sección 5 (Chat) paso a paso — Joaquín
+
+Se muestra desde un teléfono proyectado; cada respuesta se abre en «¿Cómo se generó?» para enseñar la intención, las
+noticias usadas y el costo. Las preguntas salen del set dorado (última corrida como respaldo).
+
+| # | Ubicación | Pregunta | Qué debe verse | Caso del set |
+|---|---|---|---|---|
+| 1 | `gt-guatemala` | «Resume lo más importante de hoy» | Modo digest; «Resumen generado con IA…»; en «¿Cómo se generó?», caché del digest y costo 0 | q01 |
+| 2 | `mx-cdmx` | «¿Qué se sabe de las lluvias en Guatemala?» (tras publicar D1) | Bloque con chip «En desarrollo», aviso de información en desarrollo y fuente D1 tocable | guion §2.4 |
+| 3 | `gt-guatemala` | «Explícame lo más importante de México» | Intención «Noticias de otro país»; cita el huracán | q09 |
+| 4 | `us-nueva-york` | «¿Qué se acordó en la cumbre climática?» | Tema; fuente tocable que abre la lectura | q16 |
+| 5 | `es-madrid` | «¿Quién ganó el mundial de ajedrez de 1972?» | Abstención; pie «Sin IA: …» y costo 0 en el panel | q23 |
+| 6 | (sección 7) | Repetir la pregunta 2 tras la retractación | Ya no cita la noticia retractada (prueba: `services/api/src/rag/demoFlow.test.ts`) | — |
+
+Si el proveedor falla o el saldo baja: `chatMode = retrieval_only` desde `/costs`; el chat muestra las entradillas
+con el pie «Sin IA: resultado de búsqueda» y se explica como degradación controlada.
 
 ## 3. Planes de contingencia
 
