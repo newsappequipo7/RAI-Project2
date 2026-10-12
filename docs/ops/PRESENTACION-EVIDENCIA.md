@@ -56,7 +56,7 @@ Tres loops elegidos porque cambiaron una decisión con un antes y un después me
 LOOP-005 en la diapositiva, porque muestra el chat, que es la parte que presenta Joaquín.
 
 **Gestión:** requisitos, criterios de aceptación y estado por tarea en [PLAN §6](../PLAN.md); Definition of Done en
-[ENGINEERING-LOOPS](../process/ENGINEERING-LOOPS.md); 12 loops en [`evidence/loops/`](../../evidence/loops/).
+[ENGINEERING-LOOPS](../process/ENGINEERING-LOOPS.md); 14 loops en [`evidence/loops/`](../../evidence/loops/).
 
 ## Sección 9 — Costos (Diego)
 
