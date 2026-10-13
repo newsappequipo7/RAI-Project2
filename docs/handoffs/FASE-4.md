@@ -134,7 +134,7 @@ en esta fase. El gasto estimado de lo pendiente (§3) es ≈ USD 0.35, más las 
    de servidor porque el Worker responde 404.
 2. **No dejar la noticia maliciosa de F4-07 en el índice.** Si se usó el paso 6, siempre correr `--remove`.
 3. **Loop de la corrida base:** [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md).
-   La v2 salió casi toda de la caché; repetirla sin caché antes de usarla como medición.
+   La medición completa es la v3 (`evidence/evals/chat-20261013-0425.json`); la v2 salió casi toda de la caché.
 4. **Las corridas en vivo gastan créditos:** cada una de ≈ USD 0.09. Una variable por corrida y un LOOP por cambio
    (F4-06); revisar el saldo antes.
 
