@@ -142,7 +142,7 @@ en esta fase. El gasto estimado de lo pendiente (§3) es ≈ USD 0.35, más las 
 
 - [ ] §3 pasos 1–14 hechos y su evidencia enlazada en PLAN §6.
 - [x] LOOPs de las observaciones que cambiaron el plan: LOOP-013 y LOOP-014.
-- [ ] LOOPs de la corrida base y de las 2 calibraciones (F4-05, F4-06). Hecho: [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) (corrida base y calibración 1). Falta la calibración 2.
+- [ ] LOOPs de la corrida base y de las 2 calibraciones (F4-05, F4-06). Hecho: [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) (corrida base y calibración 1) y [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) (calibración 2).
 - [ ] Este documento reescrito como estado final.
 - [ ] Saldo real ≥ USD 5 antes del último ensayo, con el snapshot registrado en `/costs`.
 - [ ] `git tag demo-final` sobre `main` congelado.
