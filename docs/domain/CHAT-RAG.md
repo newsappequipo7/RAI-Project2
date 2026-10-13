@@ -59,7 +59,7 @@ Casos que debe resolver (del enunciado):
 - Cada abstención deja en el ledger una fila `chat_answer` con `outcome = 'abstained'`, costo y tokens 0: es la
   llamada evitada que cuenta el dashboard, no una llamada a un LLM.
 
-**Implementación (F4-02).** Prompt en `services/api/src/ai/prompts/chat.v1.ts`, validación en
+**Implementación (F4-02).** Prompt en `services/api/src/ai/prompts/chat.v2.ts`, validación en
 `services/api/src/rag/validate.ts`, generación en `rag/chat.ts`.
 - Contexto: solo las noticias con puntaje ≥ τ (máx. top-k), cada una en `<noticia id="…">` con título, fecha,
   certeza, nota de certeza, medios, entradilla y los primeros `contextExcerptLength` (600) caracteres del extracto.
@@ -78,7 +78,7 @@ Casos que debe resolver (del enunciado):
 - Con `AI_MODE=mock`, el modelo simulado cita las dos primeras noticias del contexto (lee los `<noticia id>` del
   prompt), para poder probar el flujo completo sin créditos.
 
-## 3. Prompt de sistema (versión inicial; versionar en `src/ai/prompts/chat.v1.ts`)
+## 3. Prompt de sistema (versión inicial; versionar en `src/ai/prompts/chat.v2.ts`)
 
 Requisitos del prompt (el texto exacto lo escribe la persona 4 y lo itera con el set dorado):
 - Responder en español neutro, en máximo 4 bloques breves.

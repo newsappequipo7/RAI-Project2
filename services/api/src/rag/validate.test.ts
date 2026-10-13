@@ -1,6 +1,6 @@
 import type { IndexEntry } from '@repo/shared';
 import { describe, expect, it } from 'vitest';
-import { CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v1';
+import { CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v2';
 import { leaksPrompt, parseChatOutput, validateAnswer } from './validate';
 
 function entry(id: string, overrides: Partial<IndexEntry> = {}): IndexEntry {

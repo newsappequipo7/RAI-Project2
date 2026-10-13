@@ -3,8 +3,6 @@ import {
   chatSourceSchema,
   createDefaultProfile,
   DEFAULT_FEED_WINDOW_HOURS,
-  findCountry,
-  findLocation,
   MUST_KNOW_WINDOW_HOURS,
   rankFeed,
   type ChatResponse,
@@ -17,7 +15,13 @@ import { gateway } from '../ai/gateway';
 import type { GatewayContext } from '../ai/types';
 import type { Bindings } from '../env';
 import { DIGEST_PREFIX, readIndexVersion } from '../kv';
-import { askModel, CHAT_NOTICES, emptyResponse, retrievalOnlyResponse } from './answer';
+import {
+  askModel,
+  CHAT_NOTICES,
+  describeLocation,
+  emptyResponse,
+  retrievalOnlyResponse,
+} from './answer';
 import { readIndex } from './index';
 
 /** CHAT-RAG.md §5: the digest summarizes the 8 best-ranked news for the location. */
@@ -127,10 +131,7 @@ export function selectDigestNews(
 }
 
 function digestQuestion(locationId: string): string {
-  const location = findLocation(locationId);
-  const country = location ? findCountry(location.countryIso)?.name : undefined;
-  const place = location ? [location.city, country].filter(Boolean).join(', ') : locationId;
-  return `Resume lo más importante de las noticias publicadas para un lector de ${place}. Un bloque por tema, empezando por lo más importante.`;
+  return `Resume lo más importante de las noticias publicadas para un lector de ${describeLocation(locationId)}. Un bloque por tema, empezando por lo más importante.`;
 }
 
 async function readStored(kv: KVNamespace, locationId: string): Promise<StoredDigest | null> {
@@ -185,7 +186,7 @@ export async function getDigest(locationId: string, ctx: DigestContext): Promise
 
   const answer = await askModel(
     'digest',
-    { question: digestQuestion(locationId), history: [], context: selected },
+    { question: digestQuestion(locationId), locationId, history: [], context: selected },
     gatewayCtx,
   );
   if (!answer.ok || answer.response.blocks.length === 0) {

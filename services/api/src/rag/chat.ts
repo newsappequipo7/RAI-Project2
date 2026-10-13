@@ -9,7 +9,7 @@ import {
 } from '@repo/shared';
 import { isLiveMode } from '../ai/config';
 import { gateway } from '../ai/gateway';
-import { CHAT_PROMPT_VERSION } from '../ai/prompts/chat.v1';
+import { CHAT_PROMPT_VERSION } from '../ai/prompts/chat.v2';
 import { CHAT_RATE_LIMIT_PER_HOUR, consumeRateLimit } from '../ai/rateLimit';
 import type { GatewayContext } from '../ai/types';
 import type { Bindings } from '../env';
@@ -184,7 +184,12 @@ export async function runChat(request: ChatRequest, ctx: ChatContext): Promise<C
     // 8–10. Generation and validation; the rate limit was already applied in step 1.
     const answer = await askModel(
       'chat_answer',
-      { question: request.message, history: request.history ?? [], context: relevant },
+      {
+        question: request.message,
+        locationId: request.locationId,
+        history: request.history ?? [],
+        context: relevant,
+      },
       { env, uid, now: () => now, providers: ctx.providers, rateLimitApplied: true },
     );
     const costUsd = retrieval.costUsd + answer.costUsd;

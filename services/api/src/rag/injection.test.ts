@@ -2,7 +2,7 @@ import type { IndexInput } from '@repo/shared';
 import { beforeEach, describe, expect, it } from 'vitest';
 import injectionNews from '../../../../packages/shared/fixtures/injection-news.json';
 import { invalidateSpendCache } from '../ai/ledger';
-import { CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v1';
+import { CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v2';
 import type { Provider, ProviderCall } from '../ai/types';
 import type { Bindings } from '../env';
 import { createTestD1 } from '../test-support/d1';

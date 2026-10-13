@@ -22,7 +22,7 @@ const MOCK_CHAT_TEXT =
 
 /**
  * Mock chat or digest answer that cites the news actually sent as context (the `<noticia id="…">` tags of
- * chat.v1), so the app can exercise the whole answer flow without spending credits.
+ * chat.v2), so the app can exercise the whole answer flow without spending credits.
  */
 export function mockChatAnswer(prompt: string): string {
   const ids = [...prompt.matchAll(/<noticia id="([^"]+)">/g)].map((match) => match[1]);

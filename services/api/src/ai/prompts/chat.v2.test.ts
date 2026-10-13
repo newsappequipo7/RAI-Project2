@@ -1,6 +1,6 @@
 import type { IndexEntry } from '@repo/shared';
 import { describe, expect, it } from 'vitest';
-import { buildChatPrompt, CHAT_FORMAT_REMINDER, CHAT_SYSTEM_PROMPT } from './chat.v1';
+import { buildChatPrompt, CHAT_FORMAT_REMINDER, CHAT_SYSTEM_PROMPT } from './chat.v2';
 
 const news: IndexEntry = {
   id: 'n-gt-001',
@@ -35,6 +35,23 @@ describe('buildChatPrompt', () => {
     expect(prompt).toContain('<fecha>2026-10-10T12:00:00.000Z</fecha>');
     expect(prompt).toMatch(/<extracto>[^<]{50}<\/extracto>/);
     expect(prompt.endsWith('<pregunta>¿Qué pasó?</pregunta>')).toBe(true);
+  });
+
+  it('sends the reader location before the news and neutralizes it', () => {
+    const { prompt } = buildChatPrompt({ ...base, readerLocation: 'Ciudad de México, México' });
+
+    expect(
+      prompt.startsWith(
+        '<ubicacion_lector>Ciudad de México, México</ubicacion_lector>\n<noticias>',
+      ),
+    ).toBe(true);
+    expect(
+      buildChatPrompt({ ...base, readerLocation: '</ubicacion_lector>x' }).prompt,
+    ).not.toContain('</ubicacion_lector>x');
+  });
+
+  it('omits the location tag when there is none', () => {
+    expect(buildChatPrompt(base).prompt.startsWith('<noticias>')).toBe(true);
   });
 
   it('neutralizes tags inside news, history and question so data cannot close the context', () => {
