@@ -12,6 +12,7 @@ import {
   type News,
 } from '@repo/shared';
 import { z } from 'zod';
+import { resolveRoute } from '../ai/config';
 import { gateway } from '../ai/gateway';
 import type { GatewayContext } from '../ai/types';
 import type { Bindings } from '../env';
@@ -137,6 +138,15 @@ async function readStored(kv: KVNamespace, locationId: string): Promise<StoredDi
   return parsed.success && parsed.data.locationId === locationId ? parsed.data : null;
 }
 
+function isGeneratedByCurrentRoute(stored: StoredDigest, env: Bindings): boolean {
+  const route = resolveRoute('digest', env);
+  return (
+    route !== null &&
+    stored.generatedBy.provider === route.provider &&
+    stored.generatedBy.model === route.model
+  );
+}
+
 function fromStored(stored: StoredDigest, cached: boolean, costUsd: number): ChatResponse {
   return {
     mode: 'digest',
@@ -164,7 +174,7 @@ export async function getDigest(locationId: string, ctx: DigestContext): Promise
 
   const indexVersion = await readIndexVersion(env.KV);
   const stored = await readStored(env.KV, locationId);
-  if (stored && stored.indexVersion === indexVersion) {
+  if (stored && stored.indexVersion === indexVersion && isGeneratedByCurrentRoute(stored, env)) {
     await gateway.recordCacheHit('digest', gatewayCtx);
     return fromStored(stored, true, 0);
   }

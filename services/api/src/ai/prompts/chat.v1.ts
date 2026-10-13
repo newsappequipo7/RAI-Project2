@@ -3,7 +3,7 @@ import type { ChatTurn, IndexEntry } from '@repo/shared';
 /** Bump when the prompt changes: it is part of the chat cache key, so old answers are not reused. */
 export const CHAT_PROMPT_VERSION = 'chat.v1';
 
-export const CHAT_MAX_TOKENS = 700;
+export const CHAT_MAX_TOKENS = 1500;
 export const CHAT_MAX_BLOCKS = 4;
 
 export interface ChatPromptInput {

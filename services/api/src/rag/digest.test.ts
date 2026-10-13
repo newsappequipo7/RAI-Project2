@@ -137,6 +137,20 @@ describe('getDigest', () => {
     expect((await digest('es-madrid')).cached).toBe(false);
   });
 
+  it('regenerates a stored digest that was produced by another model or mode', async () => {
+    await digest('es-madrid');
+    const stored = await kv.get(digestKey('es-madrid'), 'json');
+    await kv.put(
+      digestKey('es-madrid'),
+      JSON.stringify({
+        ...(stored as object),
+        generatedBy: { provider: 'anthropic', model: 'claude-haiku-4-5' },
+      }),
+    );
+
+    expect((await digest('es-madrid')).cached).toBe(false);
+  });
+
   it('answers blocked under the kill switch and abstains without recent news', async () => {
     await kv.put(
       'flags',
