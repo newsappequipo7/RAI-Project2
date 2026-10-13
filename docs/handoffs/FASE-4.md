@@ -1,17 +1,17 @@
-# Handoff FASE-4 (estado al 2026-10-11, antes de producción)
+# Handoff FASE-4 (estado al 2026-10-13, Worker en producción)
 
-Responsable: Joaquín · Estado: **código de F4 en PR, sin desplegar** · Fecha de cierre y tag `demo-final`: pendientes
+Responsable: Joaquín · Estado: **chat y evaluaciones en producción; faltan contenido de la demo, Android, ensayos y cierre** ·
+Tag `demo-final` y cierre: pendientes
 
-Todo el código de la fase está hecho y probado en `AI_MODE=mock` (USD 0). **Lo que falta ocurre en producción**:
-desplegar el Worker, correr las evaluaciones en vivo, cargar datos y ensayar. Este documento dice qué hacer, en qué
-orden, quién lo hace y cómo comprobar cada paso (§3). La sección 9 tiene la lista para el cierre final (F4-12).
+El Worker está desplegado en `live` con Claude Haiku 5.5 y el set dorado se corrió en vivo. Lo que falta es contenido y
+ensayo: publicar el corpus, probar en un Android, ensayar y cerrar (§3 y §9).
 
 ## 1. Qué quedó funcionando (demostrable sin producción)
 
 - **Chat en el Worker** (`POST /chat`, PR #31–#33):
   - intención por reglas y recuperación con filtros por intención;
   - abstención sin LLM por debajo de τ y caché en KV;
-  - generación con el prompt `chat.v1` y validación en código: citas solo del top-k, certeza heredada de la BD y aviso de incertidumbre;
+  - generación con el prompt `chat.v2` (incluye la ubicación simulada del lector) y validación en código: citas solo del top-k, certeza heredada de la BD y aviso de incertidumbre;
   - degradación a `retrieval_only` y `blocked` con kill switch o presupuesto;
   - digest por ubicación (`GET /digest/:locationId`) con invalidación selectiva al publicar.
 - **Pantalla de chat en la app** (PR #34):
@@ -28,7 +28,7 @@ orden, quién lo hace y cómo comprobar cada paso (§3). La sección 9 tiene la 
   - mapa de evidencia de las secciones 6–10;
   - borrador de lecciones;
   - `pnpm report:ai-suggestions`.
-- Pruebas: 669 en verde (shared 293, Firestore 80, evals 11, admin 71, Worker 214).
+- Pruebas: Worker 220 en verde el 2026-10-13 (las demás suites no se volvieron a correr tras el cambio de modelo; en `evals` hay 16).
 
 ## 2. Cómo correrlo desde cero
 
@@ -56,24 +56,24 @@ Variables (nombres, nunca valores):
 
 Para `--target=prod`, los scripts usan `gcloud auth print-access-token`.
 
-## 3. Lo que falta en producción, en orden
+## 3. Pasos de producción y su estado
 
-| # | Paso | Quién | Comando / acción | Cómo se comprueba | Costo |
-|---|---|---|---|---|---|
-| 1 | Revisar y mezclar los PR **#31 → #38** en orden (con *merge commit*: son PR apilados) | Diego | GitHub | CI verde en cada PR | 0 |
-| 2 | **Desplegar el Worker en `live`** desde `main` | Diego (cuenta de Cloudflare) | `pnpm -F api run deploy --var AI_MODE:live` | `GET /health` → `aiMode: "live"`; `POST /chat` sin token → `401` (hoy da `404`) | 0 |
-| 3 | **Reescribir la semilla con horas actuales** y reconstruir el índice | Diego (`demo:prepare`) | `SEED_ID_TOKEN=… pnpm seed --target=prod` | En `/compare`, las noticias semilla vuelven a tener posición; `indexVersion` sube | Embeddings, casi 0 |
-| 4 | Corrida base del set dorado (F4-05) | Joaquín | `EVAL_ID_TOKEN=… pnpm evals:chat --api https://news-api.diegovalenzuela.workers.dev --label v1` | JSON en `evidence/evals/`; costo de la corrida < USD 0.15 (CA2) | ≈ 0.09 |
-| 5 | Registrar el LOOP de la corrida base | Joaquín | `/registrar-loop` | `evidence/loops/LOOP-0XX` con la tabla de métricas | 0 |
-| 6 | Set de inyección (F4-07) | Joaquín | `pnpm seed:injection --api <worker>` → `pnpm evals:chat --set injection --api <worker>` → `pnpm seed:injection --api <worker> --remove` | 0 fallos de inyección; la noticia queda **fuera** del índice | ≈ 0.01 |
-| 7 | Calibración (F4-06): mínimo 2 iteraciones, una variable a la vez | Joaquín | Cambiar una perilla en `services/api/src/rag/chatConfig.ts` (τ, top-k, extracto) o el prompt → desplegar → nueva corrida | 2 LOOPs con antes/después; objetivos: abstención correcta ≥ 90 %, falsas ≤ 15 %, incertidumbre ≥ 90 %, citas prohibidas 0 | ≈ 0.09 por corrida |
-| 8 | Prueba en teléfonos (F4-04 CA1) | Joaquín | Expo Go en un iPhone y un Android: las 4 sugerencias, un chip de fuente, «¿Cómo se generó?» y una abstención | Capturas y modelo/sistema/versión de Expo Go en `evidence/F4-04-chat-ui.md` | ≈ 0.03 |
-| 9 | Latencia y costo reales (F4-08) | Nelson | p50/p95 por modo: tabla «Latencia por modo» de `pnpm evals:chat` (pasos 4/7). Costos: `EVAL_ID_TOKEN=… pnpm evals:costs --api <worker> --out evidence/F4-08-costs.md` | Tabla de PRESUPUESTO-IA §4 completa; reserva ≥ 3× la estimación de la demo (§5) | 0 |
-| 10 | Cargar borradores D1, D2 y los 16 editoriales | Daniel / Diego | `pnpm seed:editorial --target=prod` | Aparecen como **borrador** en `/news` (hoy no están) | 0 |
-| 11 | Elegir la noticia a retractar en la demo | Daniel | Propuesta: D1 (encaja con el guion del chat) | Anotada en DEMO-RUNBOOK §2 | 0 |
-| 12 | Tabla «IA sugirió vs editor publicó» | Joaquín / quien tenga gcloud | `pnpm report:ai-suggestions --target=prod --out evidence/F4-11-ai-suggestions.md` | Tabla con datos reales (requiere publicar con el asistente de IA) | 0 |
-| 13 | `demo:prepare` y videos de respaldo (F4-09) | Diego | Calentar los 8 digests, revisar flags y saldo | Digests en caché; `/health` correcto | ≈ 0.03 |
-| 14 | Ensayos generales (F4-10) | Todos | DEMO-RUNBOOK §4; el ensayo 1 estaba previsto el 14 oct | Tiempos y gasto por ensayo (`env=demo`) | ver PRESUPUESTO §5 |
+| # | Paso | Estado | Evidencia / lo que falta |
+|---|---|---|---|
+| 1 | Mezclar los PR #31 → #38 | ☑ | Ya en `main` (hasta el PR #40). Los commits de esta sesión están en una rama aparte |
+| 2 | Desplegar el Worker en `live` | ☑ | `GET /health` → `aiMode: "live"`. El comando es `pnpm -F api run deploy --var AI_MODE:live` (sin `--` y escrito completo: con `AI_MODE:liv` el Worker queda en `mock` y no avisa) |
+| 3 | Reescribir la semilla con horas actuales y reindexar | ☑ el 2026-10-12 · repetir | La ventana de 72 h la vuelve a dejar fuera: repetir `pnpm seed --target=prod` y reindexar antes de cada ensayo y de la presentación |
+| 4 | Corrida base del set dorado (F4-05) | ☑ | [`chat-20261013-0401.json`](../../evidence/evals/chat-20261013-0401.json), USD 0.0070 |
+| 5 | LOOP de la corrida base | ☑ | [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) |
+| 6 | Set de inyección (F4-07) | ☑ | [`chat-injection-20261013-0419.json`](../../evidence/evals/chat-injection-20261013-0419.json): 0 fallos; la noticia se retiró del índice |
+| 7 | Calibración (F4-06) | ☑ | LOOP-015 (tokens) y [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) (ubicación en el prompt). τ = 0.45 sin cambios |
+| 8 | Prueba en teléfonos (F4-04 CA1) | ◐ | iPhone 16 Pro Max hecho ([F4-04](../../evidence/F4-04-chat-ui.md)); **falta un Android** y las capturas |
+| 9 | Latencia y costo reales (F4-08) | ◐ | [F4-08-costs.md](../../evidence/F4-08-costs.md); reserva cubierta 93.9×. **Falta** medir `enrich` con Haiku 5.5 y repetir tras los ensayos |
+| 10 | Cargar borradores D1, D2 y los 16 editoriales | ◐ | 18 borradores creados en Firestore el 2026-10-12. **Falta publicar** los 16 desde el portal (→ 56 noticias) |
+| 11 | Elegir la noticia a retractar en la demo | ☐ | Propuesta: D1; anotarla en DEMO-RUNBOOK §2 |
+| 12 | Tabla «IA sugirió vs editor publicó» | ☐ | `pnpm report:ai-suggestions --target=prod --out evidence/F4-11-ai-suggestions.md`, después de publicar con el asistente de IA |
+| 13 | `demo:prepare` y videos de respaldo (F4-09) | ☐ | Calentar los 8 digests, revisar flags y saldo |
+| 14 | Ensayos generales (F4-10) | ☐ | DEMO-RUNBOOK §4; anotar tiempos y gasto por ensayo (`env=demo`) |
 
 Antes de cada sesión en vivo, revisar el saldo en `/costs`. En `dev`, el gateway degrada solo el chat a
 `retrieval_only` desde USD 11 de gasto acumulado y bloquea todo desde USD 13 (PRESUPUESTO-IA §2).
@@ -85,14 +85,14 @@ Antes de cada sesión en vivo, revisar el saldo en `/costs`. En `dev`, el gatewa
 | F4-01 | ☑ | [F4-01](../../evidence/F4-01-chat-pipeline.md) | — |
 | F4-02 | ☑ | [F4-02](../../evidence/F4-02-generation.md) | — |
 | F4-03 | ☑ | [F4-03](../../evidence/F4-03-digest.md) | — |
-| F4-04 | ◐ | [F4-04](../../evidence/F4-04-chat-ui.md) | CA1 en teléfonos (§3 paso 8) |
-| F4-05 | ◐ | [F4-05](../../evidence/F4-05-golden-set.md) | Corrida base y LOOP (pasos 4–5) |
-| F4-06 | ☐ | — | Pasos 7 (2 LOOPs) y configuración final anotada en CHAT-RAG |
-| F4-07 | ◐ | [F4-07](../../evidence/F4-07-injection.md) | Corrida del set de inyección (paso 6) |
-| F4-08 | ☐ | — | Nelson (paso 9) |
+| F4-04 | ◐ | [F4-04](../../evidence/F4-04-chat-ui.md) | CA1 en un Android y capturas (§3 paso 8) |
+| F4-05 | ☑ | [F4-05](../../evidence/F4-05-golden-set.md), [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) | — |
+| F4-06 | ☑ | [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md), [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) | Anotar la configuración final en CHAT-RAG (`chat.v2`, `CHAT_MAX_TOKENS` 1500, τ 0.45) |
+| F4-07 | ☑ | [F4-07](../../evidence/F4-07-injection.md) | — |
+| F4-08 | ◐ | [F4-08-costs.md](../../evidence/F4-08-costs.md) | `enrich` con Haiku 5.5 y repetir tras los ensayos (paso 9) |
 | F4-09 | ◐ | [F4-09](../../evidence/F4-09-demo-readiness.md) | `demo:prepare` y videos (Diego), borradores y retractación (pasos 10, 11, 13) |
 | F4-10 | ☐ | — | Ensayos (paso 14) |
-| F4-11 | ◐ | [F4-11](../../evidence/F4-11-evidence-pack.md) | Tabla con datos de producción (paso 12); afirmaciones ☐ que dependen de F4-05 y F4-08; aportes del equipo a las lecciones |
+| F4-11 | ◐ | [F4-11](../../evidence/F4-11-evidence-pack.md) | Matriz RAI y evidencia de la presentación actualizadas con las corridas en vivo; falta la tabla de producción (paso 12), las capturas en teléfono y los aportes del equipo a las lecciones |
 | F4-12 | ☐ | Este documento | §9 |
 
 ## 5. Desviaciones respecto a contratos o docs
@@ -113,37 +113,46 @@ Todas están documentadas en [CHAT-RAG](../domain/CHAT-RAG.md) (notas «Implemen
 
 | Severidad | Problema | Sugerencia |
 |---|---|---|
-| Alta | El Worker de producción no tiene el código de F4: `/chat` y `/digest` dan `404` | §3 pasos 1–2 |
-| Alta | La semilla de producción se escribió el 10 de octubre; con la ventana de 72 h ya casi no entra al feed ni al digest | §3 paso 3, y repetirlo el día de la presentación |
-| Alta | τ = 0.45 sin calibrar; la calidad real del chat no está medida | §3 pasos 4 y 7 |
-| Media | En `mock` toda pregunta natural se abstiene (los embeddings son un hash) | Solo afecta el desarrollo local; para ver el chat de verdad hace falta `live` |
+| Alta | La semilla de producción caduca por la ventana de 72 h: el feed y el digest se quedan sin noticias recientes | Repetir `pnpm seed --target=prod` y reindexar el día de cada ensayo y de la presentación (§3 paso 3) |
+| Alta | `AI_MODE` no se valida: cualquier valor distinto de `live` deja el Worker en `mock` sin avisar (ocurrió con `AI_MODE:liv`) | Comprobar `/health` después de cada despliegue; opcional: rechazar valores inválidos al arrancar |
+| Media | Sin `temperature` las respuestas del chat ya no son deterministas (Haiku 5.5 la rechaza): las evals pueden variar entre corridas | Tratar cada medición como una muestra; repetir antes de afirmar un cambio fino |
+| Media | q09 del set dorado no cita `n-mx-001`: queda por debajo de τ = 0.45, y bajar τ pondría en riesgo q31 (0.437), que debe abstenerse | No tocar τ sin probar los casos de abstención |
+| Media | `enrich` se midió con Haiku 4.5; con 5.5 está sin medir (el precio baja unas 10×) | Medirlo al publicar el corpus con el asistente de IA |
 | Media | No hay EAS Update: la app depende del túnel o del Plan B nativo | DEMO-RUNBOOK §3 |
 | Media | El Worker no lee `config/public`: el digest siempre usa 72 h | Si se cambia `feedWindowHours` para la demo, el feed y el digest difieren |
 | Media | La key de Anthropic vence el 2026-10-29 ([LOOP-003](../../evidence/loops/LOOP-003-costo-real-gateway.md)) | Renovarla antes de la presentación si es después de esa fecha |
-| Media | El «costo medio por llamada» del dashboard `/costs` (F2-09) incluye las filas `mock` a costo 0, así que sale más bajo que el real | Para F4-08 usar `taskStats` (`pnpm evals:costs`); decidir con Daniel si el dashboard pasa a usarlo |
-| Baja | Expo sugiere `expo` 57.0.25 → 57.0.27 | No actualizar antes de la demo sin probar en Expo Go |
+| Media | El «costo medio por llamada» del dashboard `/costs` (F2-09) incluye las filas `mock` a costo 0, así que sale más bajo que el real | Para costos usar `taskStats` (`pnpm evals:costs`, con `--out ../evidence/...`: la ruta es relativa a `evals/`) |
+| Media | En `mock` toda pregunta natural se abstiene (los embeddings son un hash) | Solo afecta el desarrollo local |
+| Baja | Expo sugiere `expo` 57.0.25 → 57.0.28 | No actualizar antes de la demo sin probar en Expo Go |
 
 ## 7. Gasto de IA de la fase
 
-**USD 0 en llamadas de IA**: todo el trabajo usó `AI_MODE=mock`. No se consultaron el ledger ni el panel del proveedor
-en esta fase. El gasto estimado de lo pendiente (§3) es ≈ USD 0.35, más las iteraciones de calibración y los ensayos.
+Gasto total del ledger al 2026-10-13 (04:47 UTC): **USD 0.0596**, nivel `normal` (tope de desarrollo USD 13, tope del
+proyecto USD 20). Incluye las corridas del set dorado (≈ USD 0.0064–0.0071 cada una), el set de inyección y el uso desde
+la app. Detalle por función en [F4-08](../../evidence/F4-08-costs.md) y [PRESUPUESTO-IA §4](../ops/PRESUPUESTO-IA.md).
+Estimación de la demo: USD 0.07 frente a una reserva de USD 7.00 (93.9×).
 
 ## 8. Qué necesita saber la siguiente persona
 
-1. **Nada del chat se puede ver de verdad hasta el paso 2 de §3.** La app ya tiene la pantalla; hoy muestra el error
-   de servidor porque el Worker responde 404.
-2. **No dejar la noticia maliciosa de F4-07 en el índice.** Si se usó el paso 6, siempre correr `--remove`.
-3. **Loop de la corrida base:** [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md).
-   La medición completa es la v3 (`evidence/evals/chat-20261013-0425.json`); la v2 salió casi toda de la caché.
-4. **Las corridas en vivo gastan créditos:** cada una de ≈ USD 0.09. Una variable por corrida y un LOOP por cambio
-   (F4-06); revisar el saldo antes.
+1. **El comando de despliegue es exacto:** `pnpm -F api run deploy --var AI_MODE:live`, sin `--` y con `live` completo.
+   Un despliegue sin `--var` vuelve a `mock` (así lo fija `wrangler.toml`). Comprobar `/health` siempre.
+2. **No dejar la noticia maliciosa de F4-07 en el índice.** Si se vuelve a correr el set, terminar con `--remove`.
+3. **Un cambio de índice invalida la caché del chat y los digests;** un cambio de modelo o de `AI_MODE` invalida los
+   digests guardados. Para medir sin caché, esperar 15 minutos o cambiar el índice.
+4. **Las corridas en vivo cuestan ≈ USD 0.007 cada una.** Una variable por corrida y un LOOP por cambio (F4-06).
+5. **Los tokens de admin duran 1 hora:** exportarlos como variable de entorno, nunca pegarlos en el chat ni en archivos.
+   `pnpm evals:costs --out` usa una ruta relativa a `evals/`.
+6. **Loops de la fase:** LOOP-013, 014, [015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md)
+   y [016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md).
 
 ## 9. Lista para el cierre final (F4-12)
 
-- [ ] §3 pasos 1–14 hechos y su evidencia enlazada en PLAN §6.
+- [ ] §3 pasos 8–14 hechos (Android, `enrich` con 5.5, borradores publicados, retractación elegida, tabla de sugerencias,
+  `demo:prepare`, ensayos) y su evidencia enlazada en PLAN §6.
 - [x] LOOPs de las observaciones que cambiaron el plan: LOOP-013 y LOOP-014.
-- [ ] LOOPs de la corrida base y de las 2 calibraciones (F4-05, F4-06). Hecho: [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) (corrida base y calibración 1) y [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) (calibración 2).
-- [ ] Este documento reescrito como estado final.
+- [x] LOOPs de la corrida base y de las 2 calibraciones: LOOP-015 y LOOP-016.
+- [ ] Configuración final anotada en CHAT-RAG (`chat.v2`, `CHAT_MAX_TOKENS` 1500, τ 0.45).
+- [ ] Este documento reescrito como estado final (después de los ensayos).
 - [ ] Saldo real ≥ USD 5 antes del último ensayo, con el snapshot registrado en `/costs`.
 - [ ] `git tag demo-final` sobre `main` congelado.
 
@@ -153,4 +162,7 @@ en esta fase. El gasto estimado de lo pendiente (§3) es ≈ USD 0.35, más las 
   con el mismo código que los elige (F4-03).
 - [LOOP-014](../../evidence/loops/LOOP-014-doble-conteo-del-rate-limit.md): el rate limit del chat se contaba dos veces
   (F4-01 → F4-02).
-- Pendientes: corrida base del set dorado y 2 calibraciones (F4-05, F4-06), en producción.
+- [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md): corrida base del set dorado y
+  límite de tokens del digest con Haiku 5.5 (F4-05, F4-06).
+- [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md): la ubicación simulada del lector entra
+  al prompt (F4-06).
