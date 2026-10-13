@@ -61,7 +61,7 @@ Para `--target=prod`, los scripts usan `gcloud auth print-access-token`.
 | # | Paso | Quién | Comando / acción | Cómo se comprueba | Costo |
 |---|---|---|---|---|---|
 | 1 | Revisar y mezclar los PR **#31 → #38** en orden (con *merge commit*: son PR apilados) | Diego | GitHub | CI verde en cada PR | 0 |
-| 2 | **Desplegar el Worker en `live`** desde `main` | Diego (cuenta de Cloudflare) | `pnpm -F api run deploy -- --var AI_MODE:live` | `GET /health` → `aiMode: "live"`; `POST /chat` sin token → `401` (hoy da `404`) | 0 |
+| 2 | **Desplegar el Worker en `live`** desde `main` | Diego (cuenta de Cloudflare) | `pnpm -F api run deploy --var AI_MODE:live` | `GET /health` → `aiMode: "live"`; `POST /chat` sin token → `401` (hoy da `404`) | 0 |
 | 3 | **Reescribir la semilla con horas actuales** y reconstruir el índice | Diego (`demo:prepare`) | `SEED_ID_TOKEN=… pnpm seed --target=prod` | En `/compare`, las noticias semilla vuelven a tener posición; `indexVersion` sube | Embeddings, casi 0 |
 | 4 | Corrida base del set dorado (F4-05) | Joaquín | `EVAL_ID_TOKEN=… pnpm evals:chat --api https://news-api.diegovalenzuela.workers.dev --label v1` | JSON en `evidence/evals/`; costo de la corrida < USD 0.15 (CA2) | ≈ 0.09 |
 | 5 | Registrar el LOOP de la corrida base | Joaquín | `/registrar-loop` | `evidence/loops/LOOP-0XX` con la tabla de métricas | 0 |
@@ -133,14 +133,16 @@ en esta fase. El gasto estimado de lo pendiente (§3) es ≈ USD 0.35, más las 
 1. **Nada del chat se puede ver de verdad hasta el paso 2 de §3.** La app ya tiene la pantalla; hoy muestra el error
    de servidor porque el Worker responde 404.
 2. **No dejar la noticia maliciosa de F4-07 en el índice.** Si se usó el paso 6, siempre correr `--remove`.
-3. **Las corridas en vivo gastan créditos:** cada una de ≈ USD 0.09. Una variable por corrida y un LOOP por cambio
+3. **Loop de la corrida base:** [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md).
+   La v2 salió casi toda de la caché; repetirla sin caché antes de usarla como medición.
+4. **Las corridas en vivo gastan créditos:** cada una de ≈ USD 0.09. Una variable por corrida y un LOOP por cambio
    (F4-06); revisar el saldo antes.
 
 ## 9. Lista para el cierre final (F4-12)
 
 - [ ] §3 pasos 1–14 hechos y su evidencia enlazada en PLAN §6.
 - [x] LOOPs de las observaciones que cambiaron el plan: LOOP-013 y LOOP-014.
-- [ ] LOOPs de la corrida base y de las 2 calibraciones (F4-05, F4-06).
+- [ ] LOOPs de la corrida base y de las 2 calibraciones (F4-05, F4-06). Hecho: [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) (corrida base y calibración 1). Falta la calibración 2.
 - [ ] Este documento reescrito como estado final.
 - [ ] Saldo real ≥ USD 5 antes del último ensayo, con el snapshot registrado en `/costs`.
 - [ ] `git tag demo-final` sobre `main` congelado.
