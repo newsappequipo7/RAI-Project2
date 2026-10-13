@@ -2,8 +2,8 @@ import type { AiTask } from '@repo/shared';
 import type { Bindings } from '../env';
 import type { TaskRoute } from './types';
 
-// ADR-009: Claude Haiku 4.5 is the default LLM; ADR-008: Workers AI bge-m3 for embeddings.
-export const DEFAULT_LLM_MODEL = 'claude-haiku-4-5-20251001';
+// ADR-009 (updated to Haiku 5.5): Claude Haiku 5.5 is the default LLM; ADR-008: Workers AI bge-m3 for embeddings.
+export const DEFAULT_LLM_MODEL = 'claude-haiku-5-5';
 export const EMBEDDING_MODEL = '@cf/baai/bge-m3';
 
 const WORKERS_AI_MODEL_PREFIX = '@cf/';

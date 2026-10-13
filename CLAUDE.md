@@ -68,7 +68,7 @@ No cargues todos los documentos a la vez. Lee el de tu fase y abre los demás so
   App Store al momento de crear el proyecto (verificar, ver doc de distribución).
 - `apps/admin`: SvelteKit (SPA, `adapter-static`) en Firebase Hosting. Incluye la ruta puente de login móvil.
 - `services/api`: Cloudflare Worker con Hono. D1 (ledger de costos y caché), KV (índice de búsqueda, digests),
-  Workers AI (embeddings). LLM: Anthropic, `claude-haiku-4-5-20251001` por defecto (ADR-009), configurable por tarea.
+  Workers AI (embeddings). LLM: Anthropic, `claude-haiku-5-5` por defecto (ADR-009), configurable por tarea.
 - `packages/shared`: tipos, esquemas zod, catálogos (ubicaciones, temas), motor de ranking. Lo usan mobile y admin.
 - Firebase: Authentication (Google) + Firestore (plan Spark, sin tarjeta).
 - `evals/`: sets dorados y scripts de evaluación del chat y del ranking.

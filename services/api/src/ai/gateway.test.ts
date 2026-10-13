@@ -89,19 +89,19 @@ describe('mock mode', () => {
 });
 
 describe('cost calculation', () => {
-  it('prices Haiku 4.5 at $1/$5 per million tokens and records it before returning', async () => {
+  it('prices Haiku 5.5 at $0.10/$0.50 per million tokens and records it before returning', async () => {
     const provider = fakeAnthropic(1500, 500);
 
     const result = await gateway.run('enrich', TEXT_INPUT, liveContext({ anthropic: provider }));
 
-    expect(result.costUsd).toBeCloseTo(0.004, 10);
-    expect(result.model).toBe('claude-haiku-4-5-20251001');
+    expect(result.costUsd).toBeCloseTo(0.0004, 10);
+    expect(result.model).toBe('claude-haiku-5-5');
     expect(callRows('ok')[0]).toMatchObject({
       provider: 'anthropic',
       input_tokens: 1500,
       output_tokens: 500,
     });
-    expect(callRows('ok')[0]?.cost_usd).toBeCloseTo(0.004, 10);
+    expect(callRows('ok')[0]?.cost_usd).toBeCloseTo(0.0004, 10);
   });
 
   it('honours a per-task model override', async () => {
