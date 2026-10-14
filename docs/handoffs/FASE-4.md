@@ -62,7 +62,7 @@ Para `--target=prod`, los scripts usan `gcloud auth print-access-token`.
 |---|---|---|---|
 | 1 | Mezclar los PR #31 → #38 | ☑ | Ya en `main` (hasta el PR #40). Los commits de esta sesión están en una rama aparte |
 | 2 | Desplegar el Worker en `live` | ☑ | `GET /health` → `aiMode: "live"`. El comando es `pnpm -F api run deploy --var AI_MODE:live` (sin `--` y escrito completo: con `AI_MODE:liv` el Worker queda en `mock` y no avisa) |
-| 3 | Reescribir la semilla con horas actuales y reindexar | ☑ el 2026-10-12 · repetir | La ventana de 72 h la vuelve a dejar fuera: repetir `pnpm seed --target=prod` y reindexar antes de cada ensayo y de la presentación |
+| 3 | Reescribir la semilla con horas actuales y reindexar | ☑ el 2026-10-12 · repetir | La ventana de 72 h la vuelve a dejar fuera: antes de cada ensayo y de la presentación, `unset SEED_ID_TOKEN; pnpm seed --target=prod` (sin token solo escribe Firestore) y después «Reconstruir índice» en `/news`. **No** usar `SEED_ID_TOKEN` ni `/indice`: reemplazan el índice solo con las 40 semilla |
 | 4 | Corrida base del set dorado (F4-05) | ☑ | [`chat-20261013-0401.json`](../../evidence/evals/chat-20261013-0401.json), USD 0.0070 |
 | 5 | LOOP de la corrida base | ☑ | [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) |
 | 6 | Set de inyección (F4-07) | ☑ | [`chat-injection-20261013-0419.json`](../../evidence/evals/chat-injection-20261013-0419.json): 0 fallos; la noticia se retiró del índice |
@@ -72,7 +72,7 @@ Para `--target=prod`, los scripts usan `gcloud auth print-access-token`.
 | 10 | Cargar borradores D1, D2 y los 16 editoriales | ◐ | 18 borradores creados en Firestore el 2026-10-12. **Falta publicar** los 16 desde el portal (→ 56 noticias) |
 | 11 | Elegir la noticia a retractar en la demo | ☐ | Propuesta: D1; anotarla en DEMO-RUNBOOK §2 |
 | 12 | Tabla «IA sugirió vs editor publicó» | ☐ | `pnpm report:ai-suggestions --target=prod --out evidence/F4-11-ai-suggestions.md`, después de publicar con el asistente de IA |
-| 13 | `demo:prepare` y videos de respaldo (F4-09) | ☐ | Calentar los 8 digests, revisar flags y saldo |
+| 13 | `demo:prepare` y videos de respaldo (F4-09) | ◐ | `pnpm demo:prepare` creado (revisa `aiMode`, flags, saldo y calienta los 8 digests). Falta correrlo y grabar los videos |
 | 14 | Ensayos generales (F4-10) | ☐ | DEMO-RUNBOOK §4; anotar tiempos y gasto por ensayo (`env=demo`) |
 
 Antes de cada sesión en vivo, revisar el saldo en `/costs`. En `dev`, el gateway degrada solo el chat a
@@ -113,7 +113,8 @@ Todas están documentadas en [CHAT-RAG](../domain/CHAT-RAG.md) (notas «Implemen
 
 | Severidad | Problema | Sugerencia |
 |---|---|---|
-| Alta | La semilla de producción caduca por la ventana de 72 h: el feed y el digest se quedan sin noticias recientes | Repetir `pnpm seed --target=prod` y reindexar el día de cada ensayo y de la presentación (§3 paso 3) |
+| Alta | La semilla de producción caduca por la ventana de 72 h: el feed y el digest se quedan sin noticias recientes | Repetir la semilla y «Reconstruir índice» el día de cada ensayo y de la presentación (§3 paso 3) |
+| Alta | `pnpm seed` con `SEED_ID_TOKEN` y «Indexar corpus semilla» de `/indice` reemplazan todo el índice con solo las 40 semilla: las editoriales publicadas dejan de aparecer en el chat | Reconstruir siempre desde `/news` → «Reconstruir índice», que indexa todo lo publicado |
 | Alta | `AI_MODE` no se valida: cualquier valor distinto de `live` deja el Worker en `mock` sin avisar (ocurrió con `AI_MODE:liv`) | Comprobar `/health` después de cada despliegue; opcional: rechazar valores inválidos al arrancar |
 | Media | Sin `temperature` las respuestas del chat ya no son deterministas (Haiku 5.5 la rechaza): las evals pueden variar entre corridas | Tratar cada medición como una muestra; repetir antes de afirmar un cambio fino |
 | Media | q09 del set dorado no cita `n-mx-001`: queda por debajo de τ = 0.45, y bajar τ pondría en riesgo q31 (0.437), que debe abstenerse | No tocar τ sin probar los casos de abstención |
