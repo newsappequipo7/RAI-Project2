@@ -7,7 +7,7 @@ import {
   type IndexEntry,
 } from '@repo/shared';
 import { z } from 'zod';
-import { CHAT_MAX_BLOCKS, CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v1';
+import { CHAT_MAX_BLOCKS, CHAT_SYSTEM_PROMPT } from '../ai/prompts/chat.v2';
 
 const MAX_BLOCK_TEXT = 1200;
 

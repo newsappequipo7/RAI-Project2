@@ -25,7 +25,7 @@ Decisiones en [CHAT-RAG §4](../docs/domain/CHAT-RAG.md) («Implementación (F4-
 
 | Criterio | Estado | Evidencia |
 |---|---|---|
-| CA1: los 4 casos del enunciado funcionan en iPhone y Android | ◐ pendiente | Código listo y bundles de Metro para iOS y Android compilan con la pantalla nueva (HTTP 200, ~11 MB). **Falta** probar en teléfonos: el Worker desplegado aún no tiene `/chat` ni `/digest` (están en esta rama). Ver «Para cerrar CA1» |
+| CA1: los 4 casos del enunciado funcionan en iPhone y Android | ◐ parcial | Worker desplegado en `live` con Haiku 5.5. Probado en un iPhone 16 Pro Max (iOS 27.0.1, Expo Go 1.0.0, cliente 57.0.9, SDK 57.0.0) el 2026-10-12: las 4 sugerencias, el chip de fuente que abre la noticia y «¿Cómo se generó?» funcionan (ver «Registro de prueba en teléfono»). **Falta** probar en un Android y guardar las capturas en el repo |
 | CA2: toda respuesta con LLM muestra fuentes y pie de IA; toda abstención lo dice explícitamente | ☑ automatizado | `firebase-tests/chatComponent.test.js`: una respuesta con LLM muestra el texto, el chip «En desarrollo», el chip de fuente «Abrir noticia: …» con sus medios, el aviso y el pie «Respuesta generada con IA a partir de 1 noticia publicada · mock»; una abstención muestra el aviso «No encontré noticias publicadas sobre eso» y el pie «Sin IA: no se encontraron noticias publicadas que respondan esto». `chatPresentation.test.ts` cubre el pie de los cinco modos |
 
 Otras pruebas (20 en total):
@@ -40,6 +40,30 @@ pnpm typecheck        OK
 pnpm test             OK: shared 289, Firestore 80, admin 71, Worker 202 (642 pruebas)
 Metro (puerto 8082)   iOS 200 · Android 200; ambos bundles incluyen la pantalla del chat
 ```
+
+## Registro de prueba en teléfono (2026-10-12)
+
+- **Dispositivo:** iPhone 16 Pro Max, iOS 27.0.1, Expo Go 1.0.0 (cliente 57.0.9, SDK 57.0.0), por túnel
+  (`pnpm -F mobile start --tunnel`).
+- **Worker:** `news-api.diegovalenzuela.workers.dev`, `aiMode=live`, modelo `claude-haiku-5-5`.
+- **Reportado como correcto por Diego** (sin captura guardada en el repo):
+  - «Resume lo más importante de hoy» (digest) en Quetzaltenango, con chips de certeza, fuentes y el pie «Resumen
+    generado con IA a partir de 4 noticias publicadas · modelo» (captura de pantalla de la sesión, con el modelo anterior).
+  - «¿Hay algún festival en mi ciudad?» en Quetzaltenango y «¿Qué pasa en mi ciudad con el transporte público?» en CDMX,
+    con `chat.v2` (ver [LOOP-016](loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md)).
+  - Una pregunta fuera del corpus («¿Quién ganó el mundial de 2030?») se abstiene con «No encontré noticias publicadas
+    sobre eso».
+- **Observación de la prueba:** escribir «¿Cómo se generó?» como pregunta se abstiene; es un botón de la tarjeta, no una
+  pregunta sobre noticias.
+- **Reportado como correcto por Diego (2026-10-12, noche):**
+  - Las cuatro sugerencias del chat, una por una.
+  - Tocar un chip de fuente abre la noticia.
+  - «¿Cómo se generó?» funciona: la captura de la sesión (Ciudad de México, pregunta sobre el sismo de Guatemala) muestra
+    «Intención detectada: Noticias de otro país», «Origen: Generada ahora con claude-haiku-5-5», «Costo aproximado:
+    ≈ USD 0.0004» y «Noticias usadas (1)», con el pie «Respuesta generada con IA a partir de 1 noticia publicada ·
+    claude-haiku-5-5» y los chips «En desarrollo».
+- **Pendiente:** recorrido en un Android (Diego lo hará en los próximos días) y las capturas por caso, que se guardarán
+  en `evidence/captures/` cuando termine el ajuste de la interfaz.
 
 ## Para cerrar CA1
 

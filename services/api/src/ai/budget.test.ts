@@ -39,10 +39,23 @@ describe('applyBudgetToFlags', () => {
 });
 
 describe('pricing', () => {
-  it('computes Haiku 4.5 cost as (in/1e6)*1 + (out/1e6)*5', () => {
-    const price = findModelPrice('anthropic', 'claude-haiku-4-5-20251001');
+  it('computes Haiku 5.5 cost as (in/1e6)*0.1 + (out/1e6)*0.5', () => {
+    const price = findModelPrice('anthropic', 'claude-haiku-5-5');
 
     expect(price).not.toBeNull();
+    expect(computeCostUsd(price!, { inputTokens: 3000, outputTokens: 400 })).toBeCloseTo(0.0005, 10);
+  });
+
+  it('prices Haiku 5.5 prompts over 100k tokens at the long-prompt rates', () => {
+    const price = findModelPrice('anthropic', 'claude-haiku-5-5');
+
+    expect(computeCostUsd(price!, { inputTokens: 100_000, outputTokens: 0 })).toBeCloseTo(0.01, 10);
+    expect(computeCostUsd(price!, { inputTokens: 100_001, outputTokens: 1000 })).toBeCloseTo(0.0525005, 10);
+  });
+
+  it('keeps Haiku 4.5 cost as (in/1e6)*1 + (out/1e6)*5', () => {
+    const price = findModelPrice('anthropic', 'claude-haiku-4-5-20251001');
+
     expect(computeCostUsd(price!, { inputTokens: 3000, outputTokens: 400 })).toBeCloseTo(0.005, 10);
   });
 

@@ -38,26 +38,29 @@
 | `temperature = 0`, salida JSON corta | Chat, enrich | Menos tokens de salida |
 | Portada tipográfica por código | Imágenes | Evita generación de imágenes |
 
-## 4. Costo por función (`enrich` ya medido; el resto son estimaciones por llenar con datos reales del ledger)
+## 4. Costo por función (medido con el ledger el 2026-10-13; ver [F4-08](../../evidence/F4-08-costs.md))
 
-| Función | Tokens entrada (prom.) | Tokens salida (prom.) | Costo por llamada | Llamadas esperadas | Total esperado |
-|---|---|---|---|---|---|
-| `enrich` | ≈ 1 362 (medido) | ≈ 364 (medido) | **0.003183** (medido, 5 llamadas pagadas; LOOP-005) | 80 noticias | ≈ 0.25 |
-| `chat_answer` | ~3 000 (supuesto) | ~400 (supuesto) | ≈ 0.0050 (estimado) | 1 500 (dev + evals + demo) | ≈ 7.50 sin caché; ≈ 4.50 con 40 % evitado |
-| `digest` | ~3 000 (supuesto) | ~500 (supuesto) | ≈ 0.0055 (estimado) | 8 ubicaciones × ~20 regeneraciones | ≈ 0.88 |
-| `embed` | — | — | 0 créditos | — | 0 |
-| `image_generate` | — | — | no aplica (deshabilitado; Anthropic no genera imágenes) | 0 | 0 |
+Modelo por defecto: Claude Haiku 5.5 a USD 0.10 / USD 0.50 por millón de tokens (entrada/salida) hasta 100 000 tokens de
+prompt, USD 0.50 / USD 2.50 por encima (verificado el 2026-10-12 en la página oficial de precios).
 
-`enrich` se midió el 2026-10-03 con `enrich.v1` sobre 5 noticias semilla: el ledger (USD 0.0159) coincide con la consola
-de Anthropic (6 810 tokens de entrada y 1 821 de salida = USD 0.0159) a menos de 1 %, y salió ≈ 20 % más barato que el
-supuesto. Las demás filas siguen siendo estimaciones con Claude Haiku 4.5 a USD 1 / USD 5 por millón de tokens (entrada/salida), precio a verificar en la
-página oficial. Total estimado ≈ USD 5.7, holgado frente al tope de USD 13 de desarrollo. Reemplazar por datos reales
-del ledger en la primera semana.
+| Función | Tokens entrada (prom.) | Tokens salida (prom.) | Costo por llamada (medido) | Llamadas pagadas | Gasto medido | Llamadas esperadas | Total esperado |
+|---|---|---|---|---|---|---|---|
+| `enrich` | 1 362 | 364 | **0.003183** (con Haiku 4.5; LOOP-005) | 5 | 0.0159 | 80 noticias | ≈ 0.25 con 4.5; ≈ 0.03 con 5.5 (estimado, sin medir) |
+| `chat_answer` | 1 170 | 350 | **0.000292** | 83 | 0.0243 | 1 500 (dev + evals + demo) | ≈ 0.44 sin caché; ≈ 0.26 con 40 % evitado |
+| `digest` | 2 985 | 721 | **0.000809** (mezcla de 4.5 y 5.5) | 24 | 0.0194 | 8 ubicaciones × ~20 regeneraciones | ≈ 0.13 |
+| `embed` | — | — | 0 créditos | 141 | 0 | — | 0 |
+| `image_generate` | — | — | no aplica (deshabilitado; Anthropic no genera imágenes) | 0 | 0 | 0 | 0 |
 
-**Cómo llenar esta tabla (F4-08):** con el Worker en `live` y después de las corridas del set dorado,
-`EVAL_ID_TOKEN=… pnpm evals:costs --api <worker> --out evidence/F4-08-costs.md` lee `GET /admin/costs` (`taskStats`:
-solo llamadas reales pagadas, sin `mock` ni caché) y genera las filas de esta tabla y el chequeo de §5. Las latencias
-p50/p95 por modo las imprime y guarda `pnpm evals:chat` (`metrics.latencyByMode`).
+Gasto total del ledger al medir: **USD 0.0596**, nivel `normal`, 21 % de las 357 llamadas resueltas sin LLM (caché o
+abstención). `enrich` se midió el 2026-10-03 con `enrich.v1` y Haiku 4.5: el ledger coincide con la consola de Anthropic a
+menos de 1 %. El costo de `chat_answer` coincide con el cálculo a partir de los tokens medios a tarifa de Haiku 5.5;
+`digest` mezcla las llamadas hechas con Haiku 4.5 antes del cambio de modelo, por eso sale más caro de lo que da la tarifa
+nueva (≈ 0.00066). Total proyectado ≈ USD 0.8 como cota alta, muy por debajo del tope de USD 13 de desarrollo. Pendiente:
+medir `enrich` con Haiku 5.5 (el 4.5 sigue como cota alta) y repetir esta tabla después de los ensayos.
+
+**Cómo repetir la medición:** `EVAL_ID_TOKEN=… pnpm evals:costs --api <worker> --out ../evidence/F4-08-costs.md` (la ruta
+es relativa a `evals/`) lee `GET /admin/costs` (`taskStats`: solo llamadas reales pagadas, sin `mock` ni caché). Las
+latencias p50/p95 por modo las imprime y guarda `pnpm evals:chat` (`metrics.latencyByMode`).
 
 Fórmula: `costo = (in/1e6)·precioIn + (out/1e6)·precioOut`. Llenar la columna "Costo por llamada" en la primera semana
 con el promedio real de D1 y proyectar. Si la proyección total supera USD 13, cambiar de modelo o recortar contexto
@@ -68,6 +71,9 @@ antes de seguir (y registrarlo como loop: es exactamente el tipo de evidencia qu
 Supuesto: 25 compañeros × 5 preguntas = 125 preguntas; 40 % resueltas por digest, caché o abstención → ~75 llamadas
 LLM. Más 3 ensayos generales del equipo (~60 llamadas cada uno). Total ≈ 255 llamadas × costo medio medido.
 La reserva de USD 7 debe cubrir **al menos 3×** esa estimación. Si no la cubre, bajar el modelo del chat en demo.
+
+**Resultado (2026-10-13, [F4-08](../../evidence/F4-08-costs.md)):** 255 llamadas × USD 0.000292 ≈ **USD 0.07**; la reserva
+de USD 7.00 las cubre **93.9×** (objetivo ≥ 3×).
 
 ## 6. Dashboard de costos (portal `/costs`, F2)
 

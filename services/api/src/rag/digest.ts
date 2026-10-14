@@ -3,8 +3,6 @@ import {
   chatSourceSchema,
   createDefaultProfile,
   DEFAULT_FEED_WINDOW_HOURS,
-  findCountry,
-  findLocation,
   MUST_KNOW_WINDOW_HOURS,
   rankFeed,
   type ChatResponse,
@@ -12,11 +10,18 @@ import {
   type News,
 } from '@repo/shared';
 import { z } from 'zod';
+import { resolveRoute } from '../ai/config';
 import { gateway } from '../ai/gateway';
 import type { GatewayContext } from '../ai/types';
 import type { Bindings } from '../env';
 import { DIGEST_PREFIX, readIndexVersion } from '../kv';
-import { askModel, CHAT_NOTICES, emptyResponse, retrievalOnlyResponse } from './answer';
+import {
+  askModel,
+  CHAT_NOTICES,
+  describeLocation,
+  emptyResponse,
+  retrievalOnlyResponse,
+} from './answer';
 import { readIndex } from './index';
 
 /** CHAT-RAG.md §5: the digest summarizes the 8 best-ranked news for the location. */
@@ -126,15 +131,21 @@ export function selectDigestNews(
 }
 
 function digestQuestion(locationId: string): string {
-  const location = findLocation(locationId);
-  const country = location ? findCountry(location.countryIso)?.name : undefined;
-  const place = location ? [location.city, country].filter(Boolean).join(', ') : locationId;
-  return `Resume lo más importante de las noticias publicadas para un lector de ${place}. Un bloque por tema, empezando por lo más importante.`;
+  return `Resume lo más importante de las noticias publicadas para un lector de ${describeLocation(locationId)}. Un bloque por tema, empezando por lo más importante.`;
 }
 
 async function readStored(kv: KVNamespace, locationId: string): Promise<StoredDigest | null> {
   const parsed = storedDigestSchema.safeParse(await kv.get(digestKey(locationId), 'json'));
   return parsed.success && parsed.data.locationId === locationId ? parsed.data : null;
+}
+
+function isGeneratedByCurrentRoute(stored: StoredDigest, env: Bindings): boolean {
+  const route = resolveRoute('digest', env);
+  return (
+    route !== null &&
+    stored.generatedBy.provider === route.provider &&
+    stored.generatedBy.model === route.model
+  );
 }
 
 function fromStored(stored: StoredDigest, cached: boolean, costUsd: number): ChatResponse {
@@ -164,7 +175,7 @@ export async function getDigest(locationId: string, ctx: DigestContext): Promise
 
   const indexVersion = await readIndexVersion(env.KV);
   const stored = await readStored(env.KV, locationId);
-  if (stored && stored.indexVersion === indexVersion) {
+  if (stored && stored.indexVersion === indexVersion && isGeneratedByCurrentRoute(stored, env)) {
     await gateway.recordCacheHit('digest', gatewayCtx);
     return fromStored(stored, true, 0);
   }
@@ -175,7 +186,7 @@ export async function getDigest(locationId: string, ctx: DigestContext): Promise
 
   const answer = await askModel(
     'digest',
-    { question: digestQuestion(locationId), history: [], context: selected },
+    { question: digestQuestion(locationId), locationId, history: [], context: selected },
     gatewayCtx,
   );
   if (!answer.ok || answer.response.blocks.length === 0) {

@@ -1,4 +1,6 @@
 import {
+  findCountry,
+  findLocation,
   UNCERTAIN_CERTAINTIES,
   type AiTask,
   type ChatResponse,
@@ -6,7 +8,7 @@ import {
   type IndexEntry,
 } from '@repo/shared';
 import { gateway } from '../ai/gateway';
-import { buildChatPrompt, CHAT_MAX_TOKENS } from '../ai/prompts/chat.v1';
+import { buildChatPrompt, CHAT_MAX_TOKENS } from '../ai/prompts/chat.v2';
 import type { GatewayContext, GatewayResult } from '../ai/types';
 import { ApiError } from '../errors';
 import { CHAT_CONFIG } from './chatConfig';
@@ -61,8 +63,15 @@ export function retrievalOnlyResponse(entries: IndexEntry[], costUsd: number): C
   };
 }
 
+export function describeLocation(locationId: string): string {
+  const location = findLocation(locationId);
+  const country = location ? findCountry(location.countryIso)?.name : undefined;
+  return location ? [location.city, country].filter(Boolean).join(', ') : locationId;
+}
+
 export interface AnswerRequest {
   question: string;
+  locationId: string;
   history: ChatTurn[];
   context: IndexEntry[];
 }
@@ -97,6 +106,7 @@ export async function askModel(
         question: request.question,
         history: request.history,
         news: request.context,
+        readerLocation: describeLocation(request.locationId),
         excerptLength: CHAT_CONFIG.contextExcerptLength,
         formatReminder,
       });

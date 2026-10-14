@@ -3,6 +3,14 @@ import { providerError } from '../../errors';
 import type { Provider } from '../types';
 
 const MAX_RETRIES = 1;
+const ADAPTIVE_THINKING_MODEL_PREFIX = 'claude-haiku-5';
+
+// Haiku 5.5 thinks by default, and thinking tokens count against max_tokens.
+function thinkingOptions(model: string) {
+  return model.startsWith(ADAPTIVE_THINKING_MODEL_PREFIX)
+    ? { output_config: { effort: 'low' as const } }
+    : {};
+}
 
 export const callAnthropic: Provider = async ({ env, model, input }) => {
   if (input.kind !== 'text') {
@@ -19,7 +27,7 @@ export const callAnthropic: Provider = async ({ env, model, input }) => {
     const response = await client.messages.create({
       model,
       max_tokens: input.maxTokens,
-      temperature: 0,
+      ...thinkingOptions(model),
       system: input.system,
       messages: [{ role: 'user', content: input.prompt }],
     });

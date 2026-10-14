@@ -1,18 +1,18 @@
-{"id":"q01","category":"resumen_region","locationId":"gt-guatemala","message":"Resume lo más importante de hoy","expect":{"mode":["digest","answer"]}}
-{"id":"q02","category":"resumen_region","locationId":"gt-guatemala","message":"¿Qué pasa en mi zona?","expect":{"mode":["digest","answer"]}}
+{"id":"q01","category":"resumen_region","locationId":"gt-guatemala","message":"Resume lo más importante de hoy","expect":{"mode":["digest","answer"],"relevant":["n-gt-001","n-gt-002","n-gt-004","n-gt-sismo"]}}
+{"id":"q02","category":"resumen_region","locationId":"gt-guatemala","message":"¿Qué pasa en mi zona?","expect":{"mode":["digest","answer"],"relevant":["n-gt-001","n-gt-002","n-gt-004","n-gt-sismo"]}}
 {"id":"q03","category":"resumen_region","locationId":"gt-guatemala","message":"¿Qué está pasando en mi país con el dengue?","expect":{"mode":["answer"],"mustCite":["n-gt-001"]}}
 {"id":"q04","category":"resumen_region","locationId":"gt-quetzaltenango","message":"¿Hay algún festival en mi ciudad?","expect":{"mode":["answer"],"mustCite":["n-gt-003"]}}
 {"id":"q05","category":"resumen_region","locationId":"gt-guatemala","message":"¿Qué pasó con el sismo aquí en Guatemala?","expect":{"mode":["answer"],"mustCite":["n-gt-sismo"],"mustMentionUncertainty":true}}
 {"id":"q06","category":"resumen_region","locationId":"mx-cdmx","message":"¿Qué pasa en mi ciudad con el transporte público?","expect":{"mode":["answer"],"mustCite":["n-mx-003"]}}
-{"id":"q07","category":"resumen_region","locationId":"es-madrid","message":"Ponme al día con las noticias de mi país","expect":{"mode":["digest","answer"]}}
+{"id":"q07","category":"resumen_region","locationId":"es-madrid","message":"Ponme al día con las noticias de mi país","expect":{"mode":["digest","answer"],"relevant":["n-es-001","n-es-002","n-es-004","n-glo-001","n-glo-002"]}}
 {"id":"q08","category":"resumen_region","locationId":"gt-guatemala","message":"¿Cuántos guatemaltecos retornados hubo según las cifras de mi país?","expect":{"mode":["answer"],"mustCite":["n-gt-007"],"mustMentionUncertainty":true}}
 {"id":"q09","category":"otro_pais","locationId":"gt-guatemala","message":"Explícame lo más importante de México","expect":{"mode":["answer"],"mustCite":["n-mx-001"],"relevant":["n-mx-002","n-mx-003","n-mx-004"]}}
-{"id":"q10","category":"otro_pais","locationId":"gt-guatemala","message":"¿Qué pasa en Argentina con la economía?","expect":{"mode":["answer"],"mustCite":["n-ar-001"]}}
+{"id":"q10","category":"otro_pais","locationId":"gt-guatemala","message":"¿Qué pasa en Argentina con la economía?","expect":{"mode":["answer"],"mustCite":["n-ar-001"],"relevant":["n-ar-002"]}}
 {"id":"q11","category":"otro_pais","locationId":"mx-cdmx","message":"¿Qué se sabe del sismo en Guatemala?","expect":{"mode":["answer"],"mustCite":["n-gt-sismo"],"mustMentionUncertainty":true}}
 {"id":"q12","category":"otro_pais","locationId":"es-madrid","message":"¿Qué está pasando en Colombia con la reforma de pensiones?","expect":{"mode":["answer"],"mustCite":["n-co-001"]}}
 {"id":"q13","category":"otro_pais","locationId":"gt-guatemala","message":"¿Qué pasó en el clásico del fútbol colombiano?","expect":{"mode":["answer"],"mustCite":["n-co-003"],"mustMentionUncertainty":true}}
 {"id":"q14","category":"otro_pais","locationId":"ar-buenos-aires","message":"Explícame la situación del cólera en Haití","expect":{"mode":["answer"],"mustCite":["n-int-005"],"mustMentionUncertainty":true}}
-{"id":"q15","category":"tema","locationId":"gt-guatemala","message":"¿Qué hay de nuevo sobre la influenza?","expect":{"mode":["answer"],"mustCite":["n-glo-002"]}}
+{"id":"q15","category":"tema","locationId":"gt-guatemala","message":"¿Qué hay de nuevo sobre la influenza?","expect":{"mode":["answer"],"mustCite":["n-glo-002"],"relevant":["n-es-004"]}}
 {"id":"q16","category":"tema","locationId":"us-nueva-york","message":"¿Qué se acordó en la cumbre climática?","expect":{"mode":["answer"],"mustCite":["n-glo-001"]}}
 {"id":"q17","category":"tema","locationId":"es-madrid","message":"¿Hay huelga de trenes?","expect":{"mode":["answer"],"mustCite":["n-es-002"],"mustMentionUncertainty":true}}
 {"id":"q18","category":"tema","locationId":"co-bogota","message":"¿Va a haber restricciones de agua por los embalses?","expect":{"mode":["answer"],"mustCite":["n-co-002"],"mustMentionUncertainty":true}}

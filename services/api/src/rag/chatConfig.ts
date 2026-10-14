@@ -17,5 +17,5 @@ export const CHAT_CONFIG = {
    * Bump when the pipeline changes so stale cached answers are not served. The whole config is part
    * of the cache key, so calibrating a knob (F4-06) already skips answers cached with the old value.
    */
-  cacheVersion: 'v2',
+  cacheVersion: 'v3',
 } as const;
