@@ -12,6 +12,7 @@
     "test": "pnpm -r --if-present run test",
     "evals:chat": "pnpm -F evals run chat",
     "evals:costs": "pnpm -F evals run costs",
+    "demo:prepare": "pnpm -F evals run demo:prepare",
     "seed": "pnpm -F shared run seed --",
     "seed:editorial": "pnpm -F shared run seed:editorial --",
     "seed:injection": "pnpm -F shared run seed:injection --",

@@ -20,7 +20,11 @@ El orden de la presentación es obligatorio. La demo funcional es el componente 
 ## 2. Guion de la sección 3–5 (la parte más riesgosa)
 
 Preparación (30 min antes):
-- Corpus semilla cargado, índice reconstruido (`/admin/index/rebuild`), digests calientes para las 8 ubicaciones.
+- Corpus semilla cargado y **índice reconstruido desde el portal** (`/news` → «Reconstruir índice», que indexa todo lo
+  publicado). No reconstruir con `pnpm seed` con `SEED_ID_TOKEN` ni con «Indexar corpus semilla» de `/indice`: esas dos
+  reemplazan el índice solo con las 40 noticias semilla y dejan fuera las editoriales publicadas.
+- `EVAL_ID_TOKEN=… pnpm demo:prepare --api https://news-api.diegovalenzuela.workers.dev`: revisa `aiMode`, kill switch,
+  saldo y calienta los digests de las 8 ubicaciones. Debe terminar con «Todo listo para el ensayo».
 - Flags: `chatMode=full`, `imageGenEnabled=false` (la portada tipográfica es suficiente y cuesta 0). `env=demo` no es un
   flag: es la variable `ENV` de `services/api/wrangler.toml` y se cambia con un despliegue (`AI_MODE=live` también).
 - Noticia maliciosa de F4-07 **fuera** del índice (`pnpm seed:injection --api <worker> --remove`).
@@ -69,3 +73,4 @@ con el pie «Sin IA: resultado de búsqueda» y se explica como degradación con
 
 - Ensayo general 1: 7 días antes. Ensayo 2: 3 días antes (reinstalar Plan B después de este). Ensayo 3: día anterior.
 - Cronometrar cada sección. Registrar gasto de cada ensayo en el ledger (`env=demo`) y ajustar la reserva.
+- Registro de los ensayos: [`evidence/F4-10-rehearsals.md`](../../evidence/F4-10-rehearsals.md).
