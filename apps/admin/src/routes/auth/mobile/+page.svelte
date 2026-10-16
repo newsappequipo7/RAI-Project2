@@ -6,12 +6,13 @@
 		extractStateFromHash,
 		extractIdTokenFromHash
 	} from '$lib/googleOAuth';
-	import { isAllowedRedirect } from '$lib/redirectWhitelist';
+	import { isAllowedRedirect, toAppLaunchUrl } from '$lib/redirectWhitelist';
 
-	type Status = 'checking' | 'redirecting' | 'error';
+	type Status = 'checking' | 'redirecting' | 'ready' | 'error';
 
 	let status = $state<Status>('checking');
 	let errorMessage = $state('');
+	let appUrl = $state('');
 
 	onMount(() => {
 		const idToken = extractIdTokenFromHash(window.location.hash);
@@ -25,8 +26,9 @@
 				return;
 			}
 
-			status = 'redirecting';
-			window.location.href = `${redirect}#id_token=${idToken}`;
+			appUrl = toAppLaunchUrl(`${redirect}#id_token=${idToken}`, navigator.userAgent);
+			status = 'ready';
+			window.location.href = appUrl;
 			return;
 		}
 
@@ -46,6 +48,9 @@
 <main>
 	{#if status === 'checking' || status === 'redirecting'}
 		<p>Iniciando sesión con Google…</p>
+	{:else if status === 'ready'}
+		<p>Sesión de Google verificada.</p>
+		<a href={appUrl}>Abrir la app</a>
 	{:else if status === 'error'}
 		<p role="alert">{errorMessage}</p>
 	{/if}
