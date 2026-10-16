@@ -90,6 +90,7 @@ flowchart LR
 
 El gateway resuelve proveedor y modelo por **tarea**, no por endpoint. Esto permite cambiar una tarea a otro modelo
 (incluido Jev para el laboratorio de rediseño) sin tocar la lógica.
+El modelo LLM por defecto es `claude-haiku-5-5` (ADR-012, que reemplaza ADR-009).
 
 | Tarea (`AiTask`) | Default | Alternativas | Notas |
 |------------------|---------|--------------|-------|

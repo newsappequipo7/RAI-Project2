@@ -78,10 +78,10 @@ tiempo; LOOP-005 se conserva como respaldo de la sección 7.
 | Afirmación | Evidencia | Estado |
 |---|---|---|
 | El ledger coincide con el panel del proveedor | [LOOP-003](../../evidence/loops/LOOP-003-costo-real-gateway.md) (16/4 tokens exactos), [LOOP-005](../../evidence/loops/LOOP-005-enrich-calidad-y-costo.md) (< 1 %) | ☑ |
-| Costo por función medido | [PRESUPUESTO-IA §4](PRESUPUESTO-IA.md) y [F4-08](../../evidence/F4-08-costs.md): `chat_answer` USD 0.000292, `digest` 0.000809, `enrich` 0.003183 (medido con Haiku 4.5; con 5.5 sin medir) | ☑ chat y digest · ◐ `enrich` |
+| Costo por función medido | [PRESUPUESTO-IA §4](PRESUPUESTO-IA.md) y [F4-08](../../evidence/F4-08-costs.md): `chat_answer` USD 0.000296, `digest` 0.000809, `enrich` 0.003183 (medido con Haiku 4.5; con 5.5 sin medir) | ☑ chat y digest · ◐ `enrich` |
 | Ahorros: abstención sin LLM, caché, digest compartido y atajo | Abstención sin fila de LLM, caché sin filas nuevas ([F4-01](../../evidence/F4-01-chat-pipeline.md)); digest a costo 0 desde la segunda consulta ([F4-03](../../evidence/F4-03-digest.md)) | ☑ código · ☑ 21 % de 357 llamadas resueltas sin LLM ([F4-08](../../evidence/F4-08-costs.md)) |
 | Kill switch y modo degradado | `blocked` y `retrieval_only` probados ([F4-01](../../evidence/F4-01-chat-pipeline.md), [F4-03](../../evidence/F4-03-digest.md)) | ☑ |
-| Reserva ≥ 3× la estimación de la demo | [PRESUPUESTO-IA §5](PRESUPUESTO-IA.md): estimación USD 0.07, reserva USD 7.00, cobertura 93.9× ([F4-08](../../evidence/F4-08-costs.md)) | ☑ |
+| Reserva ≥ 3× la estimación de la demo | [PRESUPUESTO-IA §5](PRESUPUESTO-IA.md): estimación USD 0.075, reserva USD 7.00, cobertura 92.8× ([F4-08](../../evidence/F4-08-costs.md)) | ☑ |
 
 ## Sección 10 — Lecciones aprendidas (Joaquín, con aportes de todos)
 

@@ -183,3 +183,34 @@ incrustado en la imagen se implementa cuando exista una imagen real que sellar. 
 ADR con proveedor, precio en `pricing.ts` y presupuesto aprobado.
 Evidencia: pruebas del gateway («image generation») y de la ruta (flag apagado → `forbidden`).
 
+
+---
+
+## ADR-012 — Modelo LLM en producción: Claude Haiku 5.5
+Estado: aceptada
+Fecha: 2026-10-15 · Autor: Diego
+Reemplaza ADR-009.
+Contexto: ADR-009 fijó Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) para `enrich`, `chat_answer` y `digest`. En F4-06
+(commit `2d099d2`, 2026-10-12) el modelo por defecto pasó a `claude-haiku-5-5` y hoy es el que corre en producción.
+Una auditoría del 2026-10-15 encontró que ADR-009 contradecía al sistema.
+Opciones: (A) mantener Haiku 4.5: USD 1 / 5 por MTok. (B) Haiku 5.5: USD 0.10 / 0.50 por MTok hasta 100 000 tokens de
+prompt y USD 0.50 / 2.50 por encima. (C) Sonnet o Workers AI para el chat, descartados en ADR-009 y sin cambios.
+Decisión: B para las tres tareas con LLM. No hay variables `AI_MODEL_*` en el Worker desplegado (versión
+`740064a9-8227-47e9-826e-71748b3df65b`, 2026-10-15): todas usan `DEFAULT_LLM_MODEL` de `services/api/src/ai/config.ts`.
+`embed` sigue en Workers AI `@cf/baai/bge-m3` (ADR-008). La degradación a Workers AI si el presupuesto se agota
+(opción C de ADR-009) se mantiene.
+Precio verificado: 2026-10-15 en https://platform.claude.com/docs/en/about-claude/pricing. Haiku 5.5 USD 0.10 / 0.50
+(≤ 100 000 tokens) y 0.50 / 2.50 (> 100 000); Haiku 4.5 USD 1 / 5. Coincide con `services/api/src/ai/pricing.ts`
+(verificado el 2026-10-12), que no requirió cambios.
+Por qué cambió: el precio de Haiku 5.5 es 10 veces menor por token que el de 4.5 y la calibración del chat (F4-06) se
+hizo y se midió con él (LOOP-015, LOOP-016). El motivo concreto de la decisión de pasar de 4.5 a 5.5 no quedó escrito en
+el repo (confirmar).
+Consecuencias: el costo por llamada baja un orden de magnitud frente a la estimación de ADR-009 (≈ USD 0.005 por
+respuesta de chat). Hay que vigilar que Haiku 5.5 no acepta el parámetro `temperature` (se elimina) y se usa esfuerzo
+bajo en su razonamiento; el tramo de prompts > 100 000 tokens no se usa en este producto. `enrich` se midió el 2026-10-03
+con Haiku 4.5 (USD 0.003183 por llamada con 1 362 tokens de entrada y 364 de salida); con las tarifas de 5.5 los mismos
+tokens costarían ≈ USD 0.000318, cifra calculada y no medida. `digest` mezcla llamadas con 4.5 y 5.5 (medido 0.000809;
+≈ 0.00066 a tarifa de 5.5).
+Evidencia: costo real por función en `evidence/F4-08-costs.md` (ledger D1, 2026-10-14: `chat_answer` USD 0.000296 con
+85 llamadas pagadas; gasto total USD 0.0605 frente a USD 0.06 en la consola de Anthropic, conciliado el 2026-10-15 en
+PRESUPUESTO-IA §4); calibración en `evidence/loops/LOOP-015` y `LOOP-016`.

@@ -68,7 +68,7 @@ Para `--target=prod`, los scripts usan `gcloud auth print-access-token`.
 | 6 | Set de inyección (F4-07) | ☑ | [`chat-injection-20261013-0419.json`](../../evidence/evals/chat-injection-20261013-0419.json): 0 fallos; la noticia se retiró del índice |
 | 7 | Calibración (F4-06) | ☑ | LOOP-015 (tokens) y [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) (ubicación en el prompt). τ = 0.45 sin cambios |
 | 8 | Prueba en teléfonos (F4-04 CA1) | ◐ | iPhone 16 Pro Max hecho ([F4-04](../../evidence/F4-04-chat-ui.md)); **falta un Android** y las capturas |
-| 9 | Latencia y costo reales (F4-08) | ◐ | [F4-08-costs.md](../../evidence/F4-08-costs.md); reserva cubierta 93.9×. **Falta** medir `enrich` con Haiku 5.5 y repetir tras los ensayos |
+| 9 | Latencia y costo reales (F4-08) | ◐ | [F4-08-costs.md](../../evidence/F4-08-costs.md); reserva cubierta 92.8×. **Falta** medir `enrich` con Haiku 5.5 y repetir tras los ensayos |
 | 10 | Cargar borradores D1, D2 y los 16 editoriales | ◐ | 18 borradores creados en Firestore el 2026-10-12. **Falta publicar** los 16 desde el portal (→ 56 noticias) |
 | 11 | Elegir la noticia a retractar en la demo | ☐ | Propuesta: D1; anotarla en DEMO-RUNBOOK §2 |
 | 12 | Tabla «IA sugirió vs editor publicó» | ☐ | `pnpm report:ai-suggestions --target=prod --out evidence/F4-11-ai-suggestions.md`, después de publicar con el asistente de IA |
@@ -131,7 +131,7 @@ Todas están documentadas en [CHAT-RAG](../domain/CHAT-RAG.md) (notas «Implemen
 Gasto total del ledger al 2026-10-13 (04:47 UTC): **USD 0.0596**, nivel `normal` (tope de desarrollo USD 13, tope del
 proyecto USD 20). Incluye las corridas del set dorado (≈ USD 0.0064–0.0071 cada una), el set de inyección y el uso desde
 la app. Detalle por función en [F4-08](../../evidence/F4-08-costs.md) y [PRESUPUESTO-IA §4](../ops/PRESUPUESTO-IA.md).
-Estimación de la demo: USD 0.07 frente a una reserva de USD 7.00 (93.9×).
+Estimación de la demo: USD 0.075 frente a una reserva de USD 7.00 (92.8×).
 
 ## 8. Qué necesita saber la siguiente persona
 
