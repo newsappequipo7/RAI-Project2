@@ -111,8 +111,13 @@ Ya hay capturas de F2 (`F2-06-*`, `F2-08-*`). Lo nuevo es el video de respaldo; 
 
 ## 13. Medición de F3-02 CA2: `rankFeed` < 20 ms en teléfono
 
-- [ ] Modelo del teléfono de **gama media** (el iPhone 16 Pro Max no lo es), versión de Expo Go y tiempos →
-  `evidence/F3-02-ranking.md`. Método propuesto abajo; requiere tu aprobación del log solo en desarrollo.
+- [ ] No hay un dispositivo de gama media disponible (decisión de Diego, 2026-10-15). Se mide en el teléfono que haya y
+  se registra **como limitación**: un resultado en un iPhone 16 Pro Max (gama alta) es una cota inferior y no demuestra
+  F3-02 CA2 para gama media. Anotar modelo exacto, versión de Expo Go y las líneas del log en `evidence/F3-02-ranking.md`.
+- Cómo leerlo: con `pnpm -F mobile start --tunnel`, abrir la pestaña Noticias. La terminal de Metro imprime una línea
+  `LOG  [ranking-timing] n=<reales>: X ms | n=200 (replicas): Y ms | median of 5 runs` cada vez que el feed se
+  recalcula (al abrir, al cambiar de ubicación y cada minuto). El criterio es **Y < 20**. Tomar al menos 3 lecturas y
+  reportar la mayor; la primera tras abrir la app puede incluir calentamiento.
 
 ## 14. Videos de respaldo (B4), uno por sección del runbook
 
