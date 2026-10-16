@@ -127,13 +127,12 @@ Carpeta `evidence/demo-videos/`. Priorizar las secciones de riesgo (2, 3, 5, 7).
 - [ ] `04-validacion-companeros.mp4`  - [ ] `05-chat.mp4`  - [ ] `06-arquitectura-y-decisiones.mp4`
 - [ ] `07-retractacion.mp4`  - [ ] `08-loops-y-gestion.mp4`  - [ ] `09-costos.mp4`  - [ ] `10-lecciones.mp4`
 
-## Decisión abierta: noticias para publicar y retractar en producción
+## Decisión tomada: noticia de ensayo para publicar en producción
 
-`demo-d1`, `demo-d2` y `n-ar-003` son las noticias de la demo y no se pueden reutilizar tras publicarlas o retractarlas.
-Los puntos 9, 10 y 11 (CA2) necesitan publicar algo en producción. El runbook no dice cómo ensayar sin gastarlas.
-Opciones: (A) ensayar la publicación en el emulador y publicar en producción solo el día de la presentación; los
-teléfonos no pueden apuntar al emulador, así que el punto 9 no se mediría; (B) crear una noticia de ensayo descartable,
-publicarla para medir el punto 9 y después dejarla `rechazada` y fuera del índice.
+Diego eligió la opción B (2026-10-15). Se creó `ensayo-f3-10`, «[ENSAYO] Prueba de tiempo real — no publicar», en
+`borrador`: alcance `global`, importancia 3 (entra en «Lo que debes saber» en cualquier ubicación), una fuente de ejemplo
+(`example.org`), sin `/admin/enrich`. Se publica solo cuando Diego lo pide, durante los puntos 9 y 11; después se pasa a
+`rechazada` con la corrección «Noticia de ensayo» y se quita del índice. `demo-d1`, `demo-d2` y `n-ar-003` no se tocan.
 
 ## Cómo medir sin agregar código a producción
 
