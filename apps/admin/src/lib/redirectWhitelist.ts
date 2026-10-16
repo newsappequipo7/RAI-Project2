@@ -4,16 +4,13 @@ export function isAllowedRedirect(redirect: string): boolean {
 	return ALLOWED_REDIRECT_PREFIXES.some((prefix) => redirect.startsWith(prefix));
 }
 
-const ANDROID_PACKAGE_BY_SCHEME: Record<string, string> = {
-	exp: 'host.exp.exponent',
-	exps: 'host.exp.exponent',
-	newsapp: 'gt.uvg.newsapp.dv'
-};
 const ANDROID_USER_AGENT = /android/i;
 
 /**
  * Chrome on Android refuses to navigate to custom schemes from script, but follows
- * intent:// URLs, which name the target app explicitly.
+ * intent:// URLs. No package is pinned: with one, Android sends the user to the Play
+ * Store whenever that exact package does not claim the URL, instead of opening
+ * whichever installed app handles the scheme (Expo Go or our own build).
  */
 export function toAppLaunchUrl(appUrl: string, userAgent: string): string {
 	if (!ANDROID_USER_AGENT.test(userAgent)) {
@@ -29,7 +26,5 @@ export function toAppLaunchUrl(appUrl: string, userAgent: string): string {
 
 	// An intent URI reserves the fragment for its own #Intent section, so the token moves to the query.
 	const rest = rawRest.replace('#id_token=', '?id_token=');
-	const androidPackage = ANDROID_PACKAGE_BY_SCHEME[scheme];
-	const packageSection = androidPackage ? `package=${androidPackage};` : '';
-	return `intent://${rest}#Intent;scheme=${scheme};${packageSection}end`;
+	return `intent://${rest}#Intent;scheme=${scheme};action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
 }

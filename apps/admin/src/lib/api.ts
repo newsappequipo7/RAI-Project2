@@ -1,8 +1,6 @@
 import type { ApiErrorBody } from '@repo/shared';
+import { API_BASE_URL } from './apiBaseUrl';
 import { session } from './session.svelte';
-
-const DEFAULT_API_BASE_URL = 'https://news-api.diegovalenzuela.workers.dev';
-const API_BASE_URL = import.meta.env.VITE_API_URL || DEFAULT_API_BASE_URL;
 
 export class ApiRequestError extends Error {
 	constructor(

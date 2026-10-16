@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,10 +9,15 @@ const { DatabaseSync: SqliteDatabase } = createRequire(import.meta.url)(
   'node:sqlite',
 ) as typeof import('node:sqlite');
 
-const MIGRATION_PATH = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '../../migrations/0001_init.sql',
-);
+const MIGRATIONS_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../migrations');
+
+function readMigrations(): string {
+  return readdirSync(MIGRATIONS_DIR)
+    .filter((file) => file.endsWith('.sql'))
+    .sort()
+    .map((file) => readFileSync(join(MIGRATIONS_DIR, file), 'utf8'))
+    .join('\n');
+}
 
 class FakeStatement {
   constructor(
@@ -46,7 +51,7 @@ export interface TestD1 {
 
 export function createTestD1(): TestD1 {
   const sqlite = new SqliteDatabase(':memory:');
-  sqlite.exec(readFileSync(MIGRATION_PATH, 'utf8'));
+  sqlite.exec(readMigrations());
 
   const d1 = {
     prepare: (sql: string) => new FakeStatement(sqlite, sql),

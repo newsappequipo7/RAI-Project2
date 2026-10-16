@@ -1,32 +1,52 @@
 import * as Linking from 'expo-linking';
-import { signInAnonymously } from 'firebase/auth';
-import { useState } from 'react';
+import { GoogleAuthProvider, signInAnonymously, signInWithCredential } from 'firebase/auth';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { AUTH_BRIDGE_URL } from '@/src/services/authBridge';
+import { openHandoff, waitForHandoffToken } from '@/src/services/authHandoff';
 import { getFirebaseAuth } from '@/src/services/firebase';
 
 export default function LoginScreen() {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isUnmounted = useRef(false);
+
+  useEffect(
+    () => () => {
+      isUnmounted.current = true;
+    },
+    [],
+  );
 
   async function handleGoogleSignIn() {
     setError(null);
     setIsSigningIn(true);
 
     try {
-      // Opens full system Safari, not expo-web-browser's restricted
+      // Opens the full system browser, not expo-web-browser's restricted
       // ASWebAuthenticationSession: Google's sign-in loops back to the account
       // picker without completing inside that restricted session (see ADR-003).
-      // AuthGate listens for the exp:// deep link Safari hands back to the app.
+      // The token comes back two ways: the bridge drops it in a Worker handoff the
+      // app polls (works even when Android won't reopen Expo Go), and an exp://
+      // deep link AuthGate listens for (faster on iOS).
+      const ticket = await openHandoff();
       const redirectUri = Linking.createURL('auth');
-      const authUrl = `${AUTH_BRIDGE_URL}?redirect=${encodeURIComponent(redirectUri)}`;
-      await Linking.openURL(authUrl);
+      const query = `redirect=${encodeURIComponent(redirectUri)}&handoff=${encodeURIComponent(ticket.code)}`;
+      await Linking.openURL(`${AUTH_BRIDGE_URL}?${query}`);
+
+      const idToken = await waitForHandoffToken(ticket, () => isUnmounted.current);
+      if (isUnmounted.current) return;
+      if (!idToken) {
+        setError('No se completó el inicio de sesión con Google. Inténtalo de nuevo.');
+        return;
+      }
+      await signInWithCredential(getFirebaseAuth(), GoogleAuthProvider.credential(idToken));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido al iniciar sesión.');
     } finally {
-      setIsSigningIn(false);
+      if (!isUnmounted.current) setIsSigningIn(false);
     }
   }
 

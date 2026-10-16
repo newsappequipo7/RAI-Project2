@@ -7,9 +7,10 @@
 		extractStateFromHash,
 		extractIdTokenFromHash
 	} from '$lib/googleOAuth';
+	import { deliverHandoff } from '$lib/mobileHandoff';
 	import { isAllowedRedirect, toAppLaunchUrl } from '$lib/redirectWhitelist';
 
-	type Status = 'checking' | 'to-google' | 'to-app' | 'error';
+	type Status = 'checking' | 'to-google' | 'delivering' | 'to-app' | 'error';
 
 	// Paint the manual link first: a pending navigation can freeze the frame on Android
 	// browsers, and some block script navigations that lack a user gesture.
@@ -18,6 +19,7 @@
 	let status = $state<Status>('checking');
 	let errorMessage = $state('');
 	let nextUrl = $state('');
+	let handedOff = $state(false);
 
 	function navigateSoon(url: string) {
 		nextUrl = url;
@@ -31,28 +33,42 @@
 		errorMessage = message;
 	}
 
-	function returnToApp(hash: string, idToken: string) {
-		const redirect = extractStateFromHash(hash) ?? consumePendingRedirect();
+	function allowedOrNull(redirect: string | null): string | null {
+		return redirect && isAllowedRedirect(redirect) ? redirect : null;
+	}
 
-		if (!redirect || !isAllowedRedirect(redirect)) {
-			fail('No se pudo completar el inicio de sesión: falta el destino de la app.');
+	async function returnToApp(hash: string, idToken: string) {
+		const bridgeState = extractStateFromHash(hash);
+		const redirect = allowedOrNull(bridgeState.redirect ?? consumePendingRedirect());
+
+		if (bridgeState.handoff) {
+			status = 'delivering';
+			handedOff = await deliverHandoff(bridgeState.handoff, idToken);
+		}
+
+		if (!handedOff && !redirect) {
+			fail('No se pudo completar el inicio de sesión. Vuelve a la app e inténtalo de nuevo.');
 			return;
 		}
 
 		status = 'to-app';
-		navigateSoon(toAppLaunchUrl(`${redirect}#id_token=${idToken}`, navigator.userAgent));
+		if (redirect) {
+			navigateSoon(toAppLaunchUrl(`${redirect}#id_token=${idToken}`, navigator.userAgent));
+		}
 	}
 
 	function startGoogleSignIn(search: string) {
-		const redirect = new URLSearchParams(search).get('redirect');
+		const query = new URLSearchParams(search);
+		const redirect = allowedOrNull(query.get('redirect'));
+		const handoff = query.get('handoff');
 
-		if (!redirect || !isAllowedRedirect(redirect)) {
+		if (!redirect && !handoff) {
 			fail('Redirección no permitida.');
 			return;
 		}
 
 		status = 'to-google';
-		navigateSoon(buildGoogleAuthUrl(redirect));
+		navigateSoon(buildGoogleAuthUrl({ redirect, handoff }));
 	}
 
 	onMount(() => {
@@ -64,7 +80,7 @@
 			if (googleError) {
 				fail(`Google rechazó el inicio de sesión (${googleError}).`);
 			} else if (idToken) {
-				returnToApp(hash, idToken);
+				void returnToApp(hash, idToken);
 			} else {
 				startGoogleSignIn(search);
 			}
@@ -80,9 +96,17 @@
 	{:else if status === 'to-google'}
 		<p>Iniciando sesión con Google…</p>
 		<a class="action" href={nextUrl}>Continuar con Google</a>
+	{:else if status === 'delivering'}
+		<p>Sesión de Google verificada. Enviando a la app…</p>
 	{:else if status === 'to-app'}
-		<p>Sesión de Google verificada.</p>
-		<a class="action" href={nextUrl}>Abrir la app</a>
+		{#if handedOff}
+			<p><strong>Listo.</strong> Vuelve a la app: la sesión se abrirá sola.</p>
+		{:else}
+			<p>Sesión de Google verificada.</p>
+		{/if}
+		{#if nextUrl}
+			<a class="action" href={nextUrl}>Abrir la app</a>
+		{/if}
 	{:else}
 		<p role="alert">{errorMessage}</p>
 	{/if}

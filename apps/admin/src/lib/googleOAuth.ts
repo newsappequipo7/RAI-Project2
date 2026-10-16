@@ -24,8 +24,20 @@ function rememberPendingRedirect(redirect: string): void {
 	}
 }
 
-export function buildGoogleAuthUrl(redirect: string): string {
-	rememberPendingRedirect(redirect);
+export interface BridgeState {
+	redirect: string | null;
+	handoff: string | null;
+}
+
+function encodeState({ redirect, handoff }: BridgeState): string {
+	const params = new URLSearchParams();
+	if (redirect) params.set('redirect', redirect);
+	if (handoff) params.set('handoff', handoff);
+	return params.toString();
+}
+
+export function buildGoogleAuthUrl(bridgeState: BridgeState): string {
+	if (bridgeState.redirect) rememberPendingRedirect(bridgeState.redirect);
 
 	const params = new URLSearchParams({
 		client_id: GOOGLE_CLIENT_ID,
@@ -33,7 +45,7 @@ export function buildGoogleAuthUrl(redirect: string): string {
 		response_type: 'id_token',
 		scope: 'openid email profile',
 		nonce: createNonce(),
-		state: redirect,
+		state: encodeState(bridgeState),
 		prompt: 'select_account'
 	});
 
@@ -58,8 +70,10 @@ export function extractIdTokenFromHash(hash: string): string | null {
 	return readHashParam(hash, 'id_token');
 }
 
-export function extractStateFromHash(hash: string): string | null {
-	return readHashParam(hash, STATE_PARAM);
+export function extractStateFromHash(hash: string): BridgeState {
+	const rawState = readHashParam(hash, STATE_PARAM) ?? '';
+	const state = new URLSearchParams(rawState);
+	return { redirect: state.get('redirect'), handoff: state.get('handoff') };
 }
 
 export function extractErrorFromHash(hash: string): string | null {
