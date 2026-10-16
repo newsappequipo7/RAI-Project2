@@ -1,6 +1,7 @@
 import {
 	GoogleAuthProvider,
 	onAuthStateChanged,
+	signInAnonymously,
 	signInWithEmailAndPassword,
 	signInWithPopup,
 	signOut,
@@ -9,7 +10,7 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 
-export type SessionStatus = 'loading' | 'signed-out' | 'denied' | 'admin';
+export type SessionStatus = 'loading' | 'signed-out' | 'denied' | 'guest' | 'admin';
 
 class Session {
 	status = $state<SessionStatus>('loading');
@@ -28,12 +29,21 @@ class Session {
 			return;
 		}
 
+		if (user.isAnonymous) {
+			this.status = 'guest';
+			return;
+		}
+
 		const adminDoc = await getDoc(doc(db, 'admins', user.uid));
 		this.status = adminDoc.exists() ? 'admin' : 'denied';
 	}
 
 	async login() {
 		await signInWithPopup(auth, new GoogleAuthProvider());
+	}
+
+	async loginAsGuest() {
+		await signInAnonymously(auth);
 	}
 
 	/** Local development and e2e only: signs in against the Auth emulator, with no Google popup. */

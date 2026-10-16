@@ -38,6 +38,7 @@
 				Inicia sesión con tu cuenta autorizada para publicar y verificar noticias.
 			</p>
 			<button class="primary wide" onclick={() => session.login()}>Continuar con Google</button>
+			<button class="wide" onclick={() => session.loginAsGuest()}>Entrar como invitado</button>
 			{#if USE_AUTH_EMULATOR}
 				<form class="emulator" onsubmit={emulatorLogin}>
 					<p class="muted">Entorno de pruebas (emulador de Auth)</p>
@@ -61,6 +62,24 @@
 			<button class="wide" onclick={() => session.logout()}>Cerrar sesión</button>
 		</div>
 	</main>
+{:else if session.status === 'guest'}
+	<div class="shell">
+		<header class="topbar">
+			<a class="brand" href={resolve('/compare')}>
+				<span class="brand-mark" aria-hidden="true">PN</span>
+				<span>Portal de noticias (invitado)</span>
+			</a>
+			<button class="logout" onclick={() => session.logout()}>Cerrar sesión</button>
+		</header>
+		<main class="content">
+			{#if isActive('/compare')}
+				{@render children()}
+			{:else}
+				<p class="muted">Como invitado solo puedes ver las noticias publicadas.</p>
+				<a href={resolve('/compare')}>Ir al comparador</a>
+			{/if}
+		</main>
+	</div>
 {:else}
 	<div class="shell">
 		<header class="topbar">

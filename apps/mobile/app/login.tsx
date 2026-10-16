@@ -1,9 +1,11 @@
 import * as Linking from 'expo-linking';
+import { signInAnonymously } from 'firebase/auth';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 import { AUTH_BRIDGE_URL } from '@/src/services/authBridge';
+import { getFirebaseAuth } from '@/src/services/firebase';
 
 export default function LoginScreen() {
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -28,6 +30,18 @@ export default function LoginScreen() {
     }
   }
 
+  async function handleGuestSignIn() {
+    setError(null);
+    setIsSigningIn(true);
+
+    try {
+      await signInAnonymously(getFirebaseAuth());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo entrar como invitado.');
+      setIsSigningIn(false);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Noticias con IA</Text>
@@ -37,6 +51,9 @@ export default function LoginScreen() {
         ) : (
           <Text style={styles.buttonText}>Continuar con Google</Text>
         )}
+      </Pressable>
+      <Pressable style={styles.guestButton} onPress={handleGuestSignIn} disabled={isSigningIn}>
+        <Text style={styles.guestButtonText}>Entrar como invitado</Text>
       </Pressable>
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
@@ -60,6 +77,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
+  },
+  guestButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#2e78b7',
+  },
+  guestButtonText: {
+    color: '#2e78b7',
+    fontSize: 16,
+    fontWeight: '600',
   },
   buttonText: {
     color: '#fff',
