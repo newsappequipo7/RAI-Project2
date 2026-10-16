@@ -134,88 +134,107 @@
 	<p>Cargando noticias…</p>
 {:else}
 	<p class="count">{visible.length} de {items.length} noticias</p>
-	<table>
-		<thead>
-			<tr>
-				<th>Título</th>
-				<th>Workflow</th>
-				<th>Certeza</th>
-				<th>Importancia</th>
-				<th>Alcance</th>
-				<th>Actualizada</th>
-				<th>Autor</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each visible as item (item.id)}
+	<div class="table-wrap">
+		<table>
+			<thead>
 				<tr>
-					<td><a href={resolve(`/news/${item.id}`)}>{displayTitle(item)}</a></td>
-					<td>
-						{item.workflow}
-						{#if item.indexPending}<span class="badge" title="Publicada, falta indexarla"
-								>indexación pendiente</span
-							>{/if}
-					</td>
-					<td>{item.certainty}</td>
-					<td>{item.importance}</td>
-					<td>{item.geo.scope}</td>
-					<td>{formatDate(item.updatedAt)}</td>
-					<td title={item.createdBy}>{item.createdBy.slice(0, 8)}</td>
+					<th>Título</th>
+					<th>Workflow</th>
+					<th>Certeza</th>
+					<th>Importancia</th>
+					<th>Alcance</th>
+					<th>Actualizada</th>
+					<th>Autor</th>
 				</tr>
-			{:else}
-				<tr><td colspan="7">No hay noticias que coincidan con los filtros.</td></tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{#each visible as item (item.id)}
+					<tr>
+						<td><a href={resolve(`/news/${item.id}`)}>{displayTitle(item)}</a></td>
+						<td>
+							{item.workflow}
+							{#if item.indexPending}<span class="badge" title="Publicada, falta indexarla"
+									>indexación pendiente</span
+								>{/if}
+						</td>
+						<td>{item.certainty}</td>
+						<td>{item.importance}</td>
+						<td>{item.geo.scope}</td>
+						<td>{formatDate(item.updatedAt)}</td>
+						<td title={item.createdBy}>{item.createdBy.slice(0, 8)}</td>
+					</tr>
+				{:else}
+					<tr><td colspan="7">No hay noticias que coincidan con los filtros.</td></tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 {/if}
 
 <style>
 	.header {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
 	}
 
 	.actions {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
 	.badge {
 		margin-left: 0.35rem;
-		padding: 0 0.4rem;
-		border-radius: 3px;
-		background: #fff3cd;
+		padding: 0.1rem 0.45rem;
+		border-radius: 999px;
+		background: var(--color-warning-soft);
+		color: var(--color-warning-text);
 		font-size: 0.75rem;
+		font-weight: 600;
+		white-space: nowrap;
 	}
 
 	.filters {
 		display: flex;
-		gap: 1rem;
 		flex-wrap: wrap;
-		margin: 1rem 0;
+		gap: 1rem;
+		padding: 1rem;
+		margin-bottom: 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-surface);
+		box-shadow: var(--shadow-card);
 	}
 
 	.filters label {
 		display: flex;
+		flex: 1 1 12rem;
 		flex-direction: column;
-		gap: 0.25rem;
-		font-size: 0.85rem;
+		gap: 0.3rem;
+		font-size: 0.8rem;
+		font-weight: 600;
 	}
 
 	.count {
-		color: #666;
+		margin: 0 0 0.5rem;
+		color: var(--color-text-muted);
+		font-size: 0.85rem;
 	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
+	td a {
+		font-weight: 600;
+		text-decoration: none;
 	}
 
-	th,
-	td {
-		padding: 0.5rem;
-		border-bottom: 1px solid #ddd;
-		text-align: left;
+	td a:hover {
+		text-decoration: underline;
+	}
+
+	.table-wrap {
+		overflow-x: auto;
 	}
 </style>
