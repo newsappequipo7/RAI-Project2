@@ -25,10 +25,28 @@ motivo vive en este archivo.
 | `ed-co-002` | Vigencia del hecho | Anuncia marchas «del 1 al 4 de octubre», redactadas en futuro y ya pasadas. Ver [LOOP-017](loops/LOOP-017-falta-de-fecha-del-hecho.md). |
 | `ed-sv-001` | Fuente única sin confirmar | Una sola fuente (Diario El Salvador) para una cifra oficial («234 días sin homicidios»); no hay segunda organización que la confirme. |
 
+## Editoriales publicadas el 2026-10-15
+
+Diego abrió y revisó las fuentes de cada una antes de aprobarlas. Se publicaron con `publishedBy` = su uid, el checklist
+marcado a partir de esa aprobación y `validatePublish` en verde (11 de 11) antes de escribir. Cada publicación fue un
+commit atómico de Firestore con precondición de `updateTime` (`workflow`, `publishedAt`, `publishedBy`, `version`,
+`updatedAt`, `checklist`) más el snapshot `versions/1`.
+
+`ed-ar-001`, `ed-co-001`, `ed-es-001`, `ed-es-002`, `ed-es-003`, `ed-gt-001`, `ed-gt-002`, `ed-gt-003`, `ed-mx-001`,
+`ed-sv-002`, `ed-sv-003`.
+
+Indexado: un solo `POST /admin/index/upsert` con las 11 (`upserted: 11`), `indexVersion` 18 → **19**
+(`/health` lo confirma); después se quitó `indexPending` de cada una. Verificación: la búsqueda semántica sin LLM
+(`/admin/index/search`) por el título de cada noticia la devuelve en primer lugar, 11 de 11. Ningún documento queda con
+`indexPending`.
+
 ## Criterio F2-11 CA1 (≥ 55 noticias publicadas)
 
-**PARCIAL** — 3 editoriales retenidas por revisión humana (vigencia y fuentes). El conteo final se completa al terminar
-la publicación de las editoriales aprobadas (pendiente al escribir este archivo).
+**PARCIAL** — 3 editoriales retenidas por revisión humana (vigencia y fuentes).
+
+- Publicadas con `workflow = publicada`: **53** (50 vigentes + **3 retractadas, visibles con su corrección**). Faltan 2
+  para 55 si se cuentan las retractadas, y 5 si no.
+- CA2 (cada una pasa `validatePublish`): cumple para las 11 publicadas hoy.
 
 ## Duplicado despublicado
 
@@ -37,16 +55,15 @@ la publicación de las editoriales aprobadas (pendiente al escribir este archivo
 snapshot en `versions/2`. `POST /admin/index/remove` devolvió `removed: 0` (no estaba en el índice); `indexVersion` pasó
 de 17 a 18. Detalle en [LOOP-018](loops/LOOP-018-duplicados-sin-deteccion.md).
 
-## Conteo de producción al 2026-10-15 (tras estos cambios)
+## Conteo final de producción al 2026-10-15
 
 | Estado | Cantidad |
 |---|---|
-| `publicada` | 42 (39 vigentes + **3 retractadas, visibles con su corrección**) |
-| `borrador` | 13 (11 editoriales por revisar + `demo-d1` + `demo-d2`) |
+| `publicada` | 53 (50 vigentes + **3 retractadas, visibles con su corrección**) |
+| `borrador` | 2 (`demo-d1`, `demo-d2`; se publican en vivo en la demo) |
 | `en_revision` | 3 (`ed-gt-004`, `ed-co-002`, `ed-sv-001`) |
 | `rechazada` | 1 (`cGGX…`, duplicado) |
 | Total de documentos | 59 |
 
-## Pendiente de este archivo
-
-- Editoriales publicadas hoy y conteo final real.
+`demo-d1` (1 fuente) y `demo-d2` (2 fuentes) siguen en `borrador` con sus fuentes cargadas. `n-ar-003`, la noticia
+elegida para retractar en vivo, sigue publicada e indexada y es el primer resultado de su pregunta (0.647 frente a 0.271).
