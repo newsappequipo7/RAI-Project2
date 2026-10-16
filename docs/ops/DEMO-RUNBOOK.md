@@ -99,3 +99,31 @@ Se dicen en voz alta; no se esconden.
   editoriales: `ed-gt-004` (desfile del 15 de septiembre) y `ed-co-002` (marchas del 1 al 4 de octubre) se retuvieron
   en borrador por esto. Propuesta para trabajo futuro, sin implementar: un campo opcional `eventDate` que alimente la
   recencia y se muestre en la lectura. Evidencia: [LOOP-017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md).
+
+## 6. Pendientes para la presentación (estado al 2026-10-16)
+
+Diego cerró la entrega con el estado actual. Esto queda por hacer antes de presentar; nada de lo de abajo está hecho.
+
+**Guiones por escribir** (qué se dice, qué se muestra y qué evidencia se abre). Hoy el runbook solo tiene guion paso a paso
+para las secciones 3 a 5 (§2):
+- [ ] Sección 1, Producto y alcance (Diego).
+- [ ] Sección 2, App móvil en iPhone y Android (Nelson).
+- [ ] Sección 6, Arquitectura y decisiones (Diego): ADR-012 a ADR-014 incluidos.
+- [ ] Sección 7, Transparencia y Responsible AI: la retractación en vivo ya está en §2 (`n-ar-003`); falta el guion de la
+  matriz RAI.
+- [ ] Sección 8, Engineering loops y gestión (Joaquín): usar LOOP-016, LOOP-015 y LOOP-005, con LOOP-002 de reserva.
+  Dejar dicho que algunos loops se hicieron con otro agente (Codex), no con Claude Code. Se presenta tal cual.
+- [ ] Sección 9, Costos (Diego): `/costs` en vivo, [PRESUPUESTO-IA](PRESUPUESTO-IA.md) y el snapshot de saldo.
+- [ ] Sección 10, Lecciones aprendidas (Joaquín): incluir las limitaciones declaradas de §5 y los loops 017 y 018.
+
+**Operativo:**
+- [ ] Tres ensayos generales ([registro](../../evidence/F4-10-rehearsals.md)); reinstalar el Plan B en los iPhone después del
+  segundo (la firma gratuita vence a los 7 días exactos).
+- [ ] Videos de respaldo, uno por sección, en `evidence/demo-videos/` (nombres en
+  [CAPTURAS-PENDIENTES](../../evidence/CAPTURAS-PENDIENTES.md) §14).
+- [ ] Probar el chat en un Android y guardar las capturas (F4-04 CA1).
+- [ ] Día antes: `pnpm demo:prepare` y, si hace falta, ajustar `config/public.feedWindowHours` (§2 y ADR-013).
+- [ ] Desplegar el Worker con `ENV=demo`: `pnpm -F api run deploy --var AI_MODE:live --var ENV:demo` y comprobar en
+  `/health` que `aiMode` es `live` y `env` es `demo` (sin `--var AI_MODE:live`, el Worker vuelve a `mock`).
+- [ ] Medir F3-02 CA2 y F3-09 con el log `__DEV__` y el método de 240 fps ([CAPTURAS-PENDIENTES](../../evidence/CAPTURAS-PENDIENTES.md) §8 y §13).
+- [ ] Confirmar la fecha de la presentación y que la key de Anthropic (vence el 2026-10-29) siga vigente ese día.

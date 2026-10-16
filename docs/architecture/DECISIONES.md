@@ -236,3 +236,24 @@ digest sigue en 72 h); se anota en la evidencia de F4-09 cuando se haga. Los ese
 ventana (LOOP-018).
 Evidencia: [LOOP-017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md),
 [F4-09](../../evidence/F4-09-demo-readiness.md) y handoff FASE-4 (riesgo «El Worker no lee `config/public`»).
+
+---
+
+## ADR-014 — Distribución de la demo: túnel con hotspot propio y Plan B nativo, sin EAS Update
+Estado: aceptada
+Fecha: 2026-10-16 · Autor: Diego
+Reemplaza la parte de distribución de ADR-001 (el punto «Falta confirmar… si EAS Update puede cargarse desde Expo Go»).
+Contexto: ADR-001 dejó abierta la pregunta de si una actualización de EAS Update podía cargarse desde Expo Go, y
+`docs/ops/IOS-ANDROID-DISTRIBUCION.md` y la fase 4 todavía prometían «versión final publicada con EAS Update». Nunca se
+montó: `apps/mobile` no tiene `eas.json` ni `expo-updates` (verificado el 2026-10-16), y F4-09 ya planeaba túnel o Plan B.
+Opciones: (A) EAS Update cargado desde Expo Go: sin laptop en la sala, pero sin verificar y sin configuración en el repo.
+(B) Metro con túnel desde una laptop con hotspot propio: probado desde F1-02 en iPhone real, sin cuenta de pago.
+(C) Plan B: build nativo con Xcode y el Apple ID gratuito del equipo, instalado por USB. (D) PWA, solo emergencia.
+Decisión: B como plan principal en la demo, con C como respaldo en los iPhone del equipo y D sin cambios. No se usa EAS
+Update ni se agrega `expo-updates` (regla de oro 5 de CLAUDE.md: nada que Expo Go no incluya).
+Consecuencias: la demo depende de una laptop con Metro y de un hotspot propio (las redes de la universidad aíslan
+clientes); si se cae el túnel hay que pasar al Plan B. La firma gratuita del Plan B vence a los 7 días exactos (ADR-001),
+así que hay que reinstalar en los iPhone dentro de la ventana de la demo. EAS Build para generar un APK en Android no
+está descartado, pero tampoco se usa ni está configurado.
+Evidencia: ADR-001 (spikes F1-02 y F1-04), `evidence/F4-09-demo-readiness.md` (1a), handoff FASE-4 (riesgo «No hay EAS
+Update») y DEMO-RUNBOOK §3.

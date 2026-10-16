@@ -1,6 +1,6 @@
 # Handoff FASE-2 → FASE-3
 
-Responsable: Daniel Dubón · Fecha de cierre: **pendiente** (se llena al etiquetar) · Tag: `fase-2-done` (**aún no creado**: ver §5, hay tareas con evidencia incompleta)
+Responsable: Daniel Dubón · Fecha de cierre: **2026-10-16** (cierre de la entrega, hecho por Diego; aceptación de Nelson **(confirmar)**, no consta) · Tag: `fase-2-done` (**aún no creado**: se crea sobre el commit final tras el merge de `cierre/entrega`; ver §5)
 
 ## 1. Qué quedó funcionando (demostrable)
 Un editor puede, desde el portal (`/news`), llevar una noticia de borrador a publicada con las reglas editoriales
@@ -88,18 +88,20 @@ Detalle y enlaces en `docs/PLAN.md` §6. Las pruebas automáticas cuentan como e
 | F2-08 | ☑ | `revision.test.ts`, emulador; recorrido manual con el Worker real: versiones 1, 2 y 3, `indexVersion` 8 → 9 por el `remove` (`evidence/captures/F2-08-*`) | CA1 y CA2 |
 | F2-09 | ☑ | `costsView.test.ts`, prueba del Worker contra una lectura independiente del ledger, uso real (saldo registrado, costos leídos en LOOP-005) | CA1 y CA2 |
 | F2-10 | ☑ | `e2e/tests/publish-flow.spec.ts` (se rompió el bloqueo del botón a propósito y falló); CI verde en el PR #12 (confirmado por el equipo) | CA1: el CI corre unitarias y e2e en mock, sin créditos |
-| F2-11 | ◐ | `corpus.test.ts`, `docs/ops/CORPUS-EDITORIAL.md`, LOOP-006 | 16 borradores + 2 de demo listos y validados (CA2). **Falta que una persona los revise y publique** para llegar a 56 publicadas (CA1 pide ≥ 55) |
-| F2-12 | ◐ | este handoff, LOOP-006/007/008 | La vista previa móvil `[PLUS]` no se hizo. Falta el recorrido de Nelson (CA1) y el tag |
+| F2-11 | ◐ | `corpus.test.ts`, `docs/ops/CORPUS-EDITORIAL.md`, LOOP-006, [corpus en producción](../../evidence/F2-11-corpus-prod.md), LOOP-017 y LOOP-018 | CA2 cumple (las 11 publicadas el 2026-10-15 pasan `validatePublish`). **CA1 PARCIAL: 53 publicadas** (50 vigentes + 3 retractadas, visibles con su corrección) frente a ≥ 55: 3 editoriales retenidas por revisión humana (vigencia y fuentes) y un duplicado despublicado |
+| F2-12 | ◐ | este handoff, LOOP-006/007/008 | La vista previa móvil `[PLUS]` no se hizo. El recorrido de Nelson (CA1) y el tag siguen pendientes al 2026-10-16 |
 
-**Reporte de cierre (2026-10-03).** Diego informó a Daniel que ejecutó sus pendientes de cierre (cargar el corpus a
-producción, probar `enrich.v2` con créditos reales, registrar el saldo y renovar la key) y que «probó y todo bien».
-Lo que se pudo comprobar desde el repositorio: el Worker desplegado está en `mock` (`GET /health` → `aiMode: "mock"`, como
-exige la prueba de `enrich.v2`) y `indexVersion` pasó de 9 (lectura del 2026-10-02) a 10, es decir, hubo actividad de
-indexación posterior. **Todavía no hay datos registrados** para cerrar F2-04 y F2-11, así que sus filas siguen en ◐:
-- F2-04: el alcance de Haití con `enrich.v2` (¿`internacional`?), el costo de la corrida y la comparación con LOOP-005.
-- F2-11: resultado de la carga a producción (`Done: 18 created…`) y cuántas de las 16 noticias quedaron publicadas.
-- Saldo real registrado en `/costs` y fecha en que se renovó la key (no el valor).
-Con esos datos se actualizan `PLAN.md` y el LOOP-005, y solo entonces se propone el tag `fase-2-done`.
+**Estado al cierre (2026-10-16).** Datos del 2026-10-03, que entonces eran incompletos, y lo que se comprobó después:
+- **F2-11:** los 18 borradores del corpus (16 editoriales + `demo-d1` y `demo-d2`) se cargaron a producción el 2026-10-13.
+  `ed-us-001` y `ed-us-002` se publicaron desde el portal el 14 de octubre y otras 11 el 15 (Diego revisó sus fuentes). Quedan
+  3 retenidas en `en_revision` (`ed-gt-004` y `ed-co-002` por vigencia del hecho, `ed-sv-001` por fuente única sin
+  confirmar) y D1/D2 en borrador, que se publican en vivo en la demo. Detalle y conteo en
+  [F2-11-corpus-prod](../../evidence/F2-11-corpus-prod.md).
+- **F2-04:** sin datos nuevos. No consta una corrida de `enrich.v2` con créditos (alcance de Haití, costo, comparación con
+  LOOP-005). Diego reportó el 2026-10-03 que «probó y todo bien», pero no hay registro **(confirmar)**.
+- **Saldo y key:** hay snapshots de saldo en `/costs` (último: USD 19.94 el 2026-10-16, calculado como 20 − gasto de la
+  consola). La fecha en que se renovó la key de Anthropic, que vence el 2026-10-29, no consta **(confirmar)**.
+El tag `fase-2-done` no se crea hasta que Diego lo autorice sobre el commit final.
 
 ## 4. Desviaciones respecto a contratos o docs
 Los docs de `docs/architecture/` están actualizados con todo lo de esta lista.
@@ -124,13 +126,13 @@ Los docs de `docs/architecture/` están actualizados con todo lo de esta lista.
 ## 5. Deuda y problemas conocidos
 | Severidad | Problema | Sugerencia |
 |-----------|----------|------------|
-| Alta | Las 16 noticias reales siguen sin publicar (F2-11 CA1: ≥ 55 publicadas) | Que una persona abra cada enlace, marque el checklist y publique desde el portal, con la guía `CORPUS-EDITORIAL.md`. Antes, cargarlas a producción con `pnpm seed:editorial --target=prod` |
-| Alta | La key de Anthropic vence el **2026-10-29**, antes de la presentación | Renovarla y volver a subirla con `wrangler secret put` (Diego) |
+| Media | F2-11 CA1: 53 publicadas (50 vigentes + 3 retractadas) frente a ≥ 55. Tres editoriales retenidas: `ed-gt-004` y `ed-co-002` (vigencia del hecho, LOOP-017) y `ed-sv-001` (fuente única) | Publicarlas solo si una persona confirma fecha o una segunda fuente; hoy están en `en_revision` |
+| Alta | La key de Anthropic vence el **2026-10-29**, antes de la presentación si esta cae después | Renovarla y volver a subirla con `wrangler secret put` (Diego); fecha de la última renovación **(confirmar)** |
 | Media | `enrich.v2` (definiciones de alcance) no está medido: Haití devolvía `nacional` | Repetir las 5 noticias de LOOP-005 con el Worker en live (≈ USD 0.016) y registrar el antes/después |
 | Media | `Allowed formats` del preset de Cloudinary no se encontró en la interfaz: el preset sin firma acepta cualquier formato de imagen | Buscarlo en la pestaña *Advanced*; el portal ya valida JPG/PNG/WebP y 5 MB antes de subir, pero no protege contra uso externo del preset |
 | Media | La ilustración IA no tiene proveedor (Anthropic no genera imágenes) | Decidir con un ADR si se quiere; la portada tipográfica cubre el caso |
 | Media | Las noticias semilla no tienen versiones guardadas (nacieron fuera del portal): su Historial sale vacío hasta que se les haga una corrección. Además el estado de sus afirmaciones se asignó a mano y no coincide con la regla calculada | No bloquea nada; considerar regenerarlas desde el portal |
-| Media | Falta el primer saldo real posterior al gasto (19.98) en `/costs`: la alerta de desvío puede seguir en rojo por el redondeo a centavos de la consola | Registrarlo; con gastos de centavos la comparación válida es por tokens |
+| Baja | Saldo real en `/costs`: resuelto en parte. Hay snapshots de USD 19.94 (2026-10-15 y 2026-10-16), calculados como 20 − gasto de la consola (USD 0.06); el saldo exacto no se leyó | Con gastos de centavos la comparación válida es por tokens |
 | Baja | El e2e cubre un solo recorrido (publicar) y con Worker simulado; correcciones, retractación e imágenes no tienen e2e | Ampliar si hay tiempo |
 | Baja | Una prueba de tiempo real del emulador falló dos veces sin causa confirmada | Ver LOOP-007; el mensaje de error ahora diagnostica |
 | Baja | Playwright quedó en 1.62.0 porque 1.63.0 salió hace menos de las 24 h que exige la política de pnpm | Subir cuando cumpla |
@@ -148,6 +150,8 @@ Tope de la fase: USD 3.00. Datos al 2026-10-03; el ledger y el panel se leyeron 
 - Costo medio por tarea: `enrich` USD 0.003183 por llamada pagada (≈ 20 % menos que el supuesto de USD 0.0040).
   Proyección: 80 noticias ≈ USD 0.25.
 - No se gastó nada más en esta fase: desarrollo y pruebas corren en mock. `enrich.v2` no se ha medido con créditos.
+- Al cierre (2026-10-16), ledger de todo el proyecto: USD 0.0605 (nivel `normal`); consola de Anthropic: USD 0.06; saldo
+  registrado USD 19.94. El ledger no se desglosa por fase aquí **(confirmar)** si se necesita el reparto.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar
 1. **Qué lee el feed.** Muestra noticias con `workflow = 'publicada'`. Las `retractada` siguen siendo `publicada`, con su
@@ -170,3 +174,5 @@ Tope de la fase: USD 3.00. Datos al 2026-10-03; el ledger y el panel se leyeron 
   intermitente, reescrita para ser determinista; causa raíz no confirmada (F2-01, F2-03).
 - [LOOP-008](../../evidence/loops/LOOP-008-ramas-sobre-main-desactualizado.md): ramas creadas sobre un `main` local
   desactualizado y push rechazado por el upstream heredado (proceso, F2-06 y F2-07).
+- [LOOP-017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md) y [LOOP-018](../../evidence/loops/LOOP-018-duplicados-sin-deteccion.md):
+  hallados al cerrar F2-11 el 2026-10-15 (la noticia no guarda la fecha del hecho; nada detecta duplicados).
