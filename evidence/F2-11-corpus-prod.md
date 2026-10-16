@@ -62,8 +62,10 @@ de 17 a 18. Detalle en [LOOP-018](loops/LOOP-018-duplicados-sin-deteccion.md).
 | `publicada` | 53 (50 vigentes + **3 retractadas, visibles con su corrección**) |
 | `borrador` | 2 (`demo-d1`, `demo-d2`; se publican en vivo en la demo) |
 | `en_revision` | 3 (`ed-gt-004`, `ed-co-002`, `ed-sv-001`) |
-| `rechazada` | 1 (`cGGX…`, duplicado) |
-| Total de documentos | 59 |
+| `rechazada` | 2 (`cGGX…`, duplicado; `ensayo-f3-10`, noticia de ensayo que nunca se publicó) |
+| Total de documentos | 60 |
 
 `demo-d1` (1 fuente) y `demo-d2` (2 fuentes) siguen en `borrador` con sus fuentes cargadas. `n-ar-003`, la noticia
 elegida para retractar en vivo, sigue publicada e indexada y es el primer resultado de su pregunta (0.647 frente a 0.271).
+
+`ensayo-f3-10` se creó el 2026-10-15 como borrador para medir F3-10 y pasó a `rechazada` el 2026-10-16 con la corrección «Noticia de ensayo, no publicada»; nunca se publicó ni se indexó.
