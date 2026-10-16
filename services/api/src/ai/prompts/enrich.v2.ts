@@ -4,7 +4,7 @@ import { COUNTRIES_ES, IMPORTANCE_LEVELS, LOCATIONS, REGIONS, TOPICS } from '@re
 export const ENRICH_PROMPT_VERSION = 'enrich.v2';
 
 export const ENRICH_MAX_CLAIMS = 8;
-export const ENRICH_MAX_TOKENS = 1200;
+export const ENRICH_MAX_TOKENS = 2500;
 
 export interface EnrichPromptInput {
   title: string;
