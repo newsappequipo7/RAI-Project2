@@ -7,6 +7,7 @@
 const GOOGLE_CLIENT_ID = '452377084333-jm1j5lkjlv4akq73a0dt1sa30gh6v56u.apps.googleusercontent.com';
 const BRIDGE_URL = 'https://ai-news-app-f24cf.web.app/auth/mobile';
 const PENDING_REDIRECT_KEY = 'pendingRedirect';
+const STATE_PARAM = 'state';
 
 export function beginGoogleSignIn(redirect: string): void {
 	sessionStorage.setItem(PENDING_REDIRECT_KEY, redirect);
@@ -17,6 +18,7 @@ export function beginGoogleSignIn(redirect: string): void {
 		response_type: 'id_token',
 		scope: 'openid email profile',
 		nonce: crypto.randomUUID(),
+		state: redirect,
 		prompt: 'select_account'
 	});
 
@@ -32,4 +34,9 @@ export function consumePendingRedirect(): string | null {
 export function extractIdTokenFromHash(hash: string): string | null {
 	const params = new URLSearchParams(hash.replace(/^#/, ''));
 	return params.get('id_token');
+}
+
+export function extractStateFromHash(hash: string): string | null {
+	const params = new URLSearchParams(hash.replace(/^#/, ''));
+	return params.get(STATE_PARAM);
 }

@@ -3,6 +3,7 @@
 	import {
 		beginGoogleSignIn,
 		consumePendingRedirect,
+		extractStateFromHash,
 		extractIdTokenFromHash
 	} from '$lib/googleOAuth';
 	import { isAllowedRedirect } from '$lib/redirectWhitelist';
@@ -16,7 +17,7 @@
 		const idToken = extractIdTokenFromHash(window.location.hash);
 
 		if (idToken) {
-			const redirect = consumePendingRedirect();
+			const redirect = extractStateFromHash(window.location.hash) ?? consumePendingRedirect();
 
 			if (!redirect || !isAllowedRedirect(redirect)) {
 				status = 'error';
