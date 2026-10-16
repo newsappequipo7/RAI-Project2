@@ -13,6 +13,7 @@
       "appleTeamId": "L9Z4886757"
     },
     "android": {
+      "package": "gt.uvg.newsapp.dv",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

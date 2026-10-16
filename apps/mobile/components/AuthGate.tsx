@@ -24,7 +24,9 @@ export function AuthGate({ children }: { children: ReactNode }) {
       const idToken = extractIdTokenFromRedirectUrl(url);
 
       if (idToken) {
-        void signInWithCredential(getFirebaseAuth(), GoogleAuthProvider.credential(idToken));
+        signInWithCredential(getFirebaseAuth(), GoogleAuthProvider.credential(idToken)).catch(() =>
+          router.replace('/login'),
+        );
       }
     }
 
@@ -36,7 +38,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     });
 
     return () => subscription.remove();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (initializing) {
@@ -44,10 +46,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
     }
 
     const isOnLoginScreen = segments[0] === 'login';
+    const isOnAuthCallback = segments[0] === 'auth';
 
-    if (!user && !isOnLoginScreen) {
+    if (!user && !isOnLoginScreen && !isOnAuthCallback) {
       router.replace('/login');
-    } else if (user && isOnLoginScreen) {
+    } else if (user && (isOnLoginScreen || isOnAuthCallback)) {
       router.replace('/(tabs)/chat');
     }
   }, [user, initializing, segments, router]);

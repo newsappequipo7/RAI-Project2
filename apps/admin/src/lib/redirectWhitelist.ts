@@ -4,7 +4,11 @@ export function isAllowedRedirect(redirect: string): boolean {
 	return ALLOWED_REDIRECT_PREFIXES.some((prefix) => redirect.startsWith(prefix));
 }
 
-const EXPO_GO_ANDROID_PACKAGE = 'host.exp.exponent';
+const ANDROID_PACKAGE_BY_SCHEME: Record<string, string> = {
+	exp: 'host.exp.exponent',
+	exps: 'host.exp.exponent',
+	newsapp: 'gt.uvg.newsapp.dv'
+};
 const ANDROID_USER_AGENT = /android/i;
 
 /**
@@ -25,6 +29,7 @@ export function toAppLaunchUrl(appUrl: string, userAgent: string): string {
 
 	// An intent URI reserves the fragment for its own #Intent section, so the token moves to the query.
 	const rest = rawRest.replace('#id_token=', '?id_token=');
-	const packageName = scheme.startsWith('exp') ? `package=${EXPO_GO_ANDROID_PACKAGE};` : '';
-	return `intent://${rest}#Intent;scheme=${scheme};${packageName}end`;
+	const androidPackage = ANDROID_PACKAGE_BY_SCHEME[scheme];
+	const packageSection = androidPackage ? `package=${androidPackage};` : '';
+	return `intent://${rest}#Intent;scheme=${scheme};${packageSection}end`;
 }

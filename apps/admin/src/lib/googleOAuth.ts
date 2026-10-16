@@ -8,35 +8,60 @@ const GOOGLE_CLIENT_ID = '452377084333-jm1j5lkjlv4akq73a0dt1sa30gh6v56u.apps.goo
 const BRIDGE_URL = 'https://ai-news-app-f24cf.web.app/auth/mobile';
 const PENDING_REDIRECT_KEY = 'pendingRedirect';
 const STATE_PARAM = 'state';
+const NONCE_BYTES = 16;
 
-export function beginGoogleSignIn(redirect: string): void {
-	sessionStorage.setItem(PENDING_REDIRECT_KEY, redirect);
+// crypto.randomUUID is missing in some Android browsers (older Samsung Internet, WebViews).
+function createNonce(): string {
+	const bytes = crypto.getRandomValues(new Uint8Array(NONCE_BYTES));
+	return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function rememberPendingRedirect(redirect: string): void {
+	try {
+		sessionStorage.setItem(PENDING_REDIRECT_KEY, redirect);
+	} catch {
+		// The redirect also travels in `state`; storage is only a fallback.
+	}
+}
+
+export function buildGoogleAuthUrl(redirect: string): string {
+	rememberPendingRedirect(redirect);
 
 	const params = new URLSearchParams({
 		client_id: GOOGLE_CLIENT_ID,
 		redirect_uri: BRIDGE_URL,
 		response_type: 'id_token',
 		scope: 'openid email profile',
-		nonce: crypto.randomUUID(),
+		nonce: createNonce(),
 		state: redirect,
 		prompt: 'select_account'
 	});
 
-	window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+	return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
 }
 
 export function consumePendingRedirect(): string | null {
-	const redirect = sessionStorage.getItem(PENDING_REDIRECT_KEY);
-	sessionStorage.removeItem(PENDING_REDIRECT_KEY);
-	return redirect;
+	try {
+		const redirect = sessionStorage.getItem(PENDING_REDIRECT_KEY);
+		sessionStorage.removeItem(PENDING_REDIRECT_KEY);
+		return redirect;
+	} catch {
+		return null;
+	}
+}
+
+function readHashParam(hash: string, name: string): string | null {
+	return new URLSearchParams(hash.replace(/^#/, '')).get(name);
 }
 
 export function extractIdTokenFromHash(hash: string): string | null {
-	const params = new URLSearchParams(hash.replace(/^#/, ''));
-	return params.get('id_token');
+	return readHashParam(hash, 'id_token');
 }
 
 export function extractStateFromHash(hash: string): string | null {
-	const params = new URLSearchParams(hash.replace(/^#/, ''));
-	return params.get(STATE_PARAM);
+	return readHashParam(hash, STATE_PARAM);
+}
+
+export function extractErrorFromHash(hash: string): string | null {
+	return readHashParam(hash, 'error');
 }
