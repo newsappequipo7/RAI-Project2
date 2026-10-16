@@ -58,6 +58,11 @@ menos de 1 %. El costo de `chat_answer` coincide con el cálculo a partir de los
 nueva (≈ 0.00066). Total proyectado ≈ USD 0.8 como cota alta, muy por debajo del tope de USD 13 de desarrollo. Pendiente:
 medir `enrich` con Haiku 5.5 (el 4.5 sigue como cota alta) y repetir esta tabla después de los ensayos.
 
+**Conciliación con la consola (2026-10-15):** la consola de Anthropic muestra un gasto de USD 0.06 para la key del
+proyecto; el ledger (`GET /admin/costs`) suma USD 0.0605. La diferencia (~0.0005, menos del 1 %) cae dentro del
+redondeo a centavos de la consola. Saldo registrado con `POST /admin/budget-snapshot` (nota «Snapshot previo a
+entrega»): **USD 19.94**, calculado como 20 − 0.06 (la consola da el gasto redondeado, no el saldo exacto).
+
 **Cómo repetir la medición:** `EVAL_ID_TOKEN=… pnpm evals:costs --api <worker> --out ../evidence/F4-08-costs.md` (la ruta
 es relativa a `evals/`) lee `GET /admin/costs` (`taskStats`: solo llamadas reales pagadas, sin `mock` ni caché). Las
 latencias p50/p95 por modo las imprime y guarda `pnpm evals:chat` (`metrics.latencyByMode`).
@@ -74,6 +79,9 @@ La reserva de USD 7 debe cubrir **al menos 3×** esa estimación. Si no la cubre
 
 **Resultado (2026-10-13, [F4-08](../../evidence/F4-08-costs.md)):** 255 llamadas × USD 0.000292 ≈ **USD 0.07**; la reserva
 de USD 7.00 las cubre **93.9×** (objetivo ≥ 3×).
+
+**Estado de la reserva (2026-10-15):** con el saldo registrado de USD 19.94 y el gasto del ledger en USD 0.0605 (nivel
+`normal`, sin gasto con `env=demo`), la reserva de USD 7.00 está intacta.
 
 ## 6. Dashboard de costos (portal `/costs`, F2)
 
