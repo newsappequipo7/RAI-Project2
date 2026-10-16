@@ -214,3 +214,25 @@ tokens costarían ≈ USD 0.000318, cifra calculada y no medida. `digest` mezcla
 Evidencia: costo real por función en `evidence/F4-08-costs.md` (ledger D1, 2026-10-14: `chat_answer` USD 0.000296 con
 85 llamadas pagadas; gasto total USD 0.0605 frente a USD 0.06 en la consola de Anthropic, conciliado el 2026-10-15 en
 PRESUPUESTO-IA §4); calibración en `evidence/loops/LOOP-015` y `LOOP-016`.
+
+---
+
+## ADR-013 — La ventana del feed se ajusta el día antes de la presentación, no ahora
+Estado: aceptada
+Fecha: 2026-10-15 · Autor: Diego
+Contexto: `config/public.feedWindowHours` vale 72 por defecto (RELEVANCIA.md, MODELO-DATOS.md): el feed solo ordena
+noticias publicadas en esa ventana. Las editoriales de producción se publican el 2026-10-15 y la fecha de la presentación
+no está confirmada; si cae a más de 72 h de la última publicación, el feed queda vacío o sin las noticias nuevas. Dos
+cosas no dependen de ese valor: la ventana de «Lo que debes saber» (esenciales) es siempre 72 h y el digest del Worker
+también usa 72 h porque el Worker no lee `config/public` (handoff FASE-4).
+Opciones: (A) ampliar la ventana hoy. (B) republicar o reescribir las fechas de las noticias el día de la demo. (C)
+decidir el día antes, con la fecha real, y dejarlo como paso del runbook.
+Decisión: C. No se cambia la configuración hoy. Se agrega el paso «Día antes de la presentación» al DEMO-RUNBOOK §2:
+correr `pnpm demo:prepare` y, si la presentación cae a más de 72 h de la última publicación, ajustar
+`config/public.feedWindowHours`. B se descarta porque falsea `publishedAt` (ver LOOP-017).
+Consecuencias: ampliar la ventana hace que entren noticias viejas y es posible que el feed y el digest difieran (el
+digest sigue en 72 h); se anota en la evidencia de F4-09 cuando se haga. Los esenciales fuera de 72 h no aparecen en
+«Lo que debes saber» aunque se amplíe la ventana. Si se amplía, pueden coincidir noticias que en 72 h no compartían
+ventana (LOOP-018).
+Evidencia: [LOOP-017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md),
+[F4-09](../../evidence/F4-09-demo-readiness.md) y handoff FASE-4 (riesgo «El Worker no lee `config/public`»).

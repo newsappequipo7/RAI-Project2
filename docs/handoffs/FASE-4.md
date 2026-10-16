@@ -145,6 +145,9 @@ Estimación de la demo: USD 0.075 frente a una reserva de USD 7.00 (92.8×).
    `pnpm evals:costs --out` usa una ruta relativa a `evals/`.
 6. **Loops de la fase:** LOOP-013, 014, [015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md)
    y [016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md).
+7. **Loops del cierre (2026-10-15):** [017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md), la noticia no
+   guarda la fecha del hecho (`eventDate` queda como trabajo futuro).
+   [018](../../evidence/loops/LOOP-018-duplicados-sin-deteccion.md), no hay detección de noticias duplicadas.
 
 ## 9. Lista para el cierre final (F4-12)
 
