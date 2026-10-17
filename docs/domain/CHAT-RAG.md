@@ -183,3 +183,32 @@ país, 8 tema, 5 fuera de corpus, 3 inyección y 2 sobre noticias retractadas), 
   respuestas completas. En `env=dev` los admins no consumen el límite de 20 mensajes por hora; en `demo`, sí.
 - La clave de caché del chat incluye todo `CHAT_CONFIG`, así que cambiar τ, top-k o el extracto no devuelve
   respuestas guardadas con el valor anterior.
+
+## 7. Configuración final calibrada (F4-06, 2026-10-13)
+
+Valores en producción, tomados de `services/api/src/rag/chatConfig.ts` y `services/api/src/ai/prompts/chat.v2.ts`:
+
+| Parámetro | Valor final | ¿Calibrado? |
+|---|---|---|
+| Modelo | `claude-haiku-5-5` (ADR-012) | cambiado en F4-06, ver [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) |
+| Versión del prompt | `chat.v2` (incluye la ubicación del lector) | sí: [LOOP-016](../../evidence/loops/LOOP-016-ubicacion-del-lector-en-el-prompt.md) |
+| `CHAT_MAX_TOKENS` | **1500** (era 700) | sí: [LOOP-015](../../evidence/loops/LOOP-015-corrida-base-y-limite-de-tokens-del-digest.md) |
+| τ (`abstainThreshold`) | **0.45** | no: se conserva el valor inicial |
+| top-k (`topK`) | **6** | no: se conserva el valor inicial |
+| Extracto de contexto (`contextExcerptLength`) | **600** caracteres | no: se conserva el valor inicial |
+| Bonus de región en `mi_region` (`regionBoost`) | 0.1 (solo ordena, nunca ayuda a pasar τ) | no |
+| TTL de caché / `cacheVersion` | 15 min / `v3` | no |
+
+Notas:
+- **Temperatura:** el pipeline de §2 dice `temperature = 0`, pero Claude Haiku 5.5 rechaza ese parámetro y el código lo
+  omite (commit `2d099d2`). El determinismo no está garantizado; ver «una sola corrida por versión» abajo.
+- **τ, top-k y extracto no se calibraron.** Los objetivos de F4-06 se cumplieron desde la corrida base sin tocarlos.
+  τ = 0.45 deja una falsa abstención conocida en la práctica: q09 no cita `n-mx-001` (puntajes 0.463 / 0.431 / 0.416, solo
+  pasa el primero), y no se bajó porque q31, que debe abstenerse, alcanza 0.437.
+- **Resultados** (set dorado de 34 casos, `aiMode=live`, una sola corrida por versión): v4 con `chat.v2`
+  ([`chat-20261013-0440.json`](../../evidence/evals/chat-20261013-0440.json)): precisión de citas 96.0 % (24/25),
+  cobertura 95.7 %, abstención correcta 100 % (5/5), falsas abstenciones 0 %, incertidumbre 100 % (7/7), 0 citas
+  prohibidas y 0 fallos de inyección, costo USD 0.0071, latencia p50 / p95 1749 / 4085 ms. La corrida base v1
+  ([`0401`](../../evidence/evals/chat-20261013-0401.json), 700 tokens) tuvo 7.7 % de falsas abstenciones.
+- Límites: el modelo no es determinista, hay una corrida por versión y 3 respuestas de la v4 salieron de caché.
+

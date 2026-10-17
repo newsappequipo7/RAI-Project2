@@ -16,5 +16,5 @@ Gasto total del ledger: USD 0.0605 · nivel `normal` · llamadas evitadas (cach�
 
 - Llamadas LLM estimadas: **255** (25 × 5 preguntas con 40 % evitadas + 3 ensayos × 60).
 - Costo medio real de `chat_answer`: USD 0.000296.
-- Estimación: **USD 0.08** · reserva: USD 7.00.
-- Cobertura de la reserva: 92.8× → cumple F4-08 CA2 (≥ 3×).
+- Estimación: **USD 0.075** (255 × 0.00029567) · reserva: USD 7.00.
+- Cobertura de la reserva: 92.8× (7 / 0.0754 = 92.84) → cumple F4-08 CA2 (≥ 3×).

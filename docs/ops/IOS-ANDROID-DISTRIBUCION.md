@@ -7,7 +7,7 @@ Objetivo: que el equipo **y compañeros** usen la app en iPhone y Android durant
 
 | Plan | Cómo | Quién puede usarlo | Pros | Contras |
 |---|---|---|---|---|
-| **A (principal)** | Expo Go (App Store / Play Store) + nuestro proyecto servido por Metro con túnel o por EAS Update | Cualquiera con Expo Go instalado; se abre con QR | Gratis, sin firma, sin USB, funciona en iOS y Android, actualizaciones instantáneas | Solo módulos incluidos en Expo Go; la versión de SDK debe ser la que soporte Expo Go en la tienda; depende de red |
+| **A (principal)** | Expo Go (App Store / Play Store) + nuestro proyecto servido por Metro con túnel desde una laptop con hotspot propio (ADR-014) | Cualquiera con Expo Go instalado; se abre con QR | Gratis, sin firma, sin USB, funciona en iOS y Android, actualizaciones instantáneas | Solo módulos incluidos en Expo Go; la versión de SDK debe ser la que soporte Expo Go en la tienda; depende de red |
 | **B (respaldo nativo)** | `expo prebuild` → build en **Xcode desde una MacBook del equipo** firmado con el Apple ID gratuito del equipo, instalado por USB | Los 2 iPhone del equipo | App "real" con ícono propio, no depende de Expo Go ni de GitHub Actions | Firma gratuita de Apple: la app caduca en pocos días (7 según las reglas conocidas del aprovisionamiento gratuito; verificar), límite de apps por dispositivo, requiere USB y Modo desarrollador |
 | **C (emergencia)** | `expo export -p web` publicado en Firebase Hosting (PWA) | Cualquiera con navegador | Cero instalación | No es app nativa; el enunciado pide app móvil: usar solo si A y B fallan |
 
@@ -24,8 +24,9 @@ localmente con `npx expo run:android --variant release` y compartir el archivo.
    (`firebase` JS SDK, `zod`, `date-fns`). Verificar cada librería nueva con `npx expo install` y probar en Expo Go.
 3. Servir el proyecto:
    - Desarrollo: `npx expo start --tunnel` (las redes universitarias suelen aislar clientes; el túnel lo evita).
-   - Demo: publicar con EAS Update y abrir desde Expo Go con el enlace/QR (verificar en F1-02 que Expo Go puede cargar
-     la actualización publicada para nuestro proyecto; si no, usar túnel desde una laptop con hotspot propio).
+   - Demo: el mismo túnel (`pnpm -F mobile start --tunnel`) desde una laptop con hotspot propio. **No se usa EAS
+     Update**: el proyecto no tiene `eas.json` ni `expo-updates` (ADR-014, que reemplaza esa parte de ADR-001).
+     Si el túnel falla, Plan B nativo en los iPhone del equipo.
 4. Generar una página simple (`apps/admin/src/routes/instalar/`) con: enlaces a Expo Go en ambas tiendas, QR del
    proyecto y 3 pasos. Es lo que se proyecta en clase para que los compañeros entren.
 
@@ -104,7 +105,7 @@ pantalla). Se puede usar en F3/F4 para pruebas de UI automatizadas y para grabar
 ## 5. Checklist del día de la demo
 
 - [ ] Laptop con Metro/túnel lista + hotspot propio probado.
-- [ ] Actualización EAS publicada (o túnel activo) con la versión final.
+- [ ] Túnel activo (`pnpm -F mobile start --tunnel`) con la versión final, sin depender de EAS Update.
 - [ ] Los 2 iPhones del equipo con Plan B (Xcode) instalado hace < 3 días, por si Expo Go falla.
 - [ ] Página `/instalar` proyectable con QR.
 - [ ] Video de respaldo de cada flujo (ver DEMO-RUNBOOK.md).

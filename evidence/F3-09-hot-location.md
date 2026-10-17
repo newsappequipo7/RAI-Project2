@@ -37,3 +37,9 @@ comprobar que el encabezado y el orden cambian al volver sin recargar, medir el 
 entre el toque y el primer cuadro con la nueva ciudad (meta <300 ms), y repetir desde Chat
 para verificar su encabezado y el aviso. Registrar modelo de teléfono, sistema y tiempos.
 Esta tarea no llama modelos ni gasta créditos de IA.
+
+## Cierre de la entrega (2026-10-16)
+
+CA1 (< 300 ms del toque al feed nuevo) **no se midió en teléfono**: el recorrido se canceló. Queda disponible el método
+sin código del checklist ([`CAPTURAS-PENDIENTES.md`](CAPTURAS-PENDIENTES.md), §8): filmar el cambio en 240 fps y contar
+cuadros. Solo existe la prueba del cálculo aislado.

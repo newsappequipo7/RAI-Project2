@@ -183,3 +183,77 @@ incrustado en la imagen se implementa cuando exista una imagen real que sellar. 
 ADR con proveedor, precio en `pricing.ts` y presupuesto aprobado.
 Evidencia: pruebas del gateway («image generation») y de la ruta (flag apagado → `forbidden`).
 
+
+---
+
+## ADR-012 — Modelo LLM en producción: Claude Haiku 5.5
+Estado: aceptada
+Fecha: 2026-10-15 · Autor: Diego
+Reemplaza ADR-009.
+Contexto: ADR-009 fijó Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) para `enrich`, `chat_answer` y `digest`. En F4-06
+(commit `2d099d2`, 2026-10-12) el modelo por defecto pasó a `claude-haiku-5-5` y hoy es el que corre en producción.
+Una auditoría del 2026-10-15 encontró que ADR-009 contradecía al sistema.
+Opciones: (A) mantener Haiku 4.5: USD 1 / 5 por MTok. (B) Haiku 5.5: USD 0.10 / 0.50 por MTok hasta 100 000 tokens de
+prompt y USD 0.50 / 2.50 por encima. (C) Sonnet o Workers AI para el chat, descartados en ADR-009 y sin cambios.
+Decisión: B para las tres tareas con LLM. No hay variables `AI_MODEL_*` en el Worker desplegado (versión
+`740064a9-8227-47e9-826e-71748b3df65b`, 2026-10-15): todas usan `DEFAULT_LLM_MODEL` de `services/api/src/ai/config.ts`.
+`embed` sigue en Workers AI `@cf/baai/bge-m3` (ADR-008). La degradación a Workers AI si el presupuesto se agota
+(opción C de ADR-009) se mantiene.
+Precio verificado: 2026-10-15 en https://platform.claude.com/docs/en/about-claude/pricing. Haiku 5.5 USD 0.10 / 0.50
+(≤ 100 000 tokens) y 0.50 / 2.50 (> 100 000); Haiku 4.5 USD 1 / 5. Coincide con `services/api/src/ai/pricing.ts`
+(verificado el 2026-10-12), que no requirió cambios.
+Por qué cambió: el precio de Haiku 5.5 es 10 veces menor por token que el de 4.5 y la calibración del chat (F4-06) se
+hizo y se midió con él (LOOP-015, LOOP-016). El motivo concreto de la decisión de pasar de 4.5 a 5.5 no quedó escrito en
+el repo (confirmar).
+Consecuencias: el costo por llamada baja un orden de magnitud frente a la estimación de ADR-009 (≈ USD 0.005 por
+respuesta de chat). Hay que vigilar que Haiku 5.5 no acepta el parámetro `temperature` (se elimina) y se usa esfuerzo
+bajo en su razonamiento; el tramo de prompts > 100 000 tokens no se usa en este producto. `enrich` se midió el 2026-10-03
+con Haiku 4.5 (USD 0.003183 por llamada con 1 362 tokens de entrada y 364 de salida); con las tarifas de 5.5 los mismos
+tokens costarían ≈ USD 0.000318, cifra calculada y no medida. `digest` mezcla llamadas con 4.5 y 5.5 (medido 0.000809;
+≈ 0.00066 a tarifa de 5.5).
+Evidencia: costo real por función en `evidence/F4-08-costs.md` (ledger D1, 2026-10-14: `chat_answer` USD 0.000296 con
+85 llamadas pagadas; gasto total USD 0.0605 frente a USD 0.06 en la consola de Anthropic, conciliado el 2026-10-15 en
+PRESUPUESTO-IA §4); calibración en `evidence/loops/LOOP-015` y `LOOP-016`.
+
+---
+
+## ADR-013 — La ventana del feed se ajusta el día antes de la presentación, no ahora
+Estado: aceptada
+Fecha: 2026-10-15 · Autor: Diego
+Contexto: `config/public.feedWindowHours` vale 72 por defecto (RELEVANCIA.md, MODELO-DATOS.md): el feed solo ordena
+noticias publicadas en esa ventana. Las editoriales de producción se publican el 2026-10-15 y la fecha de la presentación
+no está confirmada; si cae a más de 72 h de la última publicación, el feed queda vacío o sin las noticias nuevas. Dos
+cosas no dependen de ese valor: la ventana de «Lo que debes saber» (esenciales) es siempre 72 h y el digest del Worker
+también usa 72 h porque el Worker no lee `config/public` (handoff FASE-4).
+Opciones: (A) ampliar la ventana hoy. (B) republicar o reescribir las fechas de las noticias el día de la demo. (C)
+decidir el día antes, con la fecha real, y dejarlo como paso del runbook.
+Decisión: C. No se cambia la configuración hoy. Se agrega el paso «Día antes de la presentación» al DEMO-RUNBOOK §2:
+correr `pnpm demo:prepare` y, si la presentación cae a más de 72 h de la última publicación, ajustar
+`config/public.feedWindowHours`. B se descarta porque falsea `publishedAt` (ver LOOP-017).
+Consecuencias: ampliar la ventana hace que entren noticias viejas y es posible que el feed y el digest difieran (el
+digest sigue en 72 h); se anota en la evidencia de F4-09 cuando se haga. Los esenciales fuera de 72 h no aparecen en
+«Lo que debes saber» aunque se amplíe la ventana. Si se amplía, pueden coincidir noticias que en 72 h no compartían
+ventana (LOOP-018).
+Evidencia: [LOOP-017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md),
+[F4-09](../../evidence/F4-09-demo-readiness.md) y handoff FASE-4 (riesgo «El Worker no lee `config/public`»).
+
+---
+
+## ADR-014 — Distribución de la demo: túnel con hotspot propio y Plan B nativo, sin EAS Update
+Estado: aceptada
+Fecha: 2026-10-16 · Autor: Diego
+Reemplaza la parte de distribución de ADR-001 (el punto «Falta confirmar… si EAS Update puede cargarse desde Expo Go»).
+Contexto: ADR-001 dejó abierta la pregunta de si una actualización de EAS Update podía cargarse desde Expo Go, y
+`docs/ops/IOS-ANDROID-DISTRIBUCION.md` y la fase 4 todavía prometían «versión final publicada con EAS Update». Nunca se
+montó: `apps/mobile` no tiene `eas.json` ni `expo-updates` (verificado el 2026-10-16), y F4-09 ya planeaba túnel o Plan B.
+Opciones: (A) EAS Update cargado desde Expo Go: sin laptop en la sala, pero sin verificar y sin configuración en el repo.
+(B) Metro con túnel desde una laptop con hotspot propio: probado desde F1-02 en iPhone real, sin cuenta de pago.
+(C) Plan B: build nativo con Xcode y el Apple ID gratuito del equipo, instalado por USB. (D) PWA, solo emergencia.
+Decisión: B como plan principal en la demo, con C como respaldo en los iPhone del equipo y D sin cambios. No se usa EAS
+Update ni se agrega `expo-updates` (regla de oro 5 de CLAUDE.md: nada que Expo Go no incluya).
+Consecuencias: la demo depende de una laptop con Metro y de un hotspot propio (las redes de la universidad aíslan
+clientes); si se cae el túnel hay que pasar al Plan B. La firma gratuita del Plan B vence a los 7 días exactos (ADR-001),
+así que hay que reinstalar en los iPhone dentro de la ventana de la demo. EAS Build para generar un APK en Android no
+está descartado, pero tampoco se usa ni está configurado.
+Evidencia: ADR-001 (spikes F1-02 y F1-04), `evidence/F4-09-demo-readiness.md` (1a), handoff FASE-4 (riesgo «No hay EAS
+Update») y DEMO-RUNBOOK §3.

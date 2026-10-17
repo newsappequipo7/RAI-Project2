@@ -1,8 +1,16 @@
 # Handoff FASE-3 → FASE-4
 
-Responsable: Nelson · Estado: **F3-01 a F3-11 integradas; cierre F3-12 en curso** · Fecha de cierre y tag `fase-3-done`: pendientes
+Responsable: Nelson · Estado: **F3-01 a F3-11 integradas en `main`; la evidencia en teléfono no se realizó antes de la entrega y F3-12 queda pendiente** · Fecha de cierre: **2026-10-16** (cierre de la entrega, hecho por Diego; la aceptación de Joaquín no consta) · Tag `fase-3-done`: no creado
 
 Nelson informó el 2026-10-10 que probó la app y que «todo funciona bien». El [registro de prueba](../../evidence/F3-12-manual-review.md) distingue ese reporte de los criterios que aún necesitan modelo de teléfono, tiempos o capturas. La fase no se declara cerrada por un reporte general.
+
+**Cierre (2026-10-16).** Diego decidió cerrar la entrega con el estado actual y **sin el recorrido con los teléfonos**: los 55
+ítems de [CAPTURAS-PENDIENTES](../../evidence/CAPTURAS-PENDIENTES.md) quedan pendientes. Consecuencias:
+- F3-02 CA2 (< 20 ms) y F3-09 CA1 (< 300 ms) no se midieron. El log solo de desarrollo (`__DEV__`, commit `78ebc7b`) y el
+  método de 240 fps quedan disponibles para medirlos antes de la presentación. No hay un teléfono de gama media: una
+  medición en un iPhone de gama alta sería una cota inferior y se registraría como limitación.
+- F3-10 (dos teléfonos < 5 s), F3-11 CA2 y F3-12 CA1 (recorrido de Joaquín con este handoff) siguen pendientes.
+- Modelo, sistema y versión de Expo Go del teléfono con que Nelson probó el 2026-10-10: no se registraron **(confirmar)**.
 
 ## 1. Qué quedó funcionando (demostrable)
 
@@ -73,22 +81,23 @@ Variables opcionales del portal (ver `apps/admin/.env.example`): `VITE_API_URL` 
 
 | Severidad | Pendiente | Acción |
 |---|---|---|
-| Alta | Evidencia de Expo Go incompleta aunque Nelson reportó que la app funciona | Anotar modelo, sistema, versión de Expo Go, flujo, resultado y capturas/videos por criterio; no inventar tiempos. |
-| Alta | Ventana de feed de 72 h por defecto: las fechas relativas de semilla caducan | Para demo, acordar `config/public.feedWindowHours` o preparar/publicar noticias recientes; usar seed solo en emulador para pruebas locales. |
+| Alta | Evidencia de Expo Go incompleta aunque Nelson reportó que la app funciona. **Al 2026-10-16 no se hizo** | Recorrer [CAPTURAS-PENDIENTES](../../evidence/CAPTURAS-PENDIENTES.md): modelo, sistema, versión de Expo Go, flujo, resultado y capturas por criterio; no inventar tiempos. |
+| Alta | Ventana de feed de 72 h por defecto: las fechas relativas de semilla caducan | Decidido en [ADR-013](../architecture/DECISIONES.md): el día antes de la presentación se corre `pnpm demo:prepare` y se ajusta `config/public.feedWindowHours` si hace falta (DEMO-RUNBOOK §2). |
 | Media | F3-12 aún no tiene evidencia de modo oscuro, texto dinámico, contraste AA ni videos requeridos | Revisar en dispositivos, guardar evidencia y corregir UI si alguna prueba falla. |
 | Media | No consta recorrido de Joaquín siguiendo exclusivamente este handoff | Hacerlo y corregir pasos que no pueda reproducir antes del tag. |
 | Media | F3-02, F3-09 y F3-10 exigen umbrales medidos en teléfono(s) | Registrar datos reales; escritorio y emulador no sustituyen esas mediciones. |
+| Media | La noticia no guarda la fecha del hecho: una noticia vieja publicada hoy se trata como reciente en el ranking ([LOOP-017](../../evidence/loops/LOOP-017-falta-de-fecha-del-hecho.md)) | Campo opcional `eventDate` como trabajo futuro; limitación declarada en el runbook |
 | Baja | F3-10 marca la tarjeta de noticias corregidas como `[PLUS]` | Implementar solo si se decide incluirla. |
 
 ## 6. Gasto de IA de la fase
 
-Feed, lectura, ranking y comparador no llaman a modelos; el Worker se probó en mock. **Gasto observado en este trabajo: USD 0 en llamadas de IA**. Aquí no se consultaron el ledger ni el panel del proveedor, así que el total externo de la fase, la diferencia entre fuentes y el costo medio por tarea no están reconciliados. Registrar esos valores si se requiere un cierre financiero formal; no estimarlos desde los tests.
+Feed, lectura, ranking y comparador no llaman a modelos; el Worker se probó en mock. **Gasto observado en este trabajo: USD 0 en llamadas de IA**. Aquí no se consultaron el ledger ni el panel del proveedor, así que el total externo de la fase, la diferencia entre fuentes y el costo medio por tarea no están reconciliados. Registrar esos valores si se requiere un cierre financiero formal; no estimarlos desde los tests. Al 2026-10-16 el ledger de todo el proyecto suma USD 0.0605 y no se desglosa por fase **(confirmar)** si se necesita el reparto.
 
 ## 7. Qué necesita saber la siguiente persona antes de empezar
 
 1. El chat de Fase 4 debe heredar noticias, certeza y fuentes publicadas; no debe calcular por IA la certeza ni alterar `rankFeed`. Una retractada no está en el feed, pero existe por enlace directo y conserva historial.
 2. Para reproducir app y comparador juntos, ambos deben leer el mismo Firestore y usar perfil neutro, ciudad, `config/public` y momento de cálculo equivalentes. `/compare` ofrece las ocho ciudades y un perfil sin historial por defecto.
-3. F3-01 a F3-11 están en `main`; los ◐ indican evidencia específica pendiente, no tareas por reimplementar. No hay tag `fase-3-done` ni aceptación del handoff por Joaquín todavía.
+3. F3-01 a F3-11 están en `main`; los ◐ indican evidencia específica pendiente, no tareas por reimplementar. No hay tag `fase-3-done` ni aceptación del handoff por Joaquín (al 2026-10-16 tampoco consta que lo haya recorrido).
 
 ## 8. Loops registrados en esta fase
 

@@ -6,7 +6,13 @@ No pegar tokens aquí.
 
 Cronometrar cada sección con el reloj del teléfono. El gasto sale de `/costs` (saldo antes y después).
 
-## Ensayo 1 — fecha: pendiente
+## Ensayo 1 — fecha: 2026-10-16 — **no realizado**
+
+**Motivo:** el 2026-10-16, día de la entrega, Diego decidió cerrar la entrega con el estado actual y no hacer el recorrido
+con los teléfonos. No hay tiempos por sección, fallas ni gasto de ensayo que registrar; nada de la tabla de abajo se
+midió. Los tres ensayos generales (F4-10 CA1) quedan **pendientes para antes de la presentación**.
+
+La tabla se conserva en blanco para llenarla en el próximo ensayo.
 
 | Dato | Valor |
 |---|---|
@@ -29,8 +35,8 @@ Cronometrar cada sección con el reloj del teléfono. El gasto sale de `/costs` 
 
 **Decisiones tras el ensayo:** pendiente.
 
-## Ensayo 2 — fecha: pendiente
+## Ensayo 2 — fecha: pendiente (no realizado antes de la entrega)
 (Copiar la tabla del ensayo 1. Después de este ensayo, reinstalar el Plan B en los iPhones.)
 
-## Ensayo 3 — fecha: pendiente
+## Ensayo 3 — fecha: pendiente (no realizado antes de la entrega)
 (Copiar la tabla del ensayo 1. Día anterior a la presentación.)

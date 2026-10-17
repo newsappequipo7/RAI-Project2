@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/components/useColorScheme';
 import { LocationNotice } from '@/components/LocationNotice';
 import { CompactRow, HeroCard, LargeCard, MediumRow, MustKnowBlock } from '@/src/feed/FeedCards';
+import { logRankingTiming } from '@/src/feed/devRankingTiming';
 import { WhyPanel } from '@/src/feed/WhyPanel';
 import { findNewProminentStory, isProminentStory } from '@/src/feed/newStoryAlert';
 import { useNewsFeed } from '@/src/feed/useNewsFeed';
@@ -65,16 +66,15 @@ export default function FeedScreen() {
   const ranking = useMemo(() => {
     if (!profile || (status !== 'ready' && status !== 'empty')) return null;
     try {
-      return {
-        value: rankFeed({
-          news,
-          profile,
-          locationId: profile.locationId,
-          now,
-          weights: config.rankingWeights,
-        }),
-        error: null,
+      const input = {
+        news,
+        profile,
+        locationId: profile.locationId,
+        now,
+        weights: config.rankingWeights,
       };
+      if (__DEV__) logRankingTiming(input);
+      return { value: rankFeed(input), error: null };
     } catch (problem) {
       return {
         value: null,

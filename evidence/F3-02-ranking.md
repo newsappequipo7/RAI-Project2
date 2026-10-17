@@ -4,6 +4,10 @@ Fecha: 2026-10-09 · Rama: `fase-3/f3-02-ranking` · Responsable: Nelson
 
 Estado: **implementada; CA2 pendiente en teléfono real**. No marcar Done todavía.
 
+Cierre de la entrega (2026-10-16): **CA2 no se midió.** No hay un teléfono de gama media disponible y el recorrido con
+teléfonos se canceló. El log solo de desarrollo (`__DEV__`, commit `78ebc7b`) queda disponible para medirlo antes de la
+presentación; una medición en un iPhone de gama alta sería una cota inferior y se registraría como limitación.
+
 ## Criterios de aceptación
 
 | Criterio | Estado | Evidencia |
