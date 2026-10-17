@@ -34,8 +34,8 @@
 | Digest precalculado por ubicación | Chat | "Resume lo de hoy" cuesta 1 llamada por ubicación e índice, no por usuario |
 | Caché de respuestas 15 min | Chat | Compañeros preguntando lo mismo en la demo |
 | Rate limit 20/h por usuario | Chat | Evita abuso y bucles |
-| Contexto recortado (top-k 6, extractos de 1 200 caracteres) | Chat | Menos tokens de entrada |
-| `temperature = 0`, salida JSON corta | Chat, enrich | Menos tokens de salida |
+| Contexto recortado (top-k 6, extractos de 600 caracteres en el contexto; 1 200 en el índice) | Chat | Menos tokens de entrada |
+| Salida JSON corta y `CHAT_MAX_TOKENS` 1500 como tope (solo se cobran los tokens usados). Haiku 5.5 no admite `temperature` | Chat, enrich | Menos tokens de salida |
 | Portada tipográfica por código | Imágenes | Evita generación de imágenes |
 
 ## 4. Costo por función (medido con el ledger el 2026-10-14; ver [F4-08](../../evidence/F4-08-costs.md))

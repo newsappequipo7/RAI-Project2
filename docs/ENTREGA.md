@@ -3,6 +3,8 @@
 Corte: 2026-10-16. Resumen honesto de lo que se entrega: lo que tiene evidencia está enlazado; lo que no, aparece como
 pendiente. El equipo cerró la entrega con el estado actual y **sin el recorrido de pruebas con los teléfonos**.
 
+Versión completa en un solo documento: [Entrega-Proyecto2.pdf](Entrega-Proyecto2.pdf) (9 páginas, con el enlace al repositorio y la evidencia por tarea).
+
 ## 1. Qué se entrega y dónde está
 
 | Pieza | Dónde | Estado verificado |
@@ -58,11 +60,3 @@ Tope: USD 20. **Según el ledger: USD 0.0605** (`GET /admin/costs`). **Según la
 diferencia es menor al 1 % y cae en el redondeo a centavos. **Saldo registrado: USD 19.94**, calculado como 20 − 0.06; no se
 leyó el saldo exacto de la consola. La reserva de USD 7 para la demo está intacta (ningún gasto con `env=demo`) y la
 estimación de la demo es USD 0.075, es decir, la reserva la cubre 92.8 veces ([PRESUPUESTO-IA](ops/PRESUPUESTO-IA.md)).
-
-## 6. Lo que falta antes de la presentación
-
-Ensayos 1 a 3 y reinstalar el Plan B en los iPhone después del segundo (la firma gratuita vence a los 7 días); videos de
-respaldo; probar el chat en Android; correr `pnpm demo:prepare` el día antes y ajustar la ventana del feed si hace falta
-([ADR-013](architecture/DECISIONES.md)); desplegar el Worker con `ENV=demo` y comprobar `/health`; medir F3-02 y F3-09 con
-el log de desarrollo; escribir los guiones pendientes; confirmar la fecha y que la key de Anthropic (vence el 2026-10-29)
-siga vigente. Lista completa: [DEMO-RUNBOOK §6](ops/DEMO-RUNBOOK.md).
